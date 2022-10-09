@@ -257,7 +257,6 @@ if(ENABLE_DOCS)
 
     configure_file(docs/Doxyfile ${DOXYGEN_OUT})
 
-    include(FetchContent)
     FetchContent_Declare(
             mcss
             GIT_REPOSITORY git://github.com/mosra/m.css
