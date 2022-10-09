@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package herd.proto;
+
+option cc_enable_arenas = true;
+
+message NodeMeta {
+  uint32 id = 1;
+}
+
+message InputNode {
+  NodeMeta meta = 1;
+
+  uint32 input_offset = 2;
+  repeated NodeMeta children = 3;
+}
+
+message OutputNode {
+  NodeMeta meta = 1;
+
+  uint32 output_offset = 2;
+}
+
+message OperationNode {
+  NodeMeta meta = 1;
+
+  uint32 operation_code = 2;
+
+  repeated NodeMeta children = 3;
+}
