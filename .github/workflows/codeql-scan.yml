@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install libprotobuf-dev ninja-build
+          sudo apt install libprotobuf-dev ninja-build protobuf-compiler libgrpc++-dev protobuf-compiler-grpc
         shell: bash
 
       - name: Download OpenFHE
