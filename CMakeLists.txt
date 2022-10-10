@@ -65,26 +65,7 @@ endif()
 # Targets
 
 ## Herd - proto
-include(FindProtobuf)
-find_package(Protobuf REQUIRED)
-
-protobuf_generate_cpp(
-        PROTO_SRC PROTO_HEADER
-        proto/node.proto
-        proto/ciphertext_value.proto
-        proto/circuit_graph.proto
-        proto/task.proto
-)
-add_custom_target(libherd-proto-generate DEPENDS ${PROTO_SRC} ${PROTO_HEADER})
-
-add_library(libherd-proto)
-target_sources(libherd-proto PRIVATE ${PROTO_SRC} ${PROTO_HEADER})
-
-target_include_directories(libherd-proto PUBLIC ${PROTOBUF_INCLUDE_DIR})
-target_include_directories(libherd-proto SYSTEM INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
-
-add_dependencies(libherd-proto libherd-proto-generate)
-
+add_subdirectory(proto)
 
 ## Herd
 add_library(libherd)
@@ -190,7 +171,7 @@ target_link_libraries(
         OPENFHEcore
         OPENFHEbinfhe
 
-        libherd-proto
+        herd_proto
 )
 
 target_include_directories(

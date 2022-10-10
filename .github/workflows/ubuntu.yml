@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Install gcc
         run: |
@@ -63,11 +65,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Install clang
         run: |
           sudo apt update
           sudo apt install clang-10
+        shell: bash
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install libprotobuf-dev
         shell: bash
 
       - name: Create Build Environment
