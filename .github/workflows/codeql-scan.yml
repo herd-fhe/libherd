@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install libprotobuf-dev
+          sudo apt install libprotobuf-dev ninja-build
         shell: bash
 
       - name: Download OpenFHE
@@ -53,7 +53,7 @@ jobs:
 
       - name: Configure CMake
         working-directory: ${{github.workspace}}/build
-        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Release
+        run: cmake -GNinja $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Release
         env:
           CC:   gcc-10
           CXX:  g++-10
