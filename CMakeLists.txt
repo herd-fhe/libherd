@@ -143,6 +143,9 @@ target_sources(
 # External
 find_package(OpenFHE REQUIRED)
 
+find_package(Threads REQUIRED)
+find_package(OpenMP REQUIRED)
+
 target_compile_definitions(
         libherd
         PUBLIC
@@ -162,14 +165,10 @@ target_link_libraries(
         libherd
         PRIVATE
         pthread
-        options_target
-)
 
-target_link_libraries(
-        libherd
-        PRIVATE
         OPENFHEcore
         OPENFHEbinfhe
+        OpenMP::OpenMP_CXX
 
         herd_proto
 )
