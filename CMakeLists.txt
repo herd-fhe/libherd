@@ -62,6 +62,12 @@ if(!MSVC)
     endif()
 endif()
 
+# External
+find_package(OpenFHE REQUIRED)
+
+find_package(Threads REQUIRED)
+find_package(OpenMP REQUIRED)
+
 # Targets
 
 ## Herd - proto
@@ -140,11 +146,6 @@ target_sources(
 
         include/herd/uuid.hpp
 )
-# External
-find_package(OpenFHE REQUIRED)
-
-find_package(Threads REQUIRED)
-find_package(OpenMP REQUIRED)
 
 target_compile_definitions(
         libherd

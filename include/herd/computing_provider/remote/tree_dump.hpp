@@ -2,7 +2,7 @@
 #define LIBHERD_TREE_DUMP_HPP
 
 #include "herd/tree/circuit_graph.hpp"
-#include "circuit_graph.pb.h"
+#include <circuit_graph.pb.h>
 
 
 namespace herd
