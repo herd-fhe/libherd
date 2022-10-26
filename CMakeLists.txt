@@ -62,29 +62,16 @@ if(!MSVC)
     endif()
 endif()
 
+# External
+find_package(OpenFHE REQUIRED)
+
+find_package(Threads REQUIRED)
+find_package(OpenMP REQUIRED)
+
 # Targets
 
 ## Herd - proto
-include(FindProtobuf)
-find_package(Protobuf REQUIRED)
-
-protobuf_generate_cpp(
-        PROTO_SRC PROTO_HEADER
-        proto/node.proto
-        proto/ciphertext_value.proto
-        proto/circuit_graph.proto
-        proto/task.proto
-)
-add_custom_target(libherd-proto-generate DEPENDS ${PROTO_SRC} ${PROTO_HEADER})
-
-add_library(libherd-proto)
-target_sources(libherd-proto PRIVATE ${PROTO_SRC} ${PROTO_HEADER})
-
-target_include_directories(libherd-proto PUBLIC ${PROTOBUF_INCLUDE_DIR})
-target_include_directories(libherd-proto SYSTEM INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
-
-add_dependencies(libherd-proto libherd-proto-generate)
-
+add_subdirectory(proto)
 
 ## Herd
 add_library(libherd)
@@ -159,8 +146,6 @@ target_sources(
 
         include/herd/uuid.hpp
 )
-# External
-find_package(OpenFHE REQUIRED)
 
 target_compile_definitions(
         libherd
@@ -181,16 +166,12 @@ target_link_libraries(
         libherd
         PRIVATE
         pthread
-        options_target
-)
 
-target_link_libraries(
-        libherd
-        PRIVATE
         OPENFHEcore
         OPENFHEbinfhe
+        OpenMP::OpenMP_CXX
 
-        libherd-proto
+        herd_proto
 )
 
 target_include_directories(
@@ -257,7 +238,6 @@ if(ENABLE_DOCS)
 
     configure_file(docs/Doxyfile ${DOXYGEN_OUT})
 
-    include(FetchContent)
     FetchContent_Declare(
             mcss
             GIT_REPOSITORY git://github.com/mosra/m.css

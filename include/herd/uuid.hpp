@@ -11,8 +11,6 @@ namespace herd
 	public:
 		UUID();
 
-		friend std::strong_ordering operator<=>(const UUID& lhs, const UUID& rhs);
-
 	private:
 		std::array<char, 36> uuid_{};
 	};

@@ -59,38 +59,40 @@ namespace herd::storage
 
 	void LocalDataTable::add_row(const utils::CSVRow &row)
 	{
-		for(const auto& column: column_descriptors_)
+		for(const auto& [name, column]: column_descriptors_)
 		{
-			const column_index_type index = column.second.index;
-			const column_type_key_type type_key = column.second.type;
+			const column_index_type index = column.index;
+			const column_type_key_type type_key = column.type;
 
 			switch(type_key)
 			{
-				case TypeKey::BIT:
+				using enum TypeKey;
+
+				case BIT:
 					assert_cast<TypePool<bool> *>(pools_[index].get())->emplace_back(row.get<bool>(index));
 					break;
-				case TypeKey::UINT8:
+				case UINT8:
 					assert_cast<TypePool<uint8_t> *>(pools_[index].get())->emplace_back(row.get<uint8_t>(index));
 					break;
-				case TypeKey::UINT16:
+				case UINT16:
 					assert_cast<TypePool<uint16_t> *>(pools_[index].get())->emplace_back(row.get<uint16_t>(index));
 					break;
-				case TypeKey::UINT32:
+				case UINT32:
 					assert_cast<TypePool<uint32_t> *>(pools_[index].get())->emplace_back(row.get<uint32_t>(index));
 					break;
-				case TypeKey::UINT64:
+				case UINT64:
 					assert_cast<TypePool<uint64_t> *>(pools_[index].get())->emplace_back(row.get<uint64_t>(index));
 					break;
-				case TypeKey::INT8:
+				case INT8:
 					assert_cast<TypePool<int8_t> *>(pools_[index].get())->emplace_back(row.get<int8_t>(index));
 					break;
-				case TypeKey::INT16:
+				case INT16:
 					assert_cast<TypePool<int16_t> *>(pools_[index].get())->emplace_back(row.get<int16_t>(index));
 					break;
-				case TypeKey::INT32:
+				case INT32:
 					assert_cast<TypePool<int32_t> *>(pools_[index].get())->emplace_back(row.get<int32_t>(index));
 					break;
-				case TypeKey::INT64:
+				case INT64:
 					assert_cast<TypePool<int64_t> *>(pools_[index].get())->emplace_back(row.get<int64_t>(index));
 			}
 		}

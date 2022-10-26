@@ -16,9 +16,4 @@ namespace herd
 
 		uuid_unparse(uuid_temp, uuid_.data());
 	}
-
-	std::strong_ordering operator<=>(const UUID &lhs, const UUID &rhs)
-	{
-		return lhs.uuid_ <=> rhs.uuid_;
-	}
 }

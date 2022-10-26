@@ -32,7 +32,7 @@ namespace herd::storage
 	private:
 		static std::unordered_map<TypeKey, std::function<std::unique_ptr<ITypePool>()>> factory_register;
 
-		static bool register_type(TypeKey key, std::function<std::unique_ptr<ITypePool>()>&& factory_fun);
+		static bool register_type(TypeKey key, std::function<std::unique_ptr<ITypePool>()> factory_fun);
 	};
 }
 

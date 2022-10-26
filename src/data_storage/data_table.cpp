@@ -10,14 +10,10 @@ namespace herd::storage
 	{
 		for(std::size_t i = 0; const auto& column: columns)
 		{
-			column_descriptors_.insert(
-				{
-					column.name,
-					{
-						i,
-						column.type
-					}
-				}
+			column_descriptors_.try_emplace(
+				column.name,
+				i,
+			    column.type
 			);
 
 			++i;
@@ -29,7 +25,7 @@ namespace herd::storage
 		return name_;
 	}
 
-	const std::map<DataTable::column_key_type, DataTable::ColumnDescriptor> &DataTable::columns() const
+	const std::map<DataTable::column_key_type, DataTable::ColumnDescriptor, std::less<>>& DataTable::columns() const
 	{
 		return column_descriptors_;
 	}

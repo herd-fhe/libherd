@@ -7,7 +7,6 @@
 namespace herd
 {
 	ContextBuilder::ContextBuilder()
-			: context_(Context::make_shared())
 	{}
 
 	ContextBuilder::operator std::shared_ptr<Context>()

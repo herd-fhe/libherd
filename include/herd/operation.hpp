@@ -7,7 +7,7 @@
 
 namespace herd
 {
-	enum OperationType
+	enum class OperationType: uint8_t
 	{
 		AND,
 		OR,
@@ -17,7 +17,7 @@ namespace herd
 		MUX,
 	};
 
-	enum OperandType
+	enum class OperandType: uint8_t
 	{
 		BINFHE
 	};
