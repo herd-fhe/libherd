@@ -6,7 +6,6 @@ namespace herd::crypto
 {
 	class Crypto
 	{
-	public:
 	};
 }
 

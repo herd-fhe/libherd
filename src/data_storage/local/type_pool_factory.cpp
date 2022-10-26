@@ -14,11 +14,11 @@ namespace herd::storage
 		return nullptr;
 	}
 
-	bool TypePoolFactory::register_type(TypeKey key, std::function<std::unique_ptr<ITypePool>()>&& factory_fun)
+	bool TypePoolFactory::register_type(TypeKey key, std::function<std::unique_ptr<ITypePool>()> factory_fun)
 	{
 		if(auto iter = factory_register.find(key); iter == std::end(factory_register))
 		{
-			factory_register[key] = std::forward<std::function<std::unique_ptr<ITypePool>()>>(factory_fun);
+			factory_register[key] = std::move(factory_fun);
 			return true;
 		}
 
@@ -26,16 +26,16 @@ namespace herd::storage
 	}
 
 	namespace {
-		[[maybe_unused]] bool bit_registered = TypePoolFactory::register_type<TypeKey::BIT>();
+		[[maybe_unused]] const bool bit_registered = TypePoolFactory::register_type<TypeKey::BIT>();
 
-		[[maybe_unused]] bool uint8_registered = TypePoolFactory::register_type<TypeKey::UINT8>();
-		[[maybe_unused]] bool uint16_registered = TypePoolFactory::register_type<TypeKey::UINT16>();
-		[[maybe_unused]] bool uint32_registered = TypePoolFactory::register_type<TypeKey::UINT32>();
-		[[maybe_unused]] bool uint64_registered = TypePoolFactory::register_type<TypeKey::UINT64>();
+		[[maybe_unused]] const bool uint8_registered = TypePoolFactory::register_type<TypeKey::UINT8>();
+		[[maybe_unused]] const bool uint16_registered = TypePoolFactory::register_type<TypeKey::UINT16>();
+		[[maybe_unused]] const bool uint32_registered = TypePoolFactory::register_type<TypeKey::UINT32>();
+		[[maybe_unused]] const bool uint64_registered = TypePoolFactory::register_type<TypeKey::UINT64>();
 
-		[[maybe_unused]] bool int8_registered = TypePoolFactory::register_type<TypeKey::INT8>();
-		[[maybe_unused]] bool int16_registered = TypePoolFactory::register_type<TypeKey::INT16>();
-		[[maybe_unused]] bool int32_registered = TypePoolFactory::register_type<TypeKey::INT32>();
-		[[maybe_unused]] bool int64_registered = TypePoolFactory::register_type<TypeKey::INT64>();
+		[[maybe_unused]] const bool int8_registered = TypePoolFactory::register_type<TypeKey::INT8>();
+		[[maybe_unused]] const bool int16_registered = TypePoolFactory::register_type<TypeKey::INT16>();
+		[[maybe_unused]] const bool int32_registered = TypePoolFactory::register_type<TypeKey::INT32>();
+		[[maybe_unused]] const bool int64_registered = TypePoolFactory::register_type<TypeKey::INT64>();
 	}
 }

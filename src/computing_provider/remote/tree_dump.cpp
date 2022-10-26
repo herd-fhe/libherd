@@ -22,7 +22,7 @@ namespace herd
 			const auto& node = graph.input_nodes()[i];
 
 			const uint32_t global_id = next_id++;
-			id_map.insert({node, global_id});
+			id_map.try_emplace(node, global_id);
 
 			auto new_node = input_nodes->Add();
 
@@ -32,7 +32,7 @@ namespace herd
 			for(const auto& child: node->children())
 			{
 				const uint32_t child_id = next_id++;
-				id_map.insert({child.lock(), child_id});
+				id_map.try_emplace(child.lock(), child_id);
 
 				auto child_meta = new_node->mutable_children()->Add();
 				child_meta->set_id(child_id);
@@ -46,7 +46,7 @@ namespace herd
 
 			const uint32_t global_id = next_id++;
 
-			id_map.insert({node, global_id});
+			id_map.try_emplace(node, global_id);
 
 			auto new_node = output_nodes->Add();
 
@@ -66,7 +66,7 @@ namespace herd
 			if(!id_map.contains(node))
 			{
 				id = next_id++;
-				id_map.insert({node, id});
+				id_map.try_emplace(node, id);
 			}
 
 			return tree::VisitStatus::CONTINUE;
@@ -92,9 +92,7 @@ namespace herd
 			for (const auto& child: node->children())
 			{
 				auto new_child = dumped_children->Add();
-				const uint32_t child_id = id_map[child.lock()];
-
-				new_child->set_id(child_id);
+				new_child->set_id(id_map[child.lock()]);
 			}
 
 			return tree::VisitStatus::CONTINUE;

@@ -24,7 +24,9 @@ namespace herd::storage
 		using value_type = CellType;
 		using const_reference = const value_type&;
 
-		void emplace_back(CellType&& value);
+		template<typename... Args>
+		requires std::is_constructible_v<CellType, Args...>
+		void emplace_back(Args&&... args);
 
 		[[nodiscard]] const_reference at(size_type pos) const;
 		[[nodiscard]] const_reference operator[](size_type pos) const;
@@ -36,9 +38,11 @@ namespace herd::storage
 	};
 
 	template<typename CellType>
-	void TypePool<CellType>::emplace_back(CellType &&value)
+	template<typename... Args>
+	requires std::is_constructible_v<CellType, Args...>
+	void TypePool<CellType>::emplace_back(Args&&... args)
 	{
-		values_.emplace_back(value);
+		values_.emplace_back(std::forward<Args>(args)...);
 	}
 
 	template<typename CellType>
@@ -64,6 +68,7 @@ namespace herd::storage
 	{
 		return values_.size();
 	}
+
 }
 
-#endif //LIBHERD_DS_LOCAL_TYPE_POOL_HPP
+#endif //LIBHERD_LOCAL_TYPE_POOL_HPP

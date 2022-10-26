@@ -339,112 +339,112 @@ TEST(CSVValueMappers, unsigned_values_invalid_value)
 		const std::string text = "-10";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint8_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint8_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "-10";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint16_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint16_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "-10";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint32_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint32_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "-10";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint64_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint64_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "-10v";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint8_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint8_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "-10s";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint16_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint16_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "10a";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint32_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint32_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "10b";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint64_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint64_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "ba10v";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint8_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint8_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "gh10s";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint16_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint16_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "10a";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint32_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint32_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "fd10b";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint64_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint64_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "bav";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint8_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint8_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "ghs";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint16_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint16_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "a";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint32_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint32_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "fdb";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint64_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint64_t>(view)), InvalidCsvValueError);
 	}
 }
 
@@ -454,28 +454,28 @@ TEST(CSVValueMappers, unsigned_values_overflow)
 		const std::string text = "256";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint8_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint8_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "65536";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint16_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint16_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "4294967296";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint32_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint32_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "18446744073709551616";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint64_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<uint64_t>(view)), InvalidCsvValueError);
 	}
 }
 
@@ -485,84 +485,84 @@ TEST(CSVValueMappers, signed_values_invalid_value)
 		const std::string text = "-10v";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int8_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int8_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "-10s";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int16_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int16_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "10a";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int32_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int32_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "10b";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int64_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int64_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "ba10v";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int8_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int8_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "gh10s";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int16_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int16_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "10a";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int32_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int32_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "fd10b";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int64_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int64_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "bav";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int8_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int8_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "ghs";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int16_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int16_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "a";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int32_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int32_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "fdb";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int64_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int64_t>(view)), InvalidCsvValueError);
 	}
 }
 
@@ -572,28 +572,28 @@ TEST(CSVValueMappers, signed_values_overflow)
 		const std::string text = "128";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int8_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int8_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "32768";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int16_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int16_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "2147483648";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int32_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int32_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "9223372036854775808";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int64_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int64_t>(view)), InvalidCsvValueError);
 	}
 }
 
@@ -603,28 +603,28 @@ TEST(CSVValueMappers, signed_values_overflow_minus)
 		const std::string text = "-129";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int8_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int8_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "-32769";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int16_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int16_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "-2147483649";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int32_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int32_t>(view)), InvalidCsvValueError);
 	}
 
 	{
 		const std::string text = "-9223372036854775809";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int64_t>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<int64_t>(view)), InvalidCsvValueError);
 	}
 }
 
@@ -657,6 +657,6 @@ TEST(CSVValueMappers, boolean_invalid_value)
 		const std::string text = "a";
 		const std::string_view view = text;
 
-		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<bool>(view)), invalid_csv_value_error);
+		EXPECT_THROW(static_cast<void>(csv_value_mappers::parse<bool>(view)), InvalidCsvValueError);
 	}
 }
