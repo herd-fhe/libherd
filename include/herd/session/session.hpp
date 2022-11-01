@@ -10,6 +10,12 @@ namespace herd
 {
 	class Context;
 
+	struct SessionInfo
+	{
+		std::string name;
+		UUID uuid;
+	};
+
 	class Session: public std::enable_shared_from_this<Session>
 	{
 	public:
@@ -31,6 +37,7 @@ namespace herd
 		explicit Session(std::shared_ptr<Context> context);
 		static std::shared_ptr<Session> make_shared(std::shared_ptr<Context> context);
 
+		std::string name_;
 		UUID uuid_;
 		std::shared_ptr<Context> context_;
 	};

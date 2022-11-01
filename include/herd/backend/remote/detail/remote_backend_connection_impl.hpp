@@ -8,16 +8,37 @@
 #include <session.grpc.pb.h>
 
 #include "herd/backend/remote/remote_backend.hpp"
+#include "herd/session/session.hpp"
 
 
 namespace herd
 {
+	namespace detail
+	{
+		class TokenMetadataCredentialsPlugin: public grpc::MetadataCredentialsPlugin
+		{
+		public:
+			explicit TokenMetadataCredentialsPlugin(const std::string& token);
+
+			bool IsBlocking() const override;
+			grpc::Status GetMetadata(grpc::string_ref service_url, grpc::string_ref method_name, const grpc::AuthContext& channel_auth_context, std::multimap<grpc::string, grpc::string>* metadata) override;
+			grpc::string DebugString() override;
+
+		private:
+			std::string token_;
+		};
+	}
+
 	class RemoteBackend::RemoteBackendConnectionImpl
 	{
 	public:
 		explicit RemoteBackendConnectionImpl(const RemoteBackendConfig& config, std::string  token) noexcept;
 
 		void connect();
+
+		SessionInfo create_session(const std::string& name);
+		void destroy_session(const UUID& uuid);
+		std::vector<SessionInfo> list_sessions();
 
 	private:
 		std::string address_;
@@ -34,6 +55,9 @@ namespace herd
 
 		void create_stubs();
 		void authenticate();
+
+		void setup_authenticated_context(grpc::ClientContext& context) const noexcept;
+
 	};
 }
 
