@@ -5,19 +5,18 @@
 
 namespace herd::crypto
 {
-	void crypto::Keyring::add_keyset(std::unique_ptr<IKeyset>&& keyset)
+	void crypto::Keyring::add_keyset(std::unique_ptr<IKeyset> keyset)
 	{
-		const auto index = std::type_index(typeid(keyset));
-
-		keyring_.insert({index, std::move(keyset)});
+		SchemaType type = keyset->get_schema_type();
+		keyring_.insert({type, std::move(keyset)});
 	}
 
-	bool Keyring::contains_key(const std::type_index& key_type) const noexcept
+	bool Keyring::contains_key(SchemaType key_type) const noexcept
 	{
 		return keyring_.contains(key_type);
 	}
 
-	const std::unique_ptr<IKeyset> &Keyring::get_keyset(const std::type_index &key_type) const
+	const std::unique_ptr<IKeyset> &Keyring::get_keyset(SchemaType key_type) const
 	{
 		return keyring_.at(key_type);
 	}

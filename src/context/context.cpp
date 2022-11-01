@@ -18,4 +18,9 @@ namespace herd
 
 		return session;
 	}
+
+	std::shared_ptr<Context> Context::make_shared()
+	{
+		return std::make_shared<make_shared_enabler>();
+	}
 }

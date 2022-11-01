@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "herd/computing_provider/i_computing_provider.hpp"
+#include "herd/backend/i_backend.hpp"
 
 
 namespace herd
@@ -21,12 +21,12 @@ namespace herd
 	{
 	private:
 		friend class ContextBuilder;
+		struct make_shared_enabler;
 
 		Context() noexcept = default;
-		static std::shared_ptr<Context> make_shared() { return {}; };
+		static std::shared_ptr<Context> make_shared();
 
-		std::unique_ptr<crypto::Keyring> keyring_{};
-		std::unique_ptr<IComputingProvider> computing_provider_{};
+		std::unique_ptr<IBackend> backend_{};
 		std::vector<std::weak_ptr<Session>> sessions_;
 
 	public:
@@ -39,6 +39,14 @@ namespace herd
 		[[nodiscard]] std::shared_ptr<Session> create_session();
 
 		static ContextBuilder create();
+	};
+
+	struct Context::make_shared_enabler: public Context
+	{
+		template<typename... Args>
+		explicit make_shared_enabler(Args&&... args)
+			:   Context(std::forward<Args>(args)...)
+		{}
 	};
 }
 

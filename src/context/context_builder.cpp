@@ -6,23 +6,16 @@
 
 namespace herd
 {
-	ContextBuilder::ContextBuilder()
-	{}
+	ContextBuilder::ContextBuilder() = default;
 
-	ContextBuilder::operator std::shared_ptr<Context>()
+	ContextBuilder &ContextBuilder::with(std::unique_ptr<IBackend> backend) noexcept
 	{
+		context_->backend_ = std::move(backend);
+		return *this;
+	}
+	std::shared_ptr<Context> ContextBuilder::build_and_connect()
+	{
+		context_->backend_->connect();
 		return std::move(context_);
-	}
-
-	ContextBuilder &ContextBuilder::with(std::unique_ptr<crypto::Keyring> keyring) noexcept
-	{
-		context_->keyring_ = std::move(keyring);
-		return *this;
-	}
-
-	ContextBuilder &ContextBuilder::with(std::unique_ptr<IComputingProvider> computing_provider) noexcept
-	{
-		context_->computing_provider_ = std::move(computing_provider);
-		return *this;
 	}
 }

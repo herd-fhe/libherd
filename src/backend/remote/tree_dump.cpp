@@ -1,4 +1,4 @@
-#include "herd/computing_provider/remote/tree_dump.hpp"
+#include "herd/backend/remote/tree_dump.hpp"
 
 #include "herd/tree/visitor.hpp"
 #include "herd/tree/node/operation_node.hpp"

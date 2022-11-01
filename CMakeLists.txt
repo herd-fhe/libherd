@@ -62,11 +62,17 @@ if(!MSVC)
     endif()
 endif()
 
+# Dependencies
+find_package(PkgConfig REQUIRED)
+
 # External
 find_package(OpenFHE REQUIRED)
 
 find_package(Threads REQUIRED)
 find_package(OpenMP REQUIRED)
+
+## UUID
+pkg_search_module(UUID REQUIRED uuid)
 
 # Targets
 
@@ -88,8 +94,9 @@ target_sources(
         src/tree/circuit_graph.cpp
         src/tree/visitor.cpp
 
-        src/computing_provider/local/local_computing_provider.cpp
-        src/computing_provider/remote/tree_dump.cpp
+        src/backend/remote/remote_backend.cpp
+        src/backend/remote/detail/remote_backend_connection_impl.cpp
+        src/backend/remote/tree_dump.cpp
 
         src/crypto/crypto.cpp
         src/crypto/keyring.cpp
@@ -113,9 +120,10 @@ target_sources(
         include/herd/context/context_builder.hpp
         include/herd/session/session.hpp
 
-        include/herd/computing_provider/i_computing_provider.hpp
-        include/herd/computing_provider/local/local_computing_provider.hpp
-        include/herd/computing_provider/remote/tree_dump.hpp
+        include/herd/backend/i_backend.hpp
+        include/herd/backend/remote/remote_backend.hpp
+        include/herd/backend/remote/detail/remote_backend_connection_impl.hpp
+        include/herd/backend/remote/tree_dump.hpp
 
         include/herd/tree/node/abstract_node.hpp
         include/herd/tree/node/input_node.hpp
@@ -133,6 +141,7 @@ target_sources(
         include/herd/data_storage/local/type_pool.hpp
         include/herd/data_storage/local/type_pool_factory.hpp
 
+        include/herd/crypto/schema.hpp
         include/herd/crypto/crypto.hpp
         include/herd/crypto/crypto_config.hpp
         include/herd/crypto/i_keyset.hpp
@@ -144,7 +153,11 @@ target_sources(
         include/herd/utils/csv_reader.hpp
         include/herd/utils/csv_value_mappers.hpp
 
+        include/herd/utils/pimpl.hpp
+
         include/herd/uuid.hpp
+
+        include/herd/herd.hpp
 )
 
 target_compile_definitions(
@@ -170,6 +183,7 @@ target_link_libraries(
         OPENFHEcore
         OPENFHEbinfhe
         OpenMP::OpenMP_CXX
+        ${UUID_LIBRARIES}
 
         herd_proto
 )
@@ -227,6 +241,13 @@ if(ENABLE_TESTS)
             test/storage/local/local_data_storage_test.cpp
     )
 endif()
+
+option(ENABLE_EXAMPLES "Enable examples building" FALSE)
+
+if(ENABLE_EXAMPLES)
+    add_subdirectory(example)
+endif()
+
 
 #Docs
 option(ENABLE_DOCS "Enable docs" FALSE)

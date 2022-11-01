@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstdint>
 
+#include "crypto/schema.hpp"
+
 
 namespace herd
 {
@@ -17,21 +19,16 @@ namespace herd
 		MUX,
 	};
 
-	enum class OperandType: uint8_t
-	{
-		BINFHE
-	};
-
 	struct Operation
 	{
 		OperationType type;
 
 		std::size_t cost;
 
-		std::vector<OperandType> inputs;
-		OperandType output;
+		std::vector<crypto::SchemaType> inputs;
+		crypto::SchemaType output;
 
-		Operation(OperationType op_type, std::size_t op_cost, std::vector<OperandType> op_input, OperandType op_output)
+		Operation(OperationType op_type, std::size_t op_cost, std::vector<crypto::SchemaType> op_input, crypto::SchemaType op_output)
 		: type(op_type), cost(op_cost), inputs(std::move(op_input)), output(op_output) {};
 	};
 }

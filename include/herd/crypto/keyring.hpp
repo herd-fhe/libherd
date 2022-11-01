@@ -5,6 +5,7 @@
 #include <typeindex>
 #include <memory>
 
+#include "herd/crypto/schema.hpp"
 #include "herd/crypto/i_keyset.hpp"
 
 
@@ -13,12 +14,12 @@ namespace herd::crypto
 	class Keyring
 	{
 	public:
-		void add_keyset(std::unique_ptr<IKeyset>&& keyset);
-		[[nodiscard]] const std::unique_ptr<IKeyset>& get_keyset(const std::type_index& key_type) const;
-		[[nodiscard]] bool contains_key(const std::type_index& key_type) const noexcept;
+		void add_keyset(std::unique_ptr<IKeyset> keyset);
+		[[nodiscard]] const std::unique_ptr<IKeyset>& get_keyset(SchemaType key_type) const;
+		[[nodiscard]] bool contains_key(SchemaType key_type) const noexcept;
 
 	private:
-		std::unordered_map<std::type_index, std::unique_ptr<IKeyset>> keyring_;
+		std::unordered_map<SchemaType, std::unique_ptr<IKeyset>> keyring_;
 	};
 }
 

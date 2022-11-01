@@ -28,7 +28,7 @@ namespace herd::tree
 			return operation_.cost;
 		}
 
-		[[nodiscard]] OperandType value_type() const noexcept override
+		[[nodiscard]] crypto::SchemaType value_type() const noexcept override
 		{
 			return operation_.output;
 		}
