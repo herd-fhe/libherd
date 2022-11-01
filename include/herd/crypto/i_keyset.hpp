@@ -1,16 +1,18 @@
 #ifndef LIBHERD_I_KEYSET_HPP
 #define LIBHERD_I_KEYSET_HPP
 
+#include "herd/crypto/schema.hpp"
+
 
 namespace herd::crypto
 {
 	class IKeyset
 	{
 	public:
-		virtual ~IKeyset() = 0;
-	};
+		[[nodiscard]] virtual SchemaType get_schema_type() const noexcept = 0;
 
-	IKeyset::~IKeyset() = default;
+		virtual ~IKeyset() = default;
+	};
 
 	template<typename Context, typename PrivateKey, typename CloudKey>
 	class BaseKeyset: public IKeyset

@@ -12,7 +12,7 @@ namespace herd::tree
 	class InputNode: public AbstractNode
 	{
 	public:
-		[[nodiscard]] virtual OperandType value_type() const noexcept = 0;
+		[[nodiscard]] virtual crypto::SchemaType value_type() const noexcept = 0;
 
 		[[nodiscard]] std::vector<std::weak_ptr<AbstractNode>> children() const override
 		{
