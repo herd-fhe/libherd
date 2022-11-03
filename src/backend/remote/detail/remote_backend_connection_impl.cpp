@@ -11,7 +11,7 @@ namespace herd
 	{
 		namespace
 		{
-			constexpr const char* const AUTH_TOKEN_KEY = "Authorization";
+			constexpr const char* const AUTH_TOKEN_KEY = "authorization";
 			constexpr const char* const BEARER_PREFIX = "Bearer ";
 		}
 

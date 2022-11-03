@@ -19,5 +19,20 @@ namespace herd
 		pimpl_->connect();
 	}
 
+	SessionInfo RemoteBackend::create_session(const std::string& name)
+	{
+		return pimpl_->create_session(name);
+	}
+
+	void RemoteBackend::destroy_session(const UUID& uuid)
+	{
+		return pimpl_->destroy_session(uuid);
+	}
+
+	std::vector<SessionInfo> RemoteBackend::list_sessions()
+	{
+		return pimpl_->list_sessions();
+	}
+
 	RemoteBackend::~RemoteBackend() = default;
 }

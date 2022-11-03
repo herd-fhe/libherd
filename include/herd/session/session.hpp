@@ -25,20 +25,28 @@ namespace herd
 		Session(const Session&) = delete;
 		Session& operator=(const Session&) = delete;
 
+		~Session();
+
 		[[nodiscard]] UUID uuid() const noexcept
 		{
 			return uuid_;
 		}
 
+		void destroy();
+
 	private:
 		friend class Context;
 		struct make_shared_enabler;
 
-		explicit Session(std::shared_ptr<Context> context);
-		static std::shared_ptr<Session> make_shared(std::shared_ptr<Context> context);
+		explicit Session(const SessionInfo& info, std::shared_ptr<Context> context, bool auto_destroy);
+		static std::shared_ptr<Session> make_shared(const SessionInfo& info, std::shared_ptr<Context> context, bool auto_destroy);
+
+		bool auto_destroy_;
+		bool destroyed_{false};
 
 		std::string name_;
 		UUID uuid_;
+
 		std::shared_ptr<Context> context_;
 	};
 
@@ -46,7 +54,8 @@ namespace herd
 	{
 		template<typename... Args>
 		explicit make_shared_enabler(Args&&... args)
-		:   Session(std::forward<Args>(args)...)
+		:
+			Session(std::forward<Args>(args)...)
 		{}
 	};
 

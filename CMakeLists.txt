@@ -74,6 +74,8 @@ find_package(OpenMP REQUIRED)
 ## UUID
 pkg_search_module(UUID REQUIRED uuid)
 
+add_subdirectory(third-party/spdlog EXCLUDE_FROM_ALL)
+
 # Targets
 
 ## Herd - proto

@@ -4,9 +4,10 @@
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "herd/backend/i_backend.hpp"
-
+#include "herd/session/session.hpp"
 #include "herd/utils/pimpl.hpp"
 
 
@@ -43,6 +44,10 @@ namespace herd
 		~RemoteBackend() override;
 
 		void connect() override;
+
+		SessionInfo create_session(const std::string &name) override;
+		void destroy_session(const UUID& uuid) override;
+		std::vector<SessionInfo> list_sessions() override;
 
 	private:
 		class RemoteBackendConnectionImpl;
