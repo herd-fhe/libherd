@@ -23,7 +23,7 @@ namespace herd::utils
 	public:
 		static constexpr auto TIMEOUT = std::chrono::seconds(5);
 
-		explicit ThreadPool(std::size_t max_thread_count = std::thread::hardware_concurrency()) noexcept;
+		explicit ThreadPool(std::size_t max_thread_count = std::jthread::hardware_concurrency()) noexcept;
 
 		~ThreadPool();
 

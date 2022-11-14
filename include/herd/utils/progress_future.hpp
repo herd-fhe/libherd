@@ -110,40 +110,15 @@ namespace herd::utils
 		std::shared_ptr<detail::ProgressFutureState> state_;
 		std::packaged_task<Res(ProgressUpdateProxy, Args...)> task_;
 
-		template<typename Alloc = std::allocator<int>>
-		static std::shared_ptr<detail::ProgressFutureState> create_state(const Alloc& alloc = Alloc())
-		{
-			return std::allocate_shared<detail::ProgressFutureState>(alloc);
-		}
-
 		ProgressPackagedTask() noexcept = default;
 
 		template<typename Fun>
 		requires std::is_invocable_r_v<Res, Fun, ProgressUpdateProxy&, Args...>
 		         && (!std::is_same_v<ProgressPackagedTask, std::remove_cvref<Fun>>)
 		explicit ProgressPackagedTask(Fun&& fun)
-			:state_(create_state()), task_(std::forward<Fun>(fun))
+			:task_(std::forward<Fun>(fun))
 		{
-		}
-
-		ProgressPackagedTask(const ProgressPackagedTask&) = delete;
-		ProgressPackagedTask& operator=(const ProgressPackagedTask&) = delete;
-
-		ProgressPackagedTask(ProgressPackagedTask&& other) noexcept
-		{
-			swap(other);
-		}
-
-		ProgressPackagedTask& operator=(ProgressPackagedTask&& other) noexcept
-		{
-			ProgressPackagedTask(std::move(other)).swap(*this);
-			return *this;
-		}
-
-		void swap(ProgressPackagedTask& other) noexcept
-		{
-			state_.swap(other.state_);
-			task_.swap(other.task_);
+			state_ = std::make_shared<detail::ProgressFutureState>();
 		}
 
 		[[nodiscard]] bool valid() const noexcept
