@@ -37,14 +37,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{github.workspace}}/external/openfhe/
-          key: openfhe-v0.9.4
+          key: openfhe-v1.0.0
 
       - name: Download OpenFHE
         if: steps.openfhe-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
         with:
           repository: openfheorg/openfhe-development
-          ref: v0.9.4
+          ref: v1.0.0
           path: ${{github.workspace}}/external/openfhe
 
       - name: Build OpenFHE
