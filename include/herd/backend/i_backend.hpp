@@ -18,6 +18,8 @@ namespace herd
 		virtual void destroy_session(const UUID& uuid) = 0;
 		virtual std::vector<SessionInfo> list_sessions() = 0;
 
+		virtual utils::ProgressFuture<void> add_key(const UUID& session_uuid, crypto::SchemaType type, std::vector<std::byte>&& key_data) = 0;
+
 		virtual ~IBackend() = default;
 	};
 }

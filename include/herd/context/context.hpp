@@ -23,7 +23,7 @@ namespace herd
 		friend class ContextBuilder;
 		struct make_shared_enabler;
 
-		Context() noexcept = default;
+		Context() noexcept;
 		static std::shared_ptr<Context> make_shared();
 
 		std::unique_ptr<IBackend> backend_{};
@@ -43,7 +43,8 @@ namespace herd
 	private:
 		friend class Session;
 
-		void destroy_session(const UUID& uuid);
+		void destroy_session(const UUID& session_uuid);
+		utils::ProgressFuture<void> add_key(const UUID& session_uuid, crypto::SchemaType type, std::vector<std::byte>&& key_data);
 	};
 
 	struct Context::make_shared_enabler: public Context

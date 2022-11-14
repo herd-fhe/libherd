@@ -3,7 +3,7 @@
 
 using namespace herd;
 
-int main(int argc, char** argv)
+int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
 	ContextBuilder builder;
 
@@ -14,7 +14,8 @@ int main(int argc, char** argv)
 			{
 				"127.0.0.1",
 				5000
-			}
+			},
+			std::nullopt
 		};
 
 		auto backend = std::make_unique<RemoteBackend>(

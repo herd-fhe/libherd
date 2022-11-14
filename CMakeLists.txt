@@ -98,6 +98,7 @@ target_sources(
 
         src/backend/remote/remote_backend.cpp
         src/backend/remote/detail/remote_backend_connection_impl.cpp
+        src/backend/remote/detail/mapper.cpp
         src/backend/remote/tree_dump.cpp
 
         src/crypto/crypto.cpp
@@ -113,6 +114,7 @@ target_sources(
         src/data_storage/local/type_pool_factory.cpp
 
         src/utils/csv_reader.cpp
+        src/utils/thread_pool.cpp
 
         src/uuid.cpp
 
@@ -125,6 +127,7 @@ target_sources(
         include/herd/backend/i_backend.hpp
         include/herd/backend/remote/remote_backend.hpp
         include/herd/backend/remote/detail/remote_backend_connection_impl.hpp
+        include/herd/backend/remote/detail/mapper.hpp
         include/herd/backend/remote/tree_dump.hpp
 
         include/herd/tree/node/abstract_node.hpp
@@ -155,6 +158,10 @@ target_sources(
         include/herd/utils/csv_reader.hpp
         include/herd/utils/csv_value_mappers.hpp
 
+        include/herd/utils/thread_pool.hpp
+        include/herd/utils/progress_future.hpp
+        include/herd/utils/movable_task.hpp
+
         include/herd/utils/pimpl.hpp
 
         include/herd/uuid.hpp
@@ -182,12 +189,17 @@ target_link_libraries(
         PRIVATE
         pthread
 
-        OPENFHEcore
-        OPENFHEbinfhe
         OpenMP::OpenMP_CXX
         ${UUID_LIBRARIES}
 
         herd_proto
+)
+
+target_link_libraries(
+        libherd
+        PUBLIC
+        OPENFHEcore
+        OPENFHEbinfhe
 )
 
 target_include_directories(

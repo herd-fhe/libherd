@@ -2,8 +2,11 @@
 #define LIBHERD_SESSION_HPP
 
 #include <memory>
+#include <vector>
 
+#include "herd/crypto/keyring.hpp"
 #include "herd/uuid.hpp"
+#include "herd/utils/progress_future.hpp"
 
 
 namespace herd
@@ -32,6 +35,8 @@ namespace herd
 			return uuid_;
 		}
 
+		utils::ProgressFuture<void> add_key(std::unique_ptr<crypto::IKeyset> keyset);
+
 		void destroy();
 
 	private:
@@ -48,6 +53,8 @@ namespace herd
 		UUID uuid_;
 
 		std::shared_ptr<Context> context_;
+
+		crypto::Keyring keyring_;
 	};
 
 	struct Session::make_shared_enabler: public Session

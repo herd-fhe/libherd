@@ -6,6 +6,10 @@
 
 namespace herd
 {
+	Context::Context() noexcept
+	{
+	}
+
 	ContextBuilder Context::create()
 	{
 		return {};
@@ -24,13 +28,17 @@ namespace herd
 		return std::make_shared<make_shared_enabler>();
 	}
 
-	void Context::destroy_session(const UUID& uuid)
+	void Context::destroy_session(const UUID& session_uuid)
 	{
-		backend_->destroy_session(uuid);
+		backend_->destroy_session(session_uuid);
 	}
 
 	std::vector<SessionInfo> Context::list_sessions() const
 	{
 		return backend_->list_sessions();
+	}
+	utils::ProgressFuture<void> Context::add_key(const UUID& session_uuid, crypto::SchemaType type, std::vector<std::byte>&& key_data)
+	{
+		return backend_->add_key(session_uuid, type, std::move(key_data));
 	}
 }

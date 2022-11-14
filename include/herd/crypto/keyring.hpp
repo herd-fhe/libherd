@@ -11,6 +11,11 @@
 
 namespace herd::crypto
 {
+	struct KeyAlreadyAddedException: public std::runtime_error
+	{
+		using std::runtime_error::runtime_error;
+	};
+
 	class Keyring
 	{
 	public:

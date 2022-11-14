@@ -27,4 +27,13 @@ namespace herd
 		destroyed_ = true;
 		context_->destroy_session(uuid_);
 	}
+
+	utils::ProgressFuture<void> Session::add_key(std::unique_ptr<crypto::IKeyset> keyset)
+	{
+		const auto type = keyset->get_schema_type();
+		keyring_.add_keyset(std::move(keyset));
+
+		auto cloud_key = keyring_.get_keyset(type)->serialize_cloud_key();
+		return context_->add_key(uuid_, type, std::move(cloud_key));
+	}
 }

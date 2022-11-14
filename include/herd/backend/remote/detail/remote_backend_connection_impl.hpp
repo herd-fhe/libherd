@@ -32,15 +32,19 @@ namespace herd
 	class RemoteBackend::RemoteBackendConnectionImpl
 	{
 	public:
-		explicit RemoteBackendConnectionImpl(const RemoteBackendConfig& config, std::string  token) noexcept;
+		explicit RemoteBackendConnectionImpl(utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string  token) noexcept;
 
 		void connect();
 
 		SessionInfo create_session(const std::string& name);
-		void destroy_session(const UUID& uuid);
+		void destroy_session(const UUID& session_uuid);
 		std::vector<SessionInfo> list_sessions();
 
+		utils::ProgressFuture<void> add_key(const UUID& session_uuid, crypto::SchemaType type, std::vector<std::byte>&& key_data);
+
 	private:
+		utils::ThreadPool& pool_;
+
 		std::string address_;
 
 		std::string authentication_token_;
