@@ -1,27 +1,26 @@
 #include "herd/crypto/binfhe_keyset.hpp"
 
-#include <binfhecontext.h>
+#include <binfhecontext-ser.h>
 
 
 namespace herd::crypto::binfhe
 {
-	namespace
-	{
-		struct CloudKeyData
-		{
-			std::shared_ptr<lbcrypto::LWESwitchingKey> switching_key;
-			std::shared_ptr<lbcrypto::RingGSWBTKey> refresh_key;
-		};
-	}
-
-	class Keyset: public BaseKeyset<lbcrypto::BinFHEContext, lbcrypto::LWEPrivateKey, CloudKeyData>
+	class Keyset: public IKeyset
 	{
 	public:
 		Keyset();
 
 		[[nodiscard]] SchemaType get_schema_type() const noexcept override;
+		[[nodiscard]] std::vector<std::byte> serialize_cloud_key() const override;
 
 		void recreate_keys();
+
+	private:
+		lbcrypto::BinFHEContext context_;
+		lbcrypto::LWEPrivateKey private_key_;
+
+		lbcrypto::LWESwitchingKey switching_key_;
+		lbcrypto::RingGSWACCKey refresh_key_;
 	};
 
 	std::unique_ptr<IKeyset> create_binfhe_keyset()
@@ -40,12 +39,33 @@ namespace herd::crypto::binfhe
 		private_key_ = context_.KeyGen();
 		context_.BTKeyGen(private_key_);
 
-		cloud_key_.refresh_key = context_.GetRefreshKey();
-		cloud_key_.switching_key = context_.GetSwitchKey();
+		refresh_key_ = context_.GetRefreshKey();
+		switching_key_ = context_.GetSwitchKey();
 	}
 
 	SchemaType Keyset::get_schema_type() const noexcept
 	{
 		return SchemaType::BINFHE;
+	}
+
+	std::vector<std::byte> Keyset::serialize_cloud_key() const
+	{
+		std::stringstream stream;
+		lbcrypto::Serial::Serialize(context_, stream, lbcrypto::SerType::BINARY);
+		lbcrypto::Serial::Serialize(refresh_key_, stream, lbcrypto::SerType::BINARY);
+		lbcrypto::Serial::Serialize(switching_key_, stream, lbcrypto::SerType::BINARY);
+
+		std::vector<std::byte> out;
+
+		stream.seekg(0, std::ios::beg);
+		const auto start = stream.tellg();
+		stream.seekg(0, std::ios::end);
+		const auto size = std::size_t(stream.tellg() - start);
+		stream.seekg(0, std::ios::beg);
+
+		out.resize(size);
+
+		stream.read(reinterpret_cast<char*>(out.data()), std::streamsize(size));
+		return out;
 	}
 }

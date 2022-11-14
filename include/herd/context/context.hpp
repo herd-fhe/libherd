@@ -23,11 +23,10 @@ namespace herd
 		friend class ContextBuilder;
 		struct make_shared_enabler;
 
-		Context() noexcept = default;
+		Context() noexcept;
 		static std::shared_ptr<Context> make_shared();
 
 		std::unique_ptr<IBackend> backend_{};
-		std::vector<std::weak_ptr<Session>> sessions_;
 
 	public:
 		Context(Context&&) = default;
@@ -36,9 +35,16 @@ namespace herd
 		Context(const Context&) = delete;
 		Context& operator=(const Context&) = delete;
 
-		[[nodiscard]] std::shared_ptr<Session> create_session();
+		[[nodiscard]] std::shared_ptr<Session> create_session(const std::string& name, bool auto_destroy=true);
+		[[nodiscard]] std::vector<SessionInfo> list_sessions() const;
 
 		static ContextBuilder create();
+
+	private:
+		friend class Session;
+
+		void destroy_session(const UUID& session_uuid);
+		utils::ProgressFuture<void> add_key(const UUID& session_uuid, crypto::SchemaType type, std::vector<std::byte>&& key_data);
 	};
 
 	struct Context::make_shared_enabler: public Context

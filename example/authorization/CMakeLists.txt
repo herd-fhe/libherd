@@ -6,4 +6,10 @@ target_sources(
         PRIVATE
         main.cpp
 )
-target_link_libraries(authorization PRIVATE libherd)
+target_link_libraries(authorization PRIVATE example_target_options)
+target_link_libraries(
+        authorization
+        PRIVATE
+        spdlog::spdlog_header_only
+        libherd
+)

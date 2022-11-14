@@ -1,19 +1,41 @@
 #include "herd/uuid.hpp"
 
-#ifdef __linux__
-#include <uuid/uuid.h>
-#else
-#error "System not supported"
-#endif
+#include <stdexcept>
 
 
 namespace herd
 {
 	UUID::UUID()
 	{
-		uuid_t uuid_temp;
-		uuid_generate(uuid_temp);
+		uuid_generate(uuid_);
+	}
 
-		uuid_unparse(uuid_temp, uuid_.data());
+	UUID::UUID(const std::string& uuid_string)
+	{
+		const auto result = uuid_parse(uuid_string.c_str(), uuid_);
+		if(result != 0)
+		{
+			throw std::invalid_argument("Invalid uuid");
+		}
+	}
+
+	std::strong_ordering operator<=>(const UUID &lhs, const UUID &rhs)
+	{
+		return uuid_compare(lhs.uuid_, rhs.uuid_) <=> 0;
+	}
+
+	bool operator==(const UUID &lhs, const UUID &rhs)
+	{
+		return uuid_compare(lhs.uuid_, rhs.uuid_) == 0;
+	}
+
+	std::string UUID::as_string() const
+	{
+		std::string out;
+		out.resize(UUID_STR_LEN-1);
+
+		uuid_unparse(uuid_, out.data());
+
+		return out;
 	}
 }
