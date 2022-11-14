@@ -15,8 +15,8 @@ namespace herd::utils
 		explicit PImpl(Args&&...);
 		~PImpl() = default;
 
-		PImpl(PImpl&&) = default;
-		PImpl& operator=(PImpl&&) = default;
+		PImpl(PImpl&&) noexcept = default;
+		PImpl& operator=(PImpl&&) noexcept = default;
 
 		const T* operator->() const;
 		T* operator->();

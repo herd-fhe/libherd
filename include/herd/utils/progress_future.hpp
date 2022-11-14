@@ -156,7 +156,7 @@ namespace herd::utils
 			return ProgressFuture<Res>(task_.get_future(), state_);
 		}
 
-		void operator()(Args&&... args)
+		void operator()(Args... args)
 		{
 			task_(ProgressUpdateProxy(state_), std::forward<Args>(args)...);
 		}

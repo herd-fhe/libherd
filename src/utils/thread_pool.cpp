@@ -24,9 +24,16 @@ namespace herd::utils
 
 	void ThreadPool::housekeeping()
 	{
-		auto [to_remove_begin, to_remove_end] = std::ranges::remove_if(threads_, [](const auto& thread){ return thread->ended(); });
-		std::for_each(to_remove_begin, to_remove_end, [](auto& thread) { thread->join(); });
-		threads_.erase(to_remove_begin, to_remove_end);
+		auto to_remove = std::remove_if(
+				std::begin(threads_), std::end(threads_),
+				[](const auto& thread)
+				{
+					return thread->ended();
+				}
+		);
+
+		std::for_each(to_remove, std::end(threads_), [](auto& thread) { thread->join(); });
+		threads_.erase(to_remove, std::end(threads_));
 	}
 
 	ThreadPool::PooledThread::PooledThread(ThreadPool& pool) noexcept
