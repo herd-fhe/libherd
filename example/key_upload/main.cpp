@@ -37,13 +37,17 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		auto keyset = crypto::binfhe::create_binfhe_keyset();
 		auto future = session->add_key(std::move(keyset));
 
-		std::cout << "0%";
-		std::flush(std::cout);
+		utils::ProgressBar bar;
+		bar.set_bar_width(60);
+		bar.set_status("Uploading BinFHE keys");
 		while(future.wait_for(5ms) == std::future_status::timeout)
 		{
-			std::cout << "\r" << std::to_string(future.progress()) << "%";
-			std::flush(std::cout);
+			bar.set_progress(future.progress());
+			bar.write();
 		}
+		bar.set_progress(future.progress());
+		bar.set_completed(true);
+		bar.write();
 	}
 
 	return 0;

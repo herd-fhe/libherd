@@ -42,9 +42,9 @@ namespace herd::utils
 			return state_->current_step_;
 		}
 
-		[[nodiscard]] double progress() const noexcept
+		[[nodiscard]] float progress() const noexcept
 		{
-			return (static_cast<double>(current_step()) / static_cast<double>(max_step()))*100.0;
+			return (static_cast<float>(current_step()) / static_cast<float>(max_step()))*100.0f;
 		}
 
 		[[nodiscard]] bool valid() const noexcept

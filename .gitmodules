@@ -4,3 +4,6 @@
 [submodule "third-party/spdlog"]
 	path = third-party/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "third-party/termcolor"]
+	path = third-party/termcolor
+	url = https://github.com/ikalnytskyi/termcolor
