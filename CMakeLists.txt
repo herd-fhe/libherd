@@ -75,6 +75,7 @@ find_package(OpenMP REQUIRED)
 pkg_search_module(UUID REQUIRED uuid)
 
 add_subdirectory(third-party/spdlog EXCLUDE_FROM_ALL)
+add_subdirectory(third-party/termcolor EXCLUDE_FROM_ALL)
 
 # Targets
 
@@ -115,6 +116,7 @@ target_sources(
 
         src/utils/csv_reader.cpp
         src/utils/thread_pool.cpp
+        src/utils/progress_bar.cpp
 
         src/uuid.cpp
 
@@ -161,6 +163,7 @@ target_sources(
         include/herd/utils/thread_pool.hpp
         include/herd/utils/progress_future.hpp
         include/herd/utils/movable_task.hpp
+        include/herd/utils/progress_bar.hpp
 
         include/herd/utils/pimpl.hpp
 
@@ -200,6 +203,7 @@ target_link_libraries(
         PUBLIC
         OPENFHEcore
         OPENFHEbinfhe
+        termcolor
 )
 
 target_include_directories(

@@ -8,4 +8,6 @@
 
 #include "backend/remote/remote_backend.hpp"
 
+#include "utils/progress_bar.hpp"
+
 #endif //LIBHERD_HERD_HPP
