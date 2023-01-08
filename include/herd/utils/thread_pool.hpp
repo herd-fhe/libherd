@@ -44,6 +44,11 @@ namespace herd::utils
 				const auto& thread_iter = threads_.emplace_back(std::make_unique<PooledThread>(*this));
 				thread_iter->start();
 			}
+			else
+			{
+				queue_lock.unlock();
+				consumers_cv_.notify_one();
+			}
 		}
 
 	private:
