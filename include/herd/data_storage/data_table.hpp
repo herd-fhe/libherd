@@ -23,7 +23,7 @@ namespace herd::storage
 		using row_index_type = std::size_t;
 		using column_key_type = std::string;
 		using column_index_type = std::size_t;
-		using column_type_key_type = TypeKey;
+		using column_type_key_type = DataType;
 
 		struct ColumnDescriptor {
 			column_index_type index;

@@ -10,7 +10,7 @@ using namespace herd::storage;
 
 TEST(LocalDataStorage, load_from_csv_stream)
 {
-	using enum herd::TypeKey;
+	using enum herd::DataType;
 
 	LocalDataStorage storage;
 
@@ -34,7 +34,7 @@ TEST(LocalDataStorage, load_from_csv_stream)
 
 TEST(LocalDataStorage, load_from_csv_stream_multiline)
 {
-	using enum herd::TypeKey;
+	using enum herd::DataType;
 
 	LocalDataStorage storage;
 

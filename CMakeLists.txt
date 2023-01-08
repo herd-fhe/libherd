@@ -82,6 +82,8 @@ add_subdirectory(third-party/termcolor EXCLUDE_FROM_ALL)
 ## Herd - proto
 add_subdirectory(proto)
 
+add_subdirectory(common)
+
 ## Herd
 add_library(libherd)
 
@@ -204,6 +206,8 @@ target_link_libraries(
         OPENFHEcore
         OPENFHEbinfhe
         termcolor
+
+        herd_common
 )
 
 target_include_directories(
