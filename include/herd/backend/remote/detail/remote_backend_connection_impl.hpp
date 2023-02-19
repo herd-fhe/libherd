@@ -52,7 +52,7 @@ namespace herd
 
 		std::shared_ptr<grpc::ChannelCredentials> credentials_;
 
-		std::shared_ptr<grpc_impl::Channel> channel_;
+		std::shared_ptr<grpc::Channel> channel_;
 
 		std::unique_ptr<herd::proto::Auth::Stub> auth_service_stub_;
 		std::unique_ptr<herd::proto::Session::Stub> session_service_stub_;
