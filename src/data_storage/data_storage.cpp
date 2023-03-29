@@ -15,10 +15,8 @@ namespace
 
 namespace herd::storage
 {
-	std::shared_ptr<DataTable> DataStorage::load_from_csv(const std::vector<DataTable::ColumnParameters>& columns, std::istream& stream, const std::string& table_name)
+	utils::ProgressFuture<std::shared_ptr<DataTable>> DataStorage::load_from_csv(const std::vector<DataTable::ColumnParameters>& columns, std::istream& stream, common::SchemaType schema_type, const std::string& table_name)
 	{
-		static_cast<void>(stream);
-
 		std::string name = table_name;
 		if(name.empty())
 		{
@@ -31,46 +29,10 @@ namespace herd::storage
 			while(tables_.contains(name));
 		}
 
-		auto table = create_table(name, columns);
+		auto [future, table] = populate_table_from_csv(stream, name, columns, schema_type);
+		tables_.try_emplace(name, table);
 
-		populate_table_from_csv(table, stream);
-
-		return table;
-	}
-
-	std::shared_ptr<DataTable> DataStorage::load_from_csv(const std::vector<DataTable::ColumnParameters>& columns, const std::filesystem::path& path, const std::string& table_name)
-	{
-		if(!std::filesystem::exists(path))
-		{
-			throw std::runtime_error("File " + path.string() + " not found");
-		}
-
-		if(!std::filesystem::is_regular_file(path))
-		{
-			throw std::runtime_error(path.string() + "is not a regular file");
-		}
-
-		std::ifstream file(path);
-
-		if(!file.good())
-		{
-			throw std::runtime_error("Could not open file " + path.string());
-		}
-
-		return load_from_csv(columns, file, table_name);
-	}
-
-	void DataStorage::populate_table_from_csv(const std::shared_ptr<DataTable> &table, std::istream &stream)
-	{
-		utils::CSVReader reader;
-
-		while(stream.good())
-		{
-			const auto row = reader.read_row(stream);
-			table->add_row(row);
-		}
-
-		table->flush_rows();
+		return std::move(future);
 	}
 
 	const std::unordered_map<std::string, std::shared_ptr<DataTable>> &DataStorage::tables() const
@@ -87,4 +49,5 @@ namespace herd::storage
 
 		return nullptr;
 	}
+
 }

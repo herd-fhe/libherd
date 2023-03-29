@@ -24,7 +24,7 @@ TEST(LocalDataStorage, load_from_csv_stream)
 			{"fourth", INT64},
 	};
 
-	auto table = storage.load_from_csv(columns, stream);
+	auto table = storage.load_from_csv(columns, stream, herd::common::SchemaType::NONE).get();
 
 	EXPECT_NE(nullptr, table);
 	EXPECT_EQ(4, table->columns().size());
@@ -50,7 +50,7 @@ TEST(LocalDataStorage, load_from_csv_stream_multiline)
 			{"fourth", INT64},
 	};
 
-	auto table = storage.load_from_csv(columns, stream);
+	auto table = storage.load_from_csv(columns, stream, herd::common::SchemaType::NONE).get();
 
 	EXPECT_NE(nullptr, table);
 	EXPECT_EQ(4, table->columns().size());

@@ -58,7 +58,7 @@ namespace herd::utils
 	}
 	void ThreadPool::PooledThread::thread_body(ThreadPool::PooledThread& thread, ThreadPool& pool)
 	{
-		MovableFunction fun;
+		MovableTask fun;
 		while(true)
 		{
 			{

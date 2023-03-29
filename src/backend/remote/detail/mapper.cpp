@@ -1,25 +1,25 @@
 #include "herd/backend/remote/detail/mapper.hpp"
 
 
-namespace herd::detail
+namespace herd::mapper
 {
-	crypto::SchemaType to_model(proto::SchemaType type) noexcept
+	common::SchemaType to_model(proto::SchemaType type) noexcept
 	{
 		switch(type)
 		{
 			case proto::BINFHE:
-				return crypto::SchemaType::BINFHE;
+				return common::SchemaType::BINFHE;
 			default:
 				assert(false && "Proto schema, model mismatch");
-				return static_cast<crypto::SchemaType>(0);
+				return static_cast<common::SchemaType>(0);
 		}
 	}
 
-	proto::SchemaType to_proto(crypto::SchemaType type)
+	proto::SchemaType to_proto(common::SchemaType type)
 	{
 		switch(type)
 		{
-			case crypto::SchemaType::BINFHE:
+			case common::SchemaType::BINFHE:
 				return proto::BINFHE;
 			default:
 				throw MappingError("Proto schema, model mismatch");

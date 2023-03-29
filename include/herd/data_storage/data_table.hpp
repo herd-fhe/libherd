@@ -7,6 +7,7 @@
 #include <set>
 #include <string>
 
+#include "herd/crypto/i_crypto.hpp"
 #include "herd/type.hpp"
 
 
@@ -55,15 +56,13 @@ namespace herd::storage
 
 		[[nodiscard]] const std::map<column_key_type, ColumnDescriptor, std::less<>>& columns() const;
 
-		virtual void flush_rows() = 0;
+		static std::vector<std::byte> encrypt_row(const utils::CSVRow& row, const std::vector<DataTable::column_type_key_type>& columns, const crypto::ICrypto& crypto);
 
-	protected:
+	private:
 		friend class DataStorage;
 
 		std::string name_;
 		std::map<column_key_type, ColumnDescriptor, std::less<>> column_descriptors_;
-
-		virtual void add_row(const utils::CSVRow& row) = 0;
 	};
 } // namespace herd::storage
 

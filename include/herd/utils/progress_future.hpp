@@ -19,9 +19,13 @@ namespace herd::utils
 	class ProgressPackagedTask;
 
 	template<typename Res>
+	class ProgressPromise;
+
+	template<typename Res>
 	class ProgressFuture
 	{
 	private:
+		friend class ProgressPromise<Res>;
 		template<typename> friend class ProgressPackagedTask;
 
 		std::future<Res> future_;
@@ -32,6 +36,11 @@ namespace herd::utils
 		{}
 
 	public:
+		[[nodiscard]] Res get()
+		{
+			return future_.get();
+		}
+
 		[[nodiscard]] uint64_t max_step() const noexcept
 		{
 			return state_->max_step_;
@@ -136,6 +145,68 @@ namespace herd::utils
 			task_(ProgressUpdateProxy(state_), std::forward<Args>(args)...);
 		}
 	};
+
+	template<typename Res>
+	class ProgressPromise
+	{
+		static_assert(!std::is_array<Res>{}, "result type must not be an array");
+		static_assert(!std::is_function<Res>{}, "result type must not be a function");
+		static_assert(std::is_destructible<Res>{}, "result type must be destructible");
+
+	public:
+		ProgressPromise();
+
+		ProgressPromise(ProgressPromise&&) noexcept = default;
+		ProgressPromise(const ProgressPromise&) = delete;
+
+		ProgressPromise& operator=(ProgressPromise&&) noexcept = default;
+		ProgressPromise& operator=(const ProgressPromise&) = delete;
+
+		ProgressFuture<Res> get_future()
+		{
+			return ProgressFuture(promise_.get_future(), state_);
+		}
+
+		void set_value(const Res& res)
+		{
+			promise_.set_value(res);
+		}
+
+		void set_value(Res&& res)
+		{
+			promise_.set_value(std::move(res));
+		}
+
+		void step(uint64_t step_count) noexcept
+		{
+			state_->current_step_ += step_count;
+		}
+
+		void set_max_step(uint64_t max_step) noexcept
+		{
+			state_->max_step_.store(max_step, std::memory_order_release);
+		}
+
+		[[nodiscard]] uint64_t current_step() const noexcept
+		{
+			return state_->current_step_.load(std::memory_order_acquire);
+		}
+
+		[[nodiscard]] uint64_t max_step() const noexcept
+		{
+			return state_->max_step_.load(std::memory_order_acquire);
+		}
+
+	private:
+		std::promise<Res> promise_;
+		std::shared_ptr<detail::ProgressFutureState> state_;
+	};
+
+	template<typename Res>
+	ProgressPromise<Res>::ProgressPromise()
+	:promise_{}, state_(std::make_shared<detail::ProgressFutureState>())
+	{
+	}
 }
 
 #endif //LIBHERD_PROGRESS_FUTURE_HPP

@@ -5,8 +5,9 @@
 #include <vector>
 
 #include "herd/crypto/keyring.hpp"
-#include "herd/uuid.hpp"
+#include "herd/data_storage/remote/remote_data_storage.hpp"
 #include "herd/utils/progress_future.hpp"
+#include "herd/uuid.hpp"
 
 
 namespace herd
@@ -35,6 +36,8 @@ namespace herd
 			return uuid_;
 		}
 
+		[[nodiscard]] storage::DataStorage& data_storage();
+		[[nodiscard]] crypto::ICrypto& crypto(common::SchemaType schema_type);
 		utils::ProgressFuture<void> add_key(std::unique_ptr<crypto::IKeyset> keyset);
 
 		void destroy();
@@ -43,8 +46,12 @@ namespace herd
 		friend class Context;
 		struct make_shared_enabler;
 
-		explicit Session(const SessionInfo& info, std::shared_ptr<Context> context, bool auto_destroy);
+		Session(const SessionInfo& info, std::shared_ptr<Context> context, bool auto_destroy);
 		static std::shared_ptr<Session> make_shared(const SessionInfo& info, std::shared_ptr<Context> context, bool auto_destroy);
+
+		void set_storage(std::unique_ptr<storage::DataStorage> storage);
+
+		std::unique_ptr<storage::DataStorage> storage_;
 
 		bool auto_destroy_;
 		bool destroyed_{false};
@@ -55,6 +62,7 @@ namespace herd
 		std::shared_ptr<Context> context_;
 
 		crypto::Keyring keyring_;
+		std::unordered_map<common::SchemaType, std::unique_ptr<crypto::ICrypto>> cryptos_;
 	};
 
 	struct Session::make_shared_enabler: public Session

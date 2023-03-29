@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "herd/backend/remote/detail/remote_backend_connection_impl.hpp"
+#include "herd/data_storage/remote/remote_data_table.hpp"
 #include "herd/backend/remote/detail/mapper.hpp"
 
 
@@ -14,16 +15,23 @@ namespace herd
 		constexpr const char* const BEARER_PREFIX = "Bearer ";
 		constexpr std::size_t BLOCK_SIZE = 512;
 
-		struct UploadKeyState {
+		struct UploadKeyState
+		{
 			std::unique_ptr<grpc::ClientContext> context;
-			std::unique_ptr<grpc::ClientWriterInterface<proto::SessionAddKeyRequest>> writer;
+			std::unique_ptr<grpc::ClientWriter<proto::SessionAddKeyRequest>> writer;
 			std::unique_ptr<proto::Empty> response;
 		};
 
+		struct UploadTableState
+		{
+			std::unique_ptr<grpc::ClientContext> context;
+			std::unique_ptr<grpc::ClientReaderWriterInterface<proto::DataFrameAddRequest, proto::DataFrameAddResponse>> reader_writer;
+		};
+
 		void do_upload_key(
-				utils::ProgressPackagedTask<void()>::ProgressUpdateProxy progress_proxy,
-				UploadKeyState state,
-			    UUID session_uuid, crypto::SchemaType type, std::vector<std::byte> key_data
+				utils::ProgressPackagedTask<void()>::ProgressUpdateProxy& progress_proxy,
+				UploadKeyState& state,
+			    UUID session_uuid, common::SchemaType type, std::vector<std::byte> key_data
 		)
 		{
 			progress_proxy.set_max_step(key_data.size()-1);
@@ -33,7 +41,7 @@ namespace herd
 				const auto options_request = request.mutable_options();
 				options_request->set_session_uuid(session_uuid.as_string());
 				options_request->set_size(static_cast<uint32_t>(key_data.size()));
-				options_request->set_type(detail::to_proto(type));
+				options_request->set_type(mapper::to_proto(type));
 
 				state.writer->Write(request);
 			}
@@ -52,9 +60,65 @@ namespace herd
 				progress_proxy.step(to_send);
 			}
 		}
+
+		UUID do_init_upload_frame(
+				UploadTableState& state,
+				UUID session_uuid, const std::string& name,
+				common::SchemaType type, std::size_t row_count
+		)
+		{
+			proto::DataFrameAddRequest request;
+			const auto info_request = request.mutable_info();
+			info_request->set_session_uuid(session_uuid.as_string());
+			info_request->set_name(name);
+			info_request->set_type(mapper::to_proto(type));
+
+			const auto columns = info_request->mutable_columns();
+			columns->Reserve(1);
+
+			info_request->set_row_count(static_cast<uint32_t>(row_count));
+
+			state.reader_writer->Write(request);
+
+			proto::DataFrameAddResponse response;
+			state.reader_writer->Read(&response);
+
+			return UUID(response.metadata().uuid());
+		}
+
+		[[maybe_unused]] void do_upload_data_frame(utils::ProgressPackagedTask<std::shared_ptr<storage::DataTable>()>::ProgressUpdateProxy& progress_proxy,
+								  UploadTableState& state,
+								  std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
+		{
+			progress_proxy.set_max_step(row_count);
+
+			std::vector<std::byte> buffer;
+
+			for(std::size_t i = 0; i < row_count; i += BLOCK_SIZE)
+			{
+				std::size_t current_block_size = std::min(BLOCK_SIZE, row_count - i);
+
+				buffer.clear();
+				for(std::size_t j = 0; j < current_block_size; ++j)
+				{
+					if(!next_row(buffer))
+					{
+						throw std::runtime_error("Error while encrypting data");
+					}
+				}
+				progress_proxy.step(current_block_size);
+
+				proto::DataFrameAddRequest request;
+				auto data = request.mutable_data();
+				data->mutable_blob()->assign(reinterpret_cast<const char*>(buffer.data()), buffer.size());
+				state.reader_writer->Write(request);
+			}
+
+			state.reader_writer->WritesDone();
+		}
 	}
 
-	namespace detail
+	namespace mapper
 	{
 		TokenMetadataCredentialsPlugin::TokenMetadataCredentialsPlugin(const std::string& token)
 			:token_(BEARER_PREFIX + token)
@@ -85,8 +149,8 @@ namespace herd
 		}
 	}
 
-	RemoteBackend::RemoteBackendConnectionImpl::RemoteBackendConnectionImpl(utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string  token) noexcept
-		:pool_(pool), authentication_token_(std::move(token))
+	RemoteBackend::RemoteBackendConnectionImpl::RemoteBackendConnectionImpl(RemoteBackend& backend, utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string  token) noexcept
+		: backend_(backend), pool_(pool), authentication_token_(std::move(token))
 	{
 		if(config.security.has_value())
 		{
@@ -118,6 +182,7 @@ namespace herd
 
 		auth_service_stub_ = herd::proto::Auth::NewStub(channel_);
 		session_service_stub_ = herd::proto::Session::NewStub(channel_);
+		storage_service_stub_ = herd::proto::Storage::NewStub(channel_);
 	}
 
 	void RemoteBackend::RemoteBackendConnectionImpl::authenticate()
@@ -214,12 +279,12 @@ namespace herd
 	{
 		context.set_credentials(
 			grpc::MetadataCredentialsFromPlugin(
-				std::make_unique<detail::TokenMetadataCredentialsPlugin>(connection_token_)
+				std::make_unique<mapper::TokenMetadataCredentialsPlugin>(connection_token_)
 			)
 		);
 	}
 
-	utils::ProgressFuture<void> RemoteBackend::RemoteBackendConnectionImpl::add_key(const UUID& session_uuid, crypto::SchemaType type, std::vector<std::byte>&& key_data)
+	utils::ProgressFuture<void> RemoteBackend::RemoteBackendConnectionImpl::add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
 	{
 		assert(key_data.size() <= std::numeric_limits<uint32_t>::max());
 
@@ -240,7 +305,7 @@ namespace herd
 		]
 		(utils::ProgressPackagedTask<void()>::ProgressUpdateProxy updater) mutable
 		{
-			do_upload_key(updater, std::move(state), uuid, type, std::move(key_data));
+			do_upload_key(updater, state, uuid, type, std::move(key_data));
 		});
 
 		auto future = task.get_future();
@@ -248,5 +313,32 @@ namespace herd
 		pool_.execute(std::move(task));
 
 		return future;
+	}
+
+	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> RemoteBackend::RemoteBackendConnectionImpl::create_table(const UUID& session_uuid, const std::string& name, const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
+	{
+		UploadTableState state;
+		state.context = std::make_unique<grpc::ClientContext>();
+		setup_authenticated_context(*state.context);
+
+		state.reader_writer = storage_service_stub_->add_data_frame(state.context.get());
+
+		const auto data_frame_uuid = do_init_upload_frame(state, session_uuid, name, schema_type, row_count);
+
+		auto data_table = storage::RemoteDataTable::make_shared(data_frame_uuid, name, row_count, columns, schema_type, backend_);
+		auto task = utils::ProgressPackagedTask<std::shared_ptr<storage::DataTable>()>(
+				[
+						state=std::move(state),
+						next_row=std::move(next_row),
+						data_table,
+						row_count
+			]
+			(utils::ProgressPackagedTask<std::shared_ptr<storage::DataTable>()>::ProgressUpdateProxy updater) mutable
+			{
+				do_upload_data_frame(updater, state, row_count, std::move(next_row));
+				return data_table;
+			});
+
+		return std::make_pair(task.get_future(), data_table);
 	}
 }

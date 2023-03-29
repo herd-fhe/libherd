@@ -11,7 +11,7 @@ namespace herd
 {
 	using namespace herd::common::data_type;
 
-	namespace detail
+	namespace mapper
 	{
 		using enum DataType;
 
@@ -25,7 +25,8 @@ namespace herd
 		template<>
 		struct NativeTypeMapping<BIT>
 		{
-			constexpr static DataType key =BIT;
+			constexpr static DataType key = BIT;
+			constexpr static std::size_t bit_size = 1;
 			using native_type = bool;
 		};
 
@@ -33,6 +34,7 @@ namespace herd
 		struct NativeTypeMapping<UINT8>
 		{
 			constexpr static DataType key = UINT8;
+			constexpr static std::size_t bit_size = 8;
 			using native_type = uint8_t;
 		};
 
@@ -40,6 +42,7 @@ namespace herd
 		struct NativeTypeMapping<UINT16>
 		{
 			constexpr static DataType key = UINT16;
+			constexpr static std::size_t bit_size = 16;
 			using native_type = uint16_t;
 		};
 
@@ -47,6 +50,7 @@ namespace herd
 		struct NativeTypeMapping<UINT32>
 		{
 			constexpr static DataType key = UINT32;
+			constexpr static std::size_t bit_size = 32;
 			using native_type = uint32_t;
 		};
 
@@ -54,6 +58,7 @@ namespace herd
 		struct NativeTypeMapping<UINT64>
 		{
 			constexpr static DataType key = UINT64;
+			constexpr static std::size_t bit_size = 64;
 			using native_type = uint64_t;
 		};
 
@@ -61,6 +66,7 @@ namespace herd
 		struct NativeTypeMapping<INT8>
 		{
 			constexpr static DataType key = INT8;
+			constexpr static std::size_t bit_size = 8;
 			using native_type = int8_t;
 		};
 
@@ -68,6 +74,7 @@ namespace herd
 		struct NativeTypeMapping<INT16>
 		{
 			constexpr static DataType key = INT16;
+			constexpr static std::size_t bit_size = 16;
 			using native_type = int16_t;
 		};
 
@@ -75,6 +82,7 @@ namespace herd
 		struct NativeTypeMapping<INT32>
 		{
 			constexpr static DataType key = INT32;
+			constexpr static std::size_t bit_size = 32;
 			using native_type = int32_t;
 		};
 
@@ -82,6 +90,7 @@ namespace herd
 		struct NativeTypeMapping<INT64>
 		{
 			constexpr static DataType key = INT64;
+			constexpr static std::size_t bit_size = 64;
 			using native_type = int64_t;
 		};
 	}
@@ -89,8 +98,9 @@ namespace herd
 	template<DataType type_key>
 	struct NativeTypeMapping
 	{
-		constexpr static DataType key = detail::NativeTypeMapping<type_key>::key;
-		using native_type = typename detail::NativeTypeMapping<type_key>::native_type;
+		constexpr static DataType key = mapper::NativeTypeMapping<type_key>::key;
+		constexpr static std::size_t bit_size = mapper::NativeTypeMapping<type_key>::bit_size;
+		using native_type = typename mapper::NativeTypeMapping<type_key>::native_type;
 
 		static_assert(!std::is_same_v<native_type, std::false_type>);
 	};

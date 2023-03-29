@@ -49,4 +49,38 @@ namespace herd::utils
 
 		return row;
 	}
+
+	// https://stackoverflow.com/questions/3072795/how-to-count-lines-of-a-file-in-c
+	std::size_t CSVReader::row_count(std::istream& stream)
+	{
+		if (!stream || stream.bad())
+		{
+			return 0;
+		}
+
+		auto state = stream.rdstate();
+		stream.clear();
+		auto pos = stream.tellg();
+
+		stream.seekg(0);
+
+		std::size_t count = 0;
+
+		count += static_cast<size_t>(std::count(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>(), '\n'));
+
+		if(stream.tellg() != 0)
+		{
+			stream.unget();
+			if(stream.get() != '\n')
+			{
+				++count;
+			}
+		}
+
+		stream.clear();
+		stream.seekg(pos);
+		stream.setstate(state);
+
+		return count;
+	}
 }

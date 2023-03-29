@@ -43,6 +43,7 @@ namespace herd::utils
 		explicit CSVReader(CSVOptions options = {});
 
 		CSVRow read_row(std::istream& stream) const;
+		[[nodiscard]] static std::size_t row_count(std::istream& stream);
 
 	private:
 		CSVOptions options_;

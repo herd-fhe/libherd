@@ -104,9 +104,14 @@ target_sources(
         src/backend/remote/detail/mapper.cpp
         src/backend/remote/tree_dump.cpp
 
+        src/crypto/crypto_factory.cpp
         src/crypto/crypto.cpp
         src/crypto/keyring.cpp
-        src/crypto/binfhe_keyset.cpp
+
+        src/crypto/binfhe/binfhe.cpp
+        src/crypto/binfhe/detail/crypto.cpp
+        src/crypto/binfhe/detail/keyset.cpp
+        src/crypto/binfhe/detail/ciphertext.cpp
 
         src/data_storage/data_storage.cpp
         src/data_storage/data_table.cpp
@@ -115,6 +120,9 @@ target_sources(
         src/data_storage/local/local_data_storage.cpp
         src/data_storage/local/local_data_table.cpp
         src/data_storage/local/type_pool_factory.cpp
+
+        src/data_storage/remote/remote_data_storage.cpp
+        src/data_storage/remote/remote_data_table.cpp
 
         src/utils/csv_reader.cpp
         src/utils/thread_pool.cpp
@@ -150,12 +158,20 @@ target_sources(
         include/herd/data_storage/local/type_pool.hpp
         include/herd/data_storage/local/type_pool_factory.hpp
 
-        include/herd/crypto/schema.hpp
-        include/herd/crypto/crypto.hpp
+        include/herd/data_storage/remote/remote_data_storage.hpp
+        include/herd/data_storage/remote/remote_data_table.hpp
+
+        include/herd/crypto/i_crypto.hpp
         include/herd/crypto/crypto_config.hpp
         include/herd/crypto/i_keyset.hpp
         include/herd/crypto/keyring.hpp
-        include/herd/crypto/binfhe_keyset.hpp
+        include/herd/crypto/ciphertext.hpp
+        include/herd/crypto/crypto_factory.hpp
+
+        include/herd/crypto/binfhe/binfhe.hpp
+        include/herd/crypto/binfhe/detail/crypto.hpp
+        include/herd/crypto/binfhe/detail/keyset.hpp
+        include/herd/crypto/binfhe/detail/ciphertext.hpp
 
         include/herd/type.hpp
 
@@ -165,6 +181,7 @@ target_sources(
         include/herd/utils/thread_pool.hpp
         include/herd/utils/progress_future.hpp
         include/herd/utils/movable_task.hpp
+        include/herd/utils/movable_function.hpp
         include/herd/utils/progress_bar.hpp
 
         include/herd/utils/pimpl.hpp
