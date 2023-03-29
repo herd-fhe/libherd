@@ -58,7 +58,7 @@ if(!MSVC)
 
     if(ENABLE_COVERAGE)
         target_compile_options(options_target INTERFACE --coverage -O0 -g)
-        target_link_libraries(options_targer INTERFACE --coverage)
+        target_link_libraries(options_target INTERFACE --coverage)
     endif()
 endif()
 
