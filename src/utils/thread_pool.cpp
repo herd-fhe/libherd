@@ -16,7 +16,7 @@ namespace herd::utils
 			closed_ = true;
 		}
 		consumers_cv_.notify_all();
-		for(auto& thread: threads_)
+		for(const auto& thread: threads_)
 		{
 			thread->join();
 		}

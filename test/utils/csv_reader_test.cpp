@@ -119,3 +119,34 @@ TEST(CSVReader, empty_on_bad_stream)
 		EXPECT_EQ(0, row.size());
 	}
 }
+
+TEST(CSVReader, row_count)
+{
+	{
+		std::stringstream stream;
+		stream << "10,\n20,\n30,\n40,\n50,\n60,\n70";
+
+		EXPECT_EQ(7, CSVReader::row_count(stream));
+	}
+
+	{
+		std::stringstream stream;
+		stream << "10";
+
+		EXPECT_EQ(1, CSVReader::row_count(stream));
+	}
+
+	{
+		std::stringstream stream;
+
+		EXPECT_EQ(0, CSVReader::row_count(stream));
+	}
+}
+
+TEST(CSVReader, row_count_bad_stream)
+{
+	std::stringstream stream;
+	stream.setstate(std::ios_base::badbit);
+
+	EXPECT_EQ(0, CSVReader::row_count(stream));
+}

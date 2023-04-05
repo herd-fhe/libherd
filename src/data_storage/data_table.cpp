@@ -41,7 +41,7 @@ namespace herd::storage
 			std::vector<bool> bit_representation;
 			bit_representation.resize(NativeTypeSize);
 
-			if(NativeTypeSize == 1)
+			if constexpr(NativeTypeSize == 1)
 			{
 				bit_representation[0] = value;
 			}

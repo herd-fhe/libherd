@@ -53,12 +53,12 @@ endif()
 add_library(options_target INTERFACE)
 target_compile_features(options_target INTERFACE cxx_std_20)
 
-if(!MSVC)
+if(NOT MSVC)
     option(ENABLE_COVERAGE "Enable coverage reporting (gss/clang)" FALSE)
 
     if(ENABLE_COVERAGE)
-        target_compile_options(options_target INTERFACE --coverage -O0 -g)
-        target_link_libraries(options_target INTERFACE --coverage)
+        target_compile_options(options_target INTERFACE -fprofile-arcs -ftest-coverage -O1 -g)
+        target_link_libraries(options_target INTERFACE -fprofile-arcs -ftest-coverage)
     endif()
 endif()
 
@@ -276,6 +276,7 @@ if(ENABLE_TESTS)
             PRIVATE
             test/utils/csv_reader_test.cpp
             test/utils/csv_value_mappers_test.cpp
+            test/utils/progress_bar_test.cpp
 
             test/storage/local/local_data_storage_test.cpp
     )

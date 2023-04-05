@@ -47,6 +47,7 @@ namespace herd::storage
 	struct RemoteDataTable::make_shared_enabler: public RemoteDataTable
 	{
 		template<typename... Args>
+		requires std::constructible_from<RemoteDataTable, Args...>
 		explicit make_shared_enabler(Args&&... args)
 			:   RemoteDataTable(std::forward<Args>(args)...)
 		{}
