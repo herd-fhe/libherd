@@ -1,5 +1,5 @@
-#ifndef LIBHERD_KEYSET_HPP
-#define LIBHERD_KEYSET_HPP
+#ifndef LIBHERD_BINFHE_KEYSET_HPP
+#define LIBHERD_BINFHE_KEYSET_HPP
 
 #include <binfhecontext.h>
 
@@ -30,4 +30,4 @@ namespace herd::crypto::binfhe::detail
 	};
 }
 
-#endif //LIBHERD_KEYSET_HPP
+#endif //LIBHERD_BINFHE_KEYSET_HPP

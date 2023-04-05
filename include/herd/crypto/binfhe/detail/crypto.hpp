@@ -1,5 +1,5 @@
-#ifndef LIBHERD_CRYPTO_HPP
-#define LIBHERD_CRYPTO_HPP
+#ifndef LIBHERD_BINFHE_CRYPTO_HPP
+#define LIBHERD_BINFHE_CRYPTO_HPP
 
 #include "herd/crypto/binfhe/detail/keyset.hpp"
 #include "herd/crypto/i_crypto.hpp"
@@ -19,4 +19,4 @@ namespace herd::crypto::binfhe::detail
 	};
 }
 
-#endif //LIBHERD_CRYPTO_HPP
+#endif //LIBHERD_BINFHE_CRYPTO_HPP

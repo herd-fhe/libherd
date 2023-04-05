@@ -23,4 +23,4 @@ namespace herd::crypto::binfhe::detail
 	};
 }
 
-#endif //LIBHERD_CIPHERTEXT_HPP
+#endif //LIBHERD_BINFHE_CIPHERTEXT_HPP
