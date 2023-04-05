@@ -31,7 +31,6 @@ namespace herd::storage
 	struct RemoteDataStorage::make_unique_enabler: public RemoteDataStorage
 	{
 		template<typename... Args>
-		requires std::constructible_from<RemoteDataStorage, Args...>
 		explicit make_unique_enabler(Args&&... args)
 			:   RemoteDataStorage(std::forward<Args>(args)...)
 		{}
