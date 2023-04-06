@@ -59,7 +59,7 @@ namespace herd::storage
 
 	void LocalDataTable::add_row(const utils::CSVRow &row)
 	{
-		for(const auto& [name, column]: column_descriptors_)
+		for(const auto& [name, column]: columns())
 		{
 			const column_index_type index = column.index;
 			const column_type_key_type type_key = column.type;

@@ -6,6 +6,7 @@
 
 #include <auth.grpc.pb.h>
 #include <session.grpc.pb.h>
+#include <storage.grpc.pb.h>
 
 #include "herd/backend/remote/remote_backend.hpp"
 #include "herd/session/session.hpp"
@@ -13,7 +14,7 @@
 
 namespace herd
 {
-	namespace detail
+	namespace mapper
 	{
 		class TokenMetadataCredentialsPlugin: public grpc::MetadataCredentialsPlugin
 		{
@@ -32,7 +33,7 @@ namespace herd
 	class RemoteBackend::RemoteBackendConnectionImpl
 	{
 	public:
-		explicit RemoteBackendConnectionImpl(utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string  token) noexcept;
+		explicit RemoteBackendConnectionImpl(RemoteBackend& backend, utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string  token) noexcept;
 
 		void connect();
 
@@ -40,9 +41,11 @@ namespace herd
 		void destroy_session(const UUID& session_uuid);
 		std::vector<SessionInfo> list_sessions();
 
-		utils::ProgressFuture<void> add_key(const UUID& session_uuid, crypto::SchemaType type, std::vector<std::byte>&& key_data);
+		utils::ProgressFuture<void> add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data);
 
+		std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> create_table(const UUID& session_uuid, const std::string& name, const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row);
 	private:
+		RemoteBackend& backend_;
 		utils::ThreadPool& pool_;
 
 		std::string address_;
@@ -56,6 +59,7 @@ namespace herd
 
 		std::unique_ptr<herd::proto::Auth::Stub> auth_service_stub_;
 		std::unique_ptr<herd::proto::Session::Stub> session_service_stub_;
+		std::unique_ptr<herd::proto::Storage::Stub> storage_service_stub_;
 
 		void create_stubs();
 		void authenticate();

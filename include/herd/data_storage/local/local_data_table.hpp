@@ -13,12 +13,10 @@ namespace herd::storage
 		size_t size() const override;
 		bool empty() const override;
 
-		void flush_rows() override;
-
-	protected:
-		void add_row(const utils::CSVRow &row) override;
-
 	private:
+		void add_row(const utils::CSVRow &row);
+		void flush_rows();
+
 		friend class LocalDataStorage;
 		struct make_shared_enabler;
 

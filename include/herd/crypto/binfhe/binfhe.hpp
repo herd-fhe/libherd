@@ -1,5 +1,5 @@
-#ifndef LIBHERD_BINFHE_KEYSET_HPP
-#define LIBHERD_BINFHE_KEYSET_HPP
+#ifndef LIBHERD_BINFHE_HPP
+#define LIBHERD_BINFHE_HPP
 
 #include <memory>
 
@@ -10,5 +10,4 @@ namespace herd::crypto::binfhe
 {
 	std::unique_ptr<IKeyset> create_binfhe_keyset();
 }
-
-#endif //LIBHERD_BINFHE_KEYSET_HPP
+#endif //LIBHERD_BINFHE_HPP

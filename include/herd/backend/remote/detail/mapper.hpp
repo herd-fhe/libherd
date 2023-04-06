@@ -1,11 +1,11 @@
 #ifndef LIBHERD_MAPPER_HPP
 #define LIBHERD_MAPPER_HPP
 
-#include <common.pb.h>
-
 #include <stdexcept>
 
-#include "herd/crypto/schema.hpp"
+#include <common.pb.h>
+
+#include "herd_common/schema_type.hpp"
 
 
 namespace herd
@@ -15,10 +15,10 @@ namespace herd
 		using std::runtime_error::runtime_error;
 	};
 
-	namespace detail
+	namespace mapper
 	{
-		crypto::SchemaType to_model(proto::SchemaType type) noexcept;
-		proto::SchemaType to_proto(crypto::SchemaType type);
+		common::SchemaType to_model(proto::SchemaType type) noexcept;
+		proto::SchemaType to_proto(common::SchemaType type);
 	}
 }
 

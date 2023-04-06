@@ -16,7 +16,7 @@ namespace herd::utils
 			closed_ = true;
 		}
 		consumers_cv_.notify_all();
-		for(auto& thread: threads_)
+		for(const auto& thread: threads_)
 		{
 			thread->join();
 		}
@@ -58,7 +58,7 @@ namespace herd::utils
 	}
 	void ThreadPool::PooledThread::thread_body(ThreadPool::PooledThread& thread, ThreadPool& pool)
 	{
-		MovableFunction fun;
+		MovableTask fun;
 		while(true)
 		{
 			{

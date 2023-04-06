@@ -9,15 +9,15 @@ namespace herd::utils
 {
 	namespace detail
 	{
-		class MovableFunctionPimpl
+		class MovableTaskPimpl
 		{
 		public:
 			virtual void invoke() = 0;
-			virtual ~MovableFunctionPimpl() = default;
+			virtual ~MovableTaskPimpl() = default;
 		};
 
 		template<typename F>
-		class TaskPimplImpl: public MovableFunctionPimpl
+		class TaskPimplImpl: public MovableTaskPimpl
 		{
 		public:
 			explicit TaskPimplImpl(F&& fun):
@@ -33,17 +33,17 @@ namespace herd::utils
 		};
 	}
 
-	class MovableFunction
+	class MovableTask
 	{
 	public:
-		MovableFunction() = default;
+		MovableTask() = default;
 
-		MovableFunction(MovableFunction&&) = default;
-		MovableFunction& operator=(MovableFunction&&) = default;
+		MovableTask(MovableTask&&) = default;
+		MovableTask& operator=(MovableTask&&) = default;
 
 		template<typename F>
-			requires (!std::same_as<std::decay_t<F>, MovableFunction>)
-		MovableFunction(F&& fun)
+			requires (!std::same_as<std::decay_t<F>, MovableTask>)
+		MovableTask(F&& fun)
 			:
 			pimpl_(make_pimpl(std::forward<F>(fun)))
 		{}
@@ -54,14 +54,14 @@ namespace herd::utils
 		}
 
 	private:
-		std::unique_ptr<detail::MovableFunctionPimpl> pimpl_;
+		std::unique_ptr<detail::MovableTaskPimpl> pimpl_;
 
-		[[nodiscard]] detail::MovableFunctionPimpl& pimpl() noexcept
+		[[nodiscard]] detail::MovableTaskPimpl& pimpl() noexcept
 		{
 			return *pimpl_;
 		}
 
-		[[nodiscard]] const detail::MovableFunctionPimpl& pimpl() const noexcept
+		[[nodiscard]] const detail::MovableTaskPimpl& pimpl() const noexcept
 		{
 			return *pimpl_;
 		}

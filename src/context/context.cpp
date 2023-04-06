@@ -37,8 +37,13 @@ namespace herd
 	{
 		return backend_->list_sessions();
 	}
-	utils::ProgressFuture<void> Context::add_key(const UUID& session_uuid, crypto::SchemaType type, std::vector<std::byte>&& key_data)
+	utils::ProgressFuture<void> Context::add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
 	{
 		return backend_->add_key(session_uuid, type, std::move(key_data));
+	}
+
+	std::unique_ptr<storage::DataStorage> Context::create_session_storage(Session& session)
+	{
+		return backend_->create_session_storage(session);
 	}
 }

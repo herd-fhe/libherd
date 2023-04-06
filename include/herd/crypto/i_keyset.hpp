@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "herd/crypto/schema.hpp"
+#include "herd_common/schema_type.hpp"
 
 
 namespace herd::crypto
@@ -11,8 +11,8 @@ namespace herd::crypto
 	class IKeyset
 	{
 	public:
-		[[nodiscard]] virtual SchemaType get_schema_type() const noexcept = 0;
-		[[nodiscard]] virtual std::vector<std::byte> serialize_cloud_key() const = 0;
+		[[nodiscard]] virtual common::SchemaType get_schema_type() const noexcept = 0;
+		[[nodiscard]] virtual std::vector<std::byte> to_bytes() const = 0;
 
 		virtual ~IKeyset() = default;
 	};

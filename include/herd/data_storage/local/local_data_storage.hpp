@@ -9,8 +9,7 @@ namespace herd::storage
 	class LocalDataStorage : public DataStorage
 	{
 	private:
-		[[nodiscard]] std::shared_ptr<DataTable> create_table(std::string name, const std::vector<DataTable::ColumnParameters>& columns) override;
-
+		std::pair<utils::ProgressFuture<std::shared_ptr<DataTable>>, std::shared_ptr<DataTable>> populate_table_from_csv(std::istream& stream, std::string name, const std::vector<DataTable::ColumnParameters>& columns, common::SchemaType schema_type) override;
 	};
 }
 #endif //LIBHERD_LOCAL_DATA_STORAGE_HPP

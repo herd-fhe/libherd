@@ -82,7 +82,7 @@ namespace herd::utils
 		bool closed_{false};
 		mutable std::mutex pool_mutex_;
 		std::condition_variable consumers_cv_;
-		std::queue<MovableFunction> queue_;
+		std::queue<MovableTask> queue_;
 
 		std::vector<std::unique_ptr<PooledThread>> threads_;
 

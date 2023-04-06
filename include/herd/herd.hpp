@@ -4,7 +4,7 @@
 #include "context/context_builder.hpp"
 
 #include "crypto/keyring.hpp"
-#include "crypto/binfhe_keyset.hpp"
+#include "crypto/binfhe/binfhe.hpp"
 
 #include "backend/remote/remote_backend.hpp"
 
