@@ -5,6 +5,7 @@
 #include <lwe-ciphertext-fwd.h>
 
 #include "herd/crypto/binfhe/detail/ciphertext.hpp"
+#include "herd/crypto/crypto_factory.hpp"
 
 
 namespace herd::crypto::binfhe::detail

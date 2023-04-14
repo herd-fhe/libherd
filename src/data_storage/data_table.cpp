@@ -65,8 +65,7 @@ namespace herd::storage
 			bits_stream.seekg(0, std::ios::beg);
 
 			std::vector<std::byte> bytes;
-			bytes.resize(size + sizeof(size));
-			std::copy_n(reinterpret_cast<const std::byte*>(&size), sizeof(size), std::begin(bytes));
+			bytes.resize(size);
 			bits_stream.read(reinterpret_cast<char*>(bytes.data()), std::streamsize(size));
 
 			return bytes;
@@ -76,6 +75,8 @@ namespace herd::storage
 	std::vector<std::byte> DataTable::encrypt_row(const utils::CSVRow& row, const std::vector<DataTable::column_type_key_type>& columns, const crypto::ICrypto& crypto)
 	{
 		std::vector<std::byte> row_bytes;
+		row_bytes.resize(sizeof(uint32_t));
+
 		std::size_t column_index = 0;
 
 		for(const auto& column: columns)
@@ -115,8 +116,14 @@ namespace herd::storage
 					column_data = do_encrypt_column_value<INT64>(row.get<int64_t>(column_index), crypto);
 			}
 
+			row_bytes.insert(std::end(row_bytes), std::begin(column_data), std::end(column_data));
+
 			++column_index;
 		}
+
+		const auto size = static_cast<uint32_t>(row_bytes.size() - 4u);
+
+		std::copy_n(reinterpret_cast<const std::byte*>(&size), sizeof(size), std::begin(row_bytes));
 		return row_bytes;
 	}
 }

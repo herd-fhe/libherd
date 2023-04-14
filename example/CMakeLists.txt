@@ -9,3 +9,4 @@ target_link_libraries(
 add_subdirectory(authorization)
 add_subdirectory(session_manipulation)
 add_subdirectory(key_upload)
+add_subdirectory(data_frame_upload)
