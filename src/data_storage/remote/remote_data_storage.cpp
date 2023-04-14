@@ -17,7 +17,7 @@ namespace herd::storage
 
 	std::pair<utils::ProgressFuture<std::shared_ptr<DataTable>>, std::shared_ptr<DataTable>> RemoteDataStorage::populate_table_from_csv(std::istream& stream, std::string name, const std::vector<DataTable::ColumnParameters>& columns, common::SchemaType schema_type)
 	{
-		auto& crypto = session_.crypto(schema_type);
+		const auto& crypto = session_.crypto(schema_type);
 		const auto row_count = utils::CSVReader::row_count(stream);
 
 		std::vector<DataTable::column_type_key_type> column_types;
@@ -28,7 +28,8 @@ namespace herd::storage
 		{
 			utils::CSVReader reader;
 			const auto row = reader.read_row(stream);
-			row_bytes = DataTable::encrypt_row(row, column_types, crypto);
+			const auto encrypted_row = DataTable::encrypt_row(row, column_types, crypto);
+			row_bytes.insert(std::begin(row_bytes), std::begin(encrypted_row), std::end(encrypted_row));
 			return true;
 		};
 

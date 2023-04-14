@@ -1,13 +1,15 @@
 #include "herd/crypto/crypto_factory.hpp"
+
 #include <cassert>
 
+#include "herd/crypto/binfhe/detail/crypto.hpp"
 
 namespace herd::crypto
 {
 	bool CryptoFactory::register_crypto(common::SchemaType type, CryptoFactory::FactoryMethod method)
 	{
 		auto& implementations = get_internal_map();
-		assert(implementations.contains(type) && "Schema already registered");
+		assert(!implementations.contains(type) && "Schema already registered");
 
 		implementations[type] = std::move(method);
 		return true;
@@ -48,4 +50,11 @@ namespace herd::crypto
 		static std::unordered_map<common::SchemaType, FactoryMethod> implementations_;
 		return implementations_;
 	}
+
+	static bool binfhe_registered = CryptoFactory::register_crypto(
+			common::SchemaType::BINFHE,
+			[](IKeyset& keyset){
+				return std::make_unique<binfhe::detail::CryptoImpl>(keyset);
+			}
+	);
 }

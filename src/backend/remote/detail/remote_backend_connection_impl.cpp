@@ -59,12 +59,16 @@ namespace herd
 				sent += to_send;
 				progress_proxy.step(to_send);
 			}
+
+			state.writer->WritesDone();
+			state.writer->Finish();
 		}
 
 		UUID do_init_upload_frame(
 				UploadTableState& state,
 				UUID session_uuid, const std::string& name,
-				common::SchemaType type, std::size_t row_count
+				common::SchemaType type, const std::vector<storage::DataTable::ColumnParameters>& columns,
+				std::size_t row_count
 		)
 		{
 			proto::DataFrameAddRequest request;
@@ -73,8 +77,8 @@ namespace herd
 			info_request->set_name(name);
 			info_request->set_type(mapper::to_proto(type));
 
-			const auto columns = info_request->mutable_columns();
-			columns->Reserve(1);
+			const auto columns_proto = info_request->mutable_columns();
+			columns_proto->CopyFrom(mapper::to_proto(columns));
 
 			info_request->set_row_count(static_cast<uint32_t>(row_count));
 
@@ -94,9 +98,9 @@ namespace herd
 
 			std::vector<std::byte> buffer;
 
-			for(std::size_t i = 0; i < row_count; i += BLOCK_SIZE)
+			for(std::size_t i = 0; i < row_count; i += 64lu)
 			{
-				std::size_t current_block_size = std::min(BLOCK_SIZE, row_count - i);
+				std::size_t current_block_size = std::min(64lu, row_count - i);
 
 				buffer.clear();
 				for(std::size_t j = 0; j < current_block_size; ++j)
@@ -115,6 +119,8 @@ namespace herd
 			}
 
 			state.reader_writer->WritesDone();
+
+			state.reader_writer->Finish();
 		}
 	}
 
@@ -323,7 +329,7 @@ namespace herd
 
 		state.reader_writer = storage_service_stub_->add_data_frame(state.context.get());
 
-		const auto data_frame_uuid = do_init_upload_frame(state, session_uuid, name, schema_type, row_count);
+		const auto data_frame_uuid = do_init_upload_frame(state, session_uuid, name, schema_type, columns, row_count);
 
 		auto data_table = storage::RemoteDataTable::make_shared(data_frame_uuid, name, row_count, columns, schema_type, backend_);
 		auto task = utils::ProgressPackagedTask<std::shared_ptr<storage::DataTable>()>(
@@ -339,6 +345,9 @@ namespace herd
 				return data_table;
 			});
 
-		return std::make_pair(task.get_future(), data_table);
+		auto future = task.get_future();
+		pool_.execute(std::move(task));
+
+		return std::make_pair(std::move(future), data_table);
 	}
 }
