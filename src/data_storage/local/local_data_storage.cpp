@@ -15,7 +15,7 @@ namespace herd::storage
 			throw std::runtime_error("Encryption not supported for local storage");
 		}
 
-		auto table = LocalDataTable::make_shared(std::move(name), columns);
+		auto table = LocalDataTable::make_shared(common::UUID(), std::move(name), columns);
 
 		utils::CSVReader reader;
 

@@ -49,6 +49,8 @@ namespace herd
 				std::size_t row_count,
 				utils::MovableFunction<bool(std::vector<std::byte>&)> next_row
 		);
+		std::vector<std::shared_ptr<storage::DataTable>> list_data_frames(const common::UUID& session_uuid);
+
 	private:
 		RemoteBackend& backend_;
 		utils::ThreadPool& pool_;

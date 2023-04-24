@@ -21,8 +21,8 @@ namespace herd::storage
 			common::UUID uuid, const std::string& name, size_t row_count,
 			const std::vector<ColumnParameters>& columns, common::SchemaType schema_type,
 			RemoteBackend& remote_backend)
-		: DataTable(name, columns),
-		uuid_(uuid), schema_type_(schema_type), rows_count_(row_count), backend_(remote_backend)
+		: DataTable(uuid, name, columns),
+		schema_type_(schema_type), rows_count_(row_count), backend_(remote_backend)
 	{
 
 	}

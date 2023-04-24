@@ -26,23 +26,24 @@ namespace herd::storage
 				name = auto_table_name(retry);
 				++retry;
 			}
-			while(tables_.contains(name));
+			while(data_frames_.contains(name));
 		}
 
 		auto [future, table] = populate_table_from_csv(stream, name, columns, schema_type);
-		tables_.try_emplace(name, table);
+		data_frames_.try_emplace(name, table);
 
 		return std::move(future);
 	}
 
-	const std::unordered_map<std::string, std::shared_ptr<DataTable>> &DataStorage::tables() const
+	const std::unordered_map<std::string, std::shared_ptr<DataTable>> &DataStorage::data_frames() const
 	{
-		return tables_;
+		return data_frames_;
 	}
 
-	std::shared_ptr<DataTable> DataStorage::table_by_name(const std::string& name)
+	std::shared_ptr<DataTable> DataStorage::data_frame_by_name(const std::string& name)
 	{
-		if(const auto iter = tables_.find(name); iter != std::end(tables_))
+		const auto& frames_available = data_frames();
+		if(const auto iter = frames_available.find(name); iter != std::end(frames_available))
 		{
 			return iter->second;
 		}
@@ -50,4 +51,9 @@ namespace herd::storage
 		return nullptr;
 	}
 
+
+	void DataStorage::mark_as_not_alive(std::shared_ptr<DataTable>& data_frame)
+	{
+		data_frame->set_alive_status(false);
+	}
 }

@@ -40,4 +40,51 @@ namespace herd::storage
 	{
 		return std::make_unique<make_unique_enabler>(session, backend);
 	}
+
+	const std::unordered_map<std::string, std::shared_ptr<DataTable>>& RemoteDataStorage::data_frames() const
+	{
+		sync_cache();
+		return DataStorage::data_frames();
+	}
+
+	void RemoteDataStorage::sync_cache() const
+	{
+		auto remote_data_frames = backend_.list_data_frames(session_.uuid());
+
+		std::set<common::UUID> alive_data_frame_uuids;
+		for(const auto& frame: remote_data_frames)
+		{
+			alive_data_frame_uuids.insert(frame->uuid());
+		}
+
+		std::set<common::UUID> cached_data_frame_uuids;
+		for(const auto& [name, frame]: data_frames_)
+		{
+			cached_data_frame_uuids.insert(frame->uuid());
+		}
+
+		std::set<common::UUID> new_data_frame_uuids;
+		std::set_difference(
+				std::begin(alive_data_frame_uuids), std::end(alive_data_frame_uuids),
+				std::begin(cached_data_frame_uuids), std::end(cached_data_frame_uuids),
+				std::inserter(new_data_frame_uuids, std::begin(new_data_frame_uuids)),
+				std::less<>());
+
+		for (auto& [name, frame]: data_frames_)
+		{
+			if(!alive_data_frame_uuids.contains(frame->uuid()))
+			{
+				DataStorage::mark_as_not_alive(frame);
+			}
+		}
+
+		for (auto& frame: remote_data_frames)
+		{
+			if (new_data_frame_uuids.contains(frame->uuid()))
+			{
+				const auto name = frame->name();
+				data_frames_.try_emplace(name, frame);
+			}
+		}
+	}
 }

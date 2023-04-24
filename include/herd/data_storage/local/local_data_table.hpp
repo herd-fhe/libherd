@@ -20,8 +20,8 @@ namespace herd::storage
 		friend class LocalDataStorage;
 		struct make_shared_enabler;
 
-		LocalDataTable(std::string name, const std::vector<ColumnParameters>& columns);
-		static std::shared_ptr<LocalDataTable> make_shared(std::string name, const std::vector<ColumnParameters>& columns);
+		LocalDataTable(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns);
+		static std::shared_ptr<LocalDataTable> make_shared(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns);
 
 		std::vector<std::unique_ptr<ITypePool>> pools_;
 

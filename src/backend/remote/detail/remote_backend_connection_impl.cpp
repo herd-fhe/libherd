@@ -355,4 +355,38 @@ namespace herd
 
 		return std::make_pair(std::move(future), data_table);
 	}
+
+	std::vector<std::shared_ptr<storage::DataTable>> RemoteBackend::RemoteBackendConnectionImpl::list_data_frames(const common::UUID& session_uuid)
+	{
+		grpc::ClientContext client_context{};
+		setup_authenticated_context(client_context);
+
+		proto::DataFrameListRequest request;
+		request.set_session_uuid(session_uuid.as_string());
+
+		proto::DataFrameMetadataList response;
+
+		if(auto status = storage_service_stub_->list_data_frames(&client_context, request, &response); !status.ok())
+		{
+			//todo: only happy path properly handled by now
+			throw RemoteConnectionError(status.error_message());
+		}
+
+		std::vector<std::shared_ptr<storage::DataTable>> data_frames;
+		data_frames.reserve(static_cast<std::size_t>(response.dataframes().size()));
+
+		std::ranges::transform(
+				response.dataframes(), std::back_inserter(data_frames),
+				[&](const auto& data_frame)
+				{
+					return storage::RemoteDataTable::make_shared(
+									common::UUID(data_frame.uuid()), data_frame.name(),
+									data_frame.rows_count(),
+									mapper::to_model(data_frame.columns()), mapper::to_model(data_frame.schema_type()),
+									backend_);
+				}
+		);
+
+		return data_frames;
+	}
 }

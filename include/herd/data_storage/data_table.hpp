@@ -9,6 +9,7 @@
 
 #include "herd/crypto/i_crypto.hpp"
 #include "herd/type.hpp"
+#include "herd/common/uuid.hpp"
 
 
 namespace herd::utils
@@ -45,14 +46,16 @@ namespace herd::storage
 			column_type_key_type type;
 		};
 
-		explicit DataTable(std::string name, const std::vector<ColumnParameters>& columns);
+		DataTable(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns);
 
 		virtual ~DataTable() = default;
 
 		const std::string& name() const;
+		const common::UUID& uuid() const;
 
 		[[nodiscard]] virtual size_t size() const = 0;
 		[[nodiscard]] virtual bool empty() const = 0;
+		[[nodiscard]] bool alive() const;
 
 		[[nodiscard]] const std::map<column_key_type, ColumnDescriptor, std::less<>>& columns() const;
 
@@ -61,8 +64,12 @@ namespace herd::storage
 	private:
 		friend class DataStorage;
 
+		common::UUID uuid_;
 		std::string name_;
 		std::map<column_key_type, ColumnDescriptor, std::less<>> column_descriptors_;
+		bool alive_ = true;
+
+		void set_alive_status(bool status);
 	};
 } // namespace herd::storage
 
