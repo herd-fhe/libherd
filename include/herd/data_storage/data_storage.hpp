@@ -20,12 +20,15 @@ namespace herd::storage
 
 		[[nodiscard]] utils::ProgressFuture<std::shared_ptr<DataTable>> load_from_csv(const std::vector<DataTable::ColumnParameters>& columns, std::istream& stream, common::SchemaType schema_type, const std::string& table_name = "");
 
-		[[nodiscard]] const std::unordered_map<std::string, std::shared_ptr<DataTable>>& tables() const;
-		[[nodiscard]] std::shared_ptr<DataTable> table_by_name(const std::string& name);
+		[[nodiscard]] virtual const std::unordered_map<std::string, std::shared_ptr<DataTable>>& data_frames() const;
+		[[nodiscard]] virtual std::shared_ptr<DataTable> data_frame_by_name(const std::string& name);
+
+	protected:
+		mutable std::unordered_map<std::string, std::shared_ptr<DataTable>> data_frames_;
+
+		static void mark_as_not_alive(std::shared_ptr<DataTable>& data_frame);
 
 	private:
-		std::unordered_map<std::string, std::shared_ptr<DataTable>> tables_;
-
 		virtual std::pair<utils::ProgressFuture<std::shared_ptr<DataTable>>, std::shared_ptr<DataTable>> populate_table_from_csv(std::istream& stream, std::string name, const std::vector<DataTable::ColumnParameters>& columns, common::SchemaType schema_type) = 0;
 	};
 }

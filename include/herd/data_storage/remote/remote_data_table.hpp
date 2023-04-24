@@ -25,7 +25,6 @@ namespace herd::storage
 		friend class herd::RemoteBackend;
 		struct make_shared_enabler;
 
-		UUID uuid_;
 		common::SchemaType schema_type_;
 
 		size_t rows_count_;

@@ -22,8 +22,8 @@ namespace
 
 namespace herd::storage
 {
-	LocalDataTable::LocalDataTable(std::string name, const std::vector<ColumnParameters> &columns)
-	: DataTable(std::move(name), columns)
+	LocalDataTable::LocalDataTable(const UUID& uuid, std::string name, const std::vector<ColumnParameters> &columns)
+	: DataTable(uuid, std::move(name), columns)
 	{
 		pools_.reserve(columns.size());
 
@@ -103,8 +103,8 @@ namespace herd::storage
 		//do nothing
 	}
 
-	std::shared_ptr<LocalDataTable> LocalDataTable::make_shared(std::string name, const std::vector<ColumnParameters>& columns)
+	std::shared_ptr<LocalDataTable> LocalDataTable::make_shared(const UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns)
 	{
-		return std::make_shared<make_shared_enabler>(std::move(name), columns);
+		return std::make_shared<make_shared_enabler>(uuid, std::move(name), columns);
 	}
 }

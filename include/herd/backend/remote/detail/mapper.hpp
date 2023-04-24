@@ -20,11 +20,13 @@ namespace herd
 
 	namespace mapper
 	{
-		common::SchemaType to_model(proto::SchemaType type) noexcept;
-		proto::SchemaType to_proto(common::SchemaType type);
+		[[nodiscard]] common::SchemaType to_model(proto::SchemaType type);
+		[[nodiscard]] common::DataType to_model(proto::DataType data_type);
+		[[nodiscard]] std::vector<storage::DataTable::ColumnParameters> to_model(const google::protobuf::RepeatedPtrField<proto::ColumnDescriptor>& columns);
 
-		proto::DataType to_proto(common::DataType data_type);
-		google::protobuf::RepeatedPtrField<proto::ColumnDescriptor> to_proto(const std::vector<storage::DataTable::ColumnParameters>& columns);
+		[[nodiscard]] proto::SchemaType to_proto(common::SchemaType type);
+		[[nodiscard]] proto::DataType to_proto(common::DataType data_type);
+		[[nodiscard]] google::protobuf::RepeatedPtrField<proto::ColumnDescriptor> to_proto(const std::vector<storage::DataTable::ColumnParameters>& columns);
 	}
 }
 

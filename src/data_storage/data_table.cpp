@@ -6,8 +6,8 @@
 
 namespace herd::storage
 {
-	DataTable::DataTable(std::string name, const std::vector<ColumnParameters> &columns)
-	:name_(std::move(name))
+	DataTable::DataTable(const UUID& uuid, std::string name, const std::vector<ColumnParameters> &columns)
+	:uuid_(uuid), name_(std::move(name))
 	{
 		for(std::size_t i = 0; const auto& column: columns)
 		{
@@ -19,6 +19,11 @@ namespace herd::storage
 
 			++i;
 		}
+	}
+
+	const UUID& DataTable::uuid() const
+	{
+		return uuid_;
 	}
 
 	const std::string &DataTable::name() const
@@ -125,5 +130,15 @@ namespace herd::storage
 
 		std::copy_n(reinterpret_cast<const std::byte*>(&size), sizeof(size), std::begin(row_bytes));
 		return row_bytes;
+	}
+
+	bool DataTable::alive() const
+	{
+		return alive_;
+	}
+
+	void DataTable::set_alive_status(bool status)
+	{
+		alive_ = status;
 	}
 }

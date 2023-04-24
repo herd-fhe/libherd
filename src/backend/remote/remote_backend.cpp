@@ -48,6 +48,11 @@ namespace herd
 	{
 		return pimpl_->create_table(session_uuid, name, columns, schema_type, row_count, std::move(next_row));
 	}
+	
+	std::vector<std::shared_ptr<storage::DataTable>> RemoteBackend::list_data_frames(const UUID& session_uuid)
+	{
+		return pimpl_->list_data_frames(session_uuid);
+	}
 
 	RemoteBackend::~RemoteBackend() = default;
 }

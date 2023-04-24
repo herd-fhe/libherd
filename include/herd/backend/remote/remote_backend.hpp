@@ -64,6 +64,8 @@ namespace herd
 		std::unique_ptr<storage::DataStorage> create_session_storage(Session& session) override;
 
 		std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> create_table(const UUID& session_uuid, const std::string& name, const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row) override;
+		std::vector<std::shared_ptr<storage::DataTable>> list_data_frames(const UUID& session_uuid) override;
+
 	private:
 		class RemoteBackendConnectionImpl;
 
