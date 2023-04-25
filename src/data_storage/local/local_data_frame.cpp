@@ -1,4 +1,4 @@
-#include "herd/data_storage/local/local_data_table.hpp"
+#include "herd/data_storage/local/local_data_frame.hpp"
 
 #include <cassert>
 #include <type_traits>
@@ -22,8 +22,9 @@ namespace
 
 namespace herd::storage
 {
-	LocalDataTable::LocalDataTable(std::string name, const std::vector<ColumnParameters> &columns)
-	: DataTable(std::move(name), columns)
+	LocalDataFrame::LocalDataFrame(const UUID& uuid, std::string name, const std::vector<ColumnParameters> &columns)
+	:
+		DataFrame(uuid, std::move(name), columns)
 	{
 		pools_.reserve(columns.size());
 
@@ -33,7 +34,7 @@ namespace herd::storage
 		}
 	}
 
-	size_t LocalDataTable::size() const
+	size_t LocalDataFrame::size() const
 	{
 		if(pools_.empty())
 		{
@@ -45,7 +46,7 @@ namespace herd::storage
 		}
 	}
 
-	bool LocalDataTable::empty() const
+	bool LocalDataFrame::empty() const
 	{
 		if(pools_.empty())
 		{
@@ -57,7 +58,7 @@ namespace herd::storage
 		}
 	}
 
-	void LocalDataTable::add_row(const utils::CSVRow &row)
+	void LocalDataFrame::add_row(const utils::CSVRow &row)
 	{
 		for(const auto& [name, column]: columns())
 		{
@@ -98,13 +99,13 @@ namespace herd::storage
 		}
 	}
 
-	void LocalDataTable::flush_rows()
+	void LocalDataFrame::flush_rows()
 	{
 		//do nothing
 	}
 
-	std::shared_ptr<LocalDataTable> LocalDataTable::make_shared(std::string name, const std::vector<ColumnParameters>& columns)
+	std::shared_ptr<LocalDataFrame> LocalDataFrame::make_shared(const UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns)
 	{
-		return std::make_shared<make_shared_enabler>(std::move(name), columns);
+		return std::make_shared<make_shared_enabler>(uuid, std::move(name), columns);
 	}
 }

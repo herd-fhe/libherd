@@ -37,14 +37,14 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	setup_binfhe_keyset(session);
 
 	std::stringstream data_frame_csv;
-	for (size_t i = 0; i < 1024; ++i)
+	for (size_t i = 0; i < 128; ++i)
 	{
 		data_frame_csv << std::to_string(i)
 					   << "\n";
 	}
 
 	auto data_frame_future = session->data_storage().load_from_csv({
-		storage::DataTable::ColumnParameters{"id", herd::common::data_type::DataType::INT16}
+		storage::DataFrame::ColumnParameters{"id", herd::common::data_type::DataType::INT16}
 	}, data_frame_csv, herd::common::SchemaType::BINFHE);
 
 	std::cout << std::endl;
@@ -61,5 +61,16 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	bar.set_completed(true);
 	bar.write();
 
+	std::cout << std::endl << "DataFrame uploaded" << std::endl;
+
+	std::cout << "Synchronizing with remote state..." << std::endl;
+	std::cout << "Available DataFrames:\n";
+	const auto data_frames = session->data_storage().data_frames();
+	for (const auto& [name, frame]: data_frames)
+	{
+		std::cout << "\t" << name << "(" << frame->uuid().as_string() << ", alive: " << frame->alive() << ")\n";
+	}
+
+	std::cout << std::flush;
 	return 0;
 }
