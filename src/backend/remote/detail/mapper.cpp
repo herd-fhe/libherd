@@ -42,17 +42,17 @@ namespace herd::mapper
 		}
 	}
 
-	std::vector<storage::DataTable::ColumnParameters> to_model(const google::protobuf::RepeatedPtrField<proto::ColumnDescriptor>& columns)
+	std::vector<storage::DataFrame::ColumnParameters> to_model(const google::protobuf::RepeatedPtrField<proto::ColumnDescriptor>& columns)
 	{
 		assert(std::numeric_limits<uint8_t>::max() >= columns.size() && "Columns limit");
 
-		std::vector<storage::DataTable::ColumnParameters> column_parameters;
+		std::vector<storage::DataFrame::ColumnParameters> column_parameters;
 		column_parameters.reserve(static_cast<std::size_t>(columns.size()));
 
 		std::ranges::transform(columns, std::back_inserter(column_parameters),
 			[](const auto& column)
 			{
-				return storage::DataTable::ColumnParameters{ column.name(), to_model(column.type()) };
+				return storage::DataFrame::ColumnParameters{ column.name(), to_model(column.type()) };
 			}
         );
 
@@ -98,7 +98,7 @@ namespace herd::mapper
 		}
 	}
 
-	google::protobuf::RepeatedPtrField<proto::ColumnDescriptor> to_proto(const std::vector<storage::DataTable::ColumnParameters>& columns)
+	google::protobuf::RepeatedPtrField<proto::ColumnDescriptor> to_proto(const std::vector<storage::DataFrame::ColumnParameters>& columns)
 	{
 		assert(std::numeric_limits<uint8_t>::max() >= columns.size() && "Columns limit");
 

@@ -43,8 +43,8 @@ namespace herd
 
 		utils::ProgressFuture<void> add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data);
 
-		std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> create_table(const UUID& session_uuid, const std::string& name, const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row);
-		std::vector<std::shared_ptr<storage::DataTable>> list_data_frames(const UUID& session_uuid);
+		std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> create_data_frame(const UUID& session_uuid, const std::string& name, const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row);
+		std::vector<std::shared_ptr<storage::DataFrame>> list_data_frames(const UUID& session_uuid);
 	private:
 		RemoteBackend& backend_;
 		utils::ThreadPool& pool_;

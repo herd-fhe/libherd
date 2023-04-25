@@ -17,19 +17,19 @@ TEST(LocalDataStorage, load_from_csv_stream)
 	std::stringstream stream;
 	stream << "0,10,-21,256";
 
-	std::vector<DataTable::ColumnParameters> columns = {
+	std::vector<DataFrame::ColumnParameters> columns = {
 			{"first", BIT},
 			{"second", UINT8},
 			{"third", INT16},
 			{"fourth", INT64},
 	};
 
-	auto table = storage.load_from_csv(columns, stream, herd::common::SchemaType::NONE).get();
+	auto frame = storage.load_from_csv(columns, stream, herd::common::SchemaType::NONE).get();
 
-	EXPECT_NE(nullptr, table);
-	EXPECT_EQ(4, table->columns().size());
+	EXPECT_NE(nullptr, frame);
+	EXPECT_EQ(4, frame->columns().size());
 
-	EXPECT_EQ(1, table->size());
+	EXPECT_EQ(1, frame->size());
 }
 
 TEST(LocalDataStorage, load_from_csv_stream_multiline)
@@ -43,19 +43,19 @@ TEST(LocalDataStorage, load_from_csv_stream_multiline)
 	stream << "\n";
 	stream << "1,129,0,11111111";
 
-	std::vector<DataTable::ColumnParameters> columns = {
+	std::vector<DataFrame::ColumnParameters> columns = {
 			{"first", BIT},
 			{"second", UINT8},
 			{"third", INT16},
 			{"fourth", INT64},
 	};
 
-	auto table = storage.load_from_csv(columns, stream, herd::common::SchemaType::NONE).get();
+	auto frame = storage.load_from_csv(columns, stream, herd::common::SchemaType::NONE).get();
 
-	EXPECT_NE(nullptr, table);
-	EXPECT_EQ(4, table->columns().size());
+	EXPECT_NE(nullptr, frame);
+	EXPECT_EQ(4, frame->columns().size());
 
-	EXPECT_EQ(2, table->size());
+	EXPECT_EQ(2, frame->size());
 }
 
 TEST(LocalDataStorage, not_none_schema)
@@ -69,7 +69,7 @@ TEST(LocalDataStorage, not_none_schema)
 	stream << "\n";
 	stream << "1,129,0,11111111";
 
-	std::vector<DataTable::ColumnParameters> columns = {
+	std::vector<DataFrame::ColumnParameters> columns = {
 			{"first", BIT},
 			{"second", UINT8},
 			{"third", INT16},

@@ -1,12 +1,12 @@
 #include <sstream>
 #include <utility>
 
-#include "herd/data_storage/data_table.hpp"
+#include "herd/data_storage/data_frame.hpp"
 #include "herd/utils/csv_reader.hpp"
 
 namespace herd::storage
 {
-	DataTable::DataTable(const UUID& uuid, std::string name, const std::vector<ColumnParameters> &columns)
+	DataFrame::DataFrame(const UUID& uuid, std::string name, const std::vector<ColumnParameters> &columns)
 	:uuid_(uuid), name_(std::move(name))
 	{
 		for(std::size_t i = 0; const auto& column: columns)
@@ -21,17 +21,17 @@ namespace herd::storage
 		}
 	}
 
-	const UUID& DataTable::uuid() const
+	const UUID& DataFrame::uuid() const
 	{
 		return uuid_;
 	}
 
-	const std::string &DataTable::name() const
+	const std::string & DataFrame::name() const
 	{
 		return name_;
 	}
 
-	const std::map<DataTable::column_key_type, DataTable::ColumnDescriptor, std::less<>>& DataTable::columns() const
+	const std::map<DataFrame::column_key_type, DataFrame::ColumnDescriptor, std::less<>>& DataFrame::columns() const
 	{
 		return column_descriptors_;
 	}
@@ -77,7 +77,7 @@ namespace herd::storage
 		}
 	}
 
-	std::vector<std::byte> DataTable::encrypt_row(const utils::CSVRow& row, const std::vector<DataTable::column_type_key_type>& columns, const crypto::ICrypto& crypto)
+	std::vector<std::byte> DataFrame::encrypt_row(const utils::CSVRow& row, const std::vector<DataFrame::column_type_key_type>& columns, const crypto::ICrypto& crypto)
 	{
 		std::vector<std::byte> row_bytes;
 		row_bytes.resize(sizeof(uint32_t));
@@ -132,12 +132,12 @@ namespace herd::storage
 		return row_bytes;
 	}
 
-	bool DataTable::alive() const
+	bool DataFrame::alive() const
 	{
 		return alive_;
 	}
 
-	void DataTable::set_alive_status(bool status)
+	void DataFrame::set_alive_status(bool status)
 	{
 		alive_ = status;
 	}
