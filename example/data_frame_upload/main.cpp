@@ -44,7 +44,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	}
 
 	auto data_frame_future = session->data_storage().load_from_csv({
-		storage::DataTable::ColumnParameters{"id", herd::common::DataType::INT16}
+		storage::DataFrame::ColumnParameters{"id", herd::common::DataType::INT16}
 	}, data_frame_csv, herd::common::SchemaType::BINFHE);
 
 	std::cout << std::endl;

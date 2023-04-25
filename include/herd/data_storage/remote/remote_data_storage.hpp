@@ -15,7 +15,7 @@ namespace herd::storage
 	class RemoteDataStorage: public DataStorage
 	{
 	public:
-		[[nodiscard]] const std::unordered_map<std::string, std::shared_ptr<DataTable>>& data_frames() const override;
+		[[nodiscard]] const std::unordered_map<std::string, std::shared_ptr<DataFrame>>& data_frames() const override;
 
 		void sync_cache() const;
 
@@ -30,7 +30,7 @@ namespace herd::storage
 		static std::unique_ptr<RemoteDataStorage> make_unique(
 				Session& session, RemoteBackend& backend);
 
-		[[nodiscard]] std::pair<utils::ProgressFuture<std::shared_ptr<DataTable>>, std::shared_ptr<DataTable>> populate_table_from_csv(std::istream& stream, std::string name, const std::vector<DataTable::ColumnParameters> &columns, common::SchemaType schema_type) override;
+		[[nodiscard]] std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<DataFrame::ColumnParameters> &columns, common::SchemaType schema_type) override;
 	};
 
 	struct RemoteDataStorage::make_unique_enabler: public RemoteDataStorage

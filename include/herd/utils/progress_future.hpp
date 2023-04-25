@@ -154,7 +154,7 @@ namespace herd::utils
 		static_assert(std::is_destructible<Res>{}, "result type must be destructible");
 
 	public:
-		ProgressPromise();
+		ProgressPromise() = default;
 
 		ProgressPromise(ProgressPromise&&) noexcept = default;
 		ProgressPromise(const ProgressPromise&) = delete;
@@ -198,15 +198,9 @@ namespace herd::utils
 		}
 
 	private:
-		std::promise<Res> promise_;
-		std::shared_ptr<detail::ProgressFutureState> state_;
+		std::promise<Res> promise_{};
+		std::shared_ptr<detail::ProgressFutureState> state_{std::make_shared<detail::ProgressFutureState>()};
 	};
-
-	template<typename Res>
-	ProgressPromise<Res>::ProgressPromise()
-	:promise_{}, state_(std::make_shared<detail::ProgressFutureState>())
-	{
-	}
 }
 
 #endif //LIBHERD_PROGRESS_FUTURE_HPP

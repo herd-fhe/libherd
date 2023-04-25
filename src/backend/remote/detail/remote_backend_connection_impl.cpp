@@ -2,9 +2,9 @@
 
 #include <utility>
 
-#include "herd/backend/remote/detail/remote_backend_connection_impl.hpp"
-#include "herd/data_storage/remote/remote_data_table.hpp"
 #include "herd/backend/remote/detail/mapper.hpp"
+#include "herd/backend/remote/detail/remote_backend_connection_impl.hpp"
+#include "herd/data_storage/remote/remote_data_frame.hpp"
 
 
 namespace herd
@@ -22,7 +22,7 @@ namespace herd
 			std::unique_ptr<proto::Empty> response;
 		};
 
-		struct UploadTableState
+		struct UploadFrameState
 		{
 			std::unique_ptr<grpc::ClientContext> context;
 			std::unique_ptr<grpc::ClientReaderWriterInterface<proto::DataFrameAddRequest, proto::DataFrameAddResponse>> reader_writer;
@@ -65,9 +65,9 @@ namespace herd
 		}
 
 		common::UUID do_init_upload_frame(
-				UploadTableState& state,
+				UploadFrameState& state,
 				common::UUID session_uuid, const std::string& name,
-				common::SchemaType type, const std::vector<storage::DataTable::ColumnParameters>& columns,
+				common::SchemaType type, const std::vector<storage::DataFrame::ColumnParameters>& columns,
 				std::size_t row_count
 		)
 		{
@@ -90,8 +90,8 @@ namespace herd
 			return common::UUID(response.metadata().uuid());
 		}
 
-		[[maybe_unused]] void do_upload_data_frame(utils::ProgressPackagedTask<std::shared_ptr<storage::DataTable>()>::ProgressUpdateProxy& progress_proxy,
-								  UploadTableState& state,
+		[[maybe_unused]] void do_upload_data_frame(utils::ProgressPackagedTask<std::shared_ptr<storage::DataFrame>()>::ProgressUpdateProxy& progress_proxy,
+												   UploadFrameState& state,
 								  std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 		{
 			progress_proxy.set_max_step(row_count);
@@ -321,14 +321,9 @@ namespace herd
 		return future;
 	}
 
-	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> RemoteBackend::RemoteBackendConnectionImpl::create_table(
-			const common::UUID& session_uuid, const std::string& name,
-			const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type,
-			std::size_t row_count,
-			utils::MovableFunction<bool(std::vector<std::byte>&)> next_row
-	)
+	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> RemoteBackend::RemoteBackendConnectionImpl::create_data_frame(const common::UUID& session_uuid, const std::string& name, const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 	{
-		UploadTableState state;
+		UploadFrameState state;
 		state.context = std::make_unique<grpc::ClientContext>();
 		setup_authenticated_context(*state.context);
 
@@ -336,27 +331,27 @@ namespace herd
 
 		const auto data_frame_uuid = do_init_upload_frame(state, session_uuid, name, schema_type, columns, row_count);
 
-		auto data_table = storage::RemoteDataTable::make_shared(data_frame_uuid, name, row_count, columns, schema_type, backend_);
-		auto task = utils::ProgressPackagedTask<std::shared_ptr<storage::DataTable>()>(
+		auto data_frame = storage::RemoteDataFrame::make_shared(data_frame_uuid, name, row_count, columns, schema_type, backend_);
+		auto task = utils::ProgressPackagedTask<std::shared_ptr<storage::DataFrame>()>(
 				[
 						state=std::move(state),
 						next_row=std::move(next_row),
-						data_table,
+				        data_frame,
 						row_count
 			]
-			(utils::ProgressPackagedTask<std::shared_ptr<storage::DataTable>()>::ProgressUpdateProxy updater) mutable
+			(utils::ProgressPackagedTask<std::shared_ptr<storage::DataFrame>()>::ProgressUpdateProxy updater) mutable
 			{
 				do_upload_data_frame(updater, state, row_count, std::move(next_row));
-				return data_table;
+				return data_frame;
 			});
 
 		auto future = task.get_future();
 		pool_.execute(std::move(task));
 
-		return std::make_pair(std::move(future), data_table);
+		return std::make_pair(std::move(future), data_frame);
 	}
 
-	std::vector<std::shared_ptr<storage::DataTable>> RemoteBackend::RemoteBackendConnectionImpl::list_data_frames(const common::UUID& session_uuid)
+	std::vector<std::shared_ptr<storage::DataFrame>> RemoteBackend::RemoteBackendConnectionImpl::list_data_frames(const common::UUID& session_uuid)
 	{
 		grpc::ClientContext client_context{};
 		setup_authenticated_context(client_context);
@@ -372,14 +367,14 @@ namespace herd
 			throw RemoteConnectionError(status.error_message());
 		}
 
-		std::vector<std::shared_ptr<storage::DataTable>> data_frames;
+		std::vector<std::shared_ptr<storage::DataFrame>> data_frames;
 		data_frames.reserve(static_cast<std::size_t>(response.dataframes().size()));
 
 		std::ranges::transform(
 				response.dataframes(), std::back_inserter(data_frames),
 				[&](const auto& data_frame)
 				{
-					return storage::RemoteDataTable::make_shared(
+					return storage::RemoteDataFrame::make_shared(
 									common::UUID(data_frame.uuid()), data_frame.name(),
 									data_frame.rows_count(),
 									mapper::to_model(data_frame.columns()), mapper::to_model(data_frame.schema_type()),

@@ -111,15 +111,15 @@ target_sources(
         src/crypto/binfhe/detail/ciphertext.cpp
 
         src/data_storage/data_storage.cpp
-        src/data_storage/data_table.cpp
+        src/data_storage/data_frame.cpp
         src/data_storage/i_data_row.cpp
 
         src/data_storage/local/local_data_storage.cpp
-        src/data_storage/local/local_data_table.cpp
+        src/data_storage/local/local_data_frame.cpp
         src/data_storage/local/type_pool_factory.cpp
 
         src/data_storage/remote/remote_data_storage.cpp
-        src/data_storage/remote/remote_data_table.cpp
+        src/data_storage/remote/remote_data_frame.cpp
 
         src/utils/csv_reader.cpp
         src/utils/progress_bar.cpp
@@ -145,16 +145,16 @@ target_sources(
         include/herd/tree/visitor.hpp
 
         include/herd/data_storage/data_storage.hpp
-        include/herd/data_storage/data_table.hpp
+        include/herd/data_storage/data_frame.hpp
         include/herd/data_storage/i_data_row.hpp
 
         include/herd/data_storage/local/local_data_storage.hpp
-        include/herd/data_storage/local/local_data_table.hpp
+        include/herd/data_storage/local/local_data_frame.hpp
         include/herd/data_storage/local/type_pool.hpp
         include/herd/data_storage/local/type_pool_factory.hpp
 
         include/herd/data_storage/remote/remote_data_storage.hpp
-        include/herd/data_storage/remote/remote_data_table.hpp
+        include/herd/data_storage/remote/remote_data_frame.hpp
 
         include/herd/crypto/i_crypto.hpp
         include/herd/crypto/crypto_config.hpp

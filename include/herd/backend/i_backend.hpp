@@ -22,13 +22,13 @@ namespace herd
 		virtual utils::ProgressFuture<void> add_key(const common::UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data) = 0;
 
 		virtual std::unique_ptr<storage::DataStorage> create_session_storage(Session& session) = 0;
-		virtual std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> create_table(
+		virtual std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> create_data_frame(
 				const common::UUID& session_uuid, const std::string& name,
-				const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type,
+				const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type,
 				std::size_t row_count,
 				utils::MovableFunction<bool(std::vector<std::byte>&)> next_row
 		) = 0;
-		virtual std::vector<std::shared_ptr<storage::DataTable>> list_data_frames(const common::UUID& session_uuid) = 0;
+		virtual std::vector<std::shared_ptr<storage::DataFrame>> list_data_frames(const common::UUID& session_uuid) = 0;
 
 		virtual ~IBackend() = default;
 	};
