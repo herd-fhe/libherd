@@ -91,7 +91,7 @@ namespace herd
 		}
 
 		[[maybe_unused]] void do_upload_data_frame(utils::ProgressPackagedTask<std::shared_ptr<storage::DataFrame>()>::ProgressUpdateProxy& progress_proxy,
-												   UploadFrameState& state,
+								  UploadFrameState& state,
 								  std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 		{
 			progress_proxy.set_max_step(row_count);
@@ -321,7 +321,12 @@ namespace herd
 		return future;
 	}
 
-	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> RemoteBackend::RemoteBackendConnectionImpl::create_data_frame(const common::UUID& session_uuid, const std::string& name, const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
+	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> RemoteBackend::RemoteBackendConnectionImpl::create_data_frame(
+			const common::UUID& session_uuid, const std::string& name,
+			const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type,
+			std::size_t row_count,
+			utils::MovableFunction<bool(std::vector<std::byte>&)> next_row
+	)
 	{
 		UploadFrameState state;
 		state.context = std::make_unique<grpc::ClientContext>();

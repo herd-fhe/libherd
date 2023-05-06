@@ -44,7 +44,8 @@ namespace herd::storage
 				RemoteBackend& remote_backend);
 	};
 
-	struct RemoteDataFrame::make_shared_enabler: public RemoteDataFrame {
+	struct RemoteDataFrame::make_shared_enabler: public RemoteDataFrame
+	{
 		template<typename... Args>
 		explicit make_shared_enabler(Args&&... args)
 			:
