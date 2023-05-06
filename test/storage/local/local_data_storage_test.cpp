@@ -10,7 +10,7 @@ using namespace herd::storage;
 
 TEST(LocalDataStorage, load_from_csv_stream)
 {
-	using enum herd::DataType;
+	using enum herd::common::DataType;
 
 	LocalDataStorage storage;
 
@@ -34,7 +34,7 @@ TEST(LocalDataStorage, load_from_csv_stream)
 
 TEST(LocalDataStorage, load_from_csv_stream_multiline)
 {
-	using enum herd::DataType;
+	using enum herd::common::DataType;
 
 	LocalDataStorage storage;
 
@@ -60,7 +60,7 @@ TEST(LocalDataStorage, load_from_csv_stream_multiline)
 
 TEST(LocalDataStorage, not_none_schema)
 {
-	using enum herd::DataType;
+	using enum herd::common::DataType;
 
 	LocalDataStorage storage;
 
@@ -76,5 +76,5 @@ TEST(LocalDataStorage, not_none_schema)
 			{"fourth", INT64},
 	};
 
-	EXPECT_THROW(storage.load_from_csv(columns, stream, herd::common::SchemaType::BINFHE), std::runtime_error);
+	EXPECT_THROW(static_cast<void>(storage.load_from_csv(columns, stream, herd::common::SchemaType::BINFHE)), std::runtime_error);
 }

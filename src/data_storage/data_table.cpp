@@ -33,7 +33,7 @@ namespace herd::storage
 
 	namespace
 	{
-		template<DataType key_type,
+		template<common::DataType key_type,
 				 typename NativeType=typename NativeTypeMapping<key_type>::native_type,
 				 std::size_t NativeTypeSize=NativeTypeMapping<key_type>::bit_size>
 		std::vector<std::byte> do_encrypt_column_value(NativeType value, const crypto::ICrypto& crypto)
@@ -86,7 +86,7 @@ namespace herd::storage
 
 			switch(type_key)
 			{
-				using enum DataType;
+				using enum common::DataType;
 
 				case BIT:
 					column_data = do_encrypt_column_value<BIT>(row.get<bool>(column_index), crypto);

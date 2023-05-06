@@ -14,7 +14,7 @@ namespace herd::storage
 	class TypePoolFactory
 	{
 	public:
-		template<DataType key>
+		template<common::DataType key>
 		[[nodiscard]] static bool register_type()
 		{
 			using mapping = NativeTypeMapping<key>;
@@ -27,12 +27,12 @@ namespace herd::storage
 			);
 		}
 
-		[[nodiscard]] static std::unique_ptr<ITypePool> create_pool(DataType key);
+		[[nodiscard]] static std::unique_ptr<ITypePool> create_pool(common::DataType key);
 
 	private:
-		static std::unordered_map<DataType, std::function<std::unique_ptr<ITypePool>()>> factory_register;
+		static std::unordered_map<common::DataType, std::function<std::unique_ptr<ITypePool>()>> factory_register;
 
-		static bool register_type(DataType key, std::function<std::unique_ptr<ITypePool>()> factory_fun);
+		static bool register_type(common::DataType key, std::function<std::unique_ptr<ITypePool>()> factory_fun);
 	};
 }
 

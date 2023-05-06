@@ -2,7 +2,7 @@
 #define LIBHERD_REMOTE_DATA_STORAGE_HPP
 
 #include "herd/data_storage/data_storage.hpp"
-#include "herd/uuid.hpp"
+#include "herd/common/uuid.hpp"
 
 namespace herd
 {

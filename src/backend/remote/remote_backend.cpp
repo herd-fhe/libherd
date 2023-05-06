@@ -24,7 +24,7 @@ namespace herd
 		return pimpl_->create_session(name);
 	}
 
-	void RemoteBackend::destroy_session(const UUID& session_uuid)
+	void RemoteBackend::destroy_session(const common::UUID& session_uuid)
 	{
 		return pimpl_->destroy_session(session_uuid);
 	}
@@ -34,7 +34,7 @@ namespace herd
 		return pimpl_->list_sessions();
 	}
 
-	utils::ProgressFuture<void> RemoteBackend::add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
+	utils::ProgressFuture<void> RemoteBackend::add_key(const common::UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
 	{
 		return pimpl_->add_key(session_uuid, type, std::move(key_data));
 	}
@@ -44,7 +44,7 @@ namespace herd
 		return storage::RemoteDataStorage::make_unique(session, *this);
 	}
 
-	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> RemoteBackend::create_table(const UUID& session_uuid, const std::string& name, const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
+	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> RemoteBackend::create_table(const common::UUID& session_uuid, const std::string& name, const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 	{
 		return pimpl_->create_table(session_uuid, name, columns, schema_type, row_count, std::move(next_row));
 	}

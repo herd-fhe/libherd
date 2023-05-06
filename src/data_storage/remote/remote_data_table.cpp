@@ -18,7 +18,7 @@ namespace herd::storage
 	}
 
 	RemoteDataTable::RemoteDataTable(
-			UUID uuid, const std::string& name, size_t row_count,
+			common::UUID uuid, const std::string& name, size_t row_count,
 			const std::vector<ColumnParameters>& columns, common::SchemaType schema_type,
 			RemoteBackend& remote_backend)
 		: DataTable(name, columns),
@@ -27,7 +27,7 @@ namespace herd::storage
 
 	}
 
-	std::shared_ptr<RemoteDataTable> RemoteDataTable::make_shared(UUID uuid, const std::string& name, size_t row_count, const std::vector<ColumnParameters>& columns, common::SchemaType schema_type, RemoteBackend& remote_backend)
+	std::shared_ptr<RemoteDataTable> RemoteDataTable::make_shared(common::UUID uuid, const std::string& name, size_t row_count, const std::vector<ColumnParameters>& columns, common::SchemaType schema_type, RemoteBackend& remote_backend)
 	{
 		return std::make_shared<make_shared_enabler>(uuid, name, row_count, columns, schema_type, remote_backend);
 	}

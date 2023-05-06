@@ -66,7 +66,7 @@ namespace herd::storage
 
 			switch(type_key)
 			{
-				using enum DataType;
+				using enum common::DataType;
 
 				case BIT:
 					assert_cast<TypePool<bool> *>(pools_[index].get())->emplace_back(row.get<bool>(index));

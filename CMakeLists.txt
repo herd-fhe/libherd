@@ -71,9 +71,6 @@ find_package(OpenFHE REQUIRED)
 find_package(Threads REQUIRED)
 find_package(OpenMP REQUIRED)
 
-## UUID
-pkg_search_module(UUID REQUIRED uuid)
-
 add_subdirectory(third-party/spdlog EXCLUDE_FROM_ALL)
 add_subdirectory(third-party/termcolor EXCLUDE_FROM_ALL)
 
@@ -125,10 +122,8 @@ target_sources(
         src/data_storage/remote/remote_data_table.cpp
 
         src/utils/csv_reader.cpp
-        src/utils/thread_pool.cpp
         src/utils/progress_bar.cpp
-
-        src/uuid.cpp
+        src/utils/thread_pool.cpp
 
         include/herd/operation.hpp
 
@@ -186,8 +181,6 @@ target_sources(
 
         include/herd/utils/pimpl.hpp
 
-        include/herd/uuid.hpp
-
         include/herd/herd.hpp
 )
 
@@ -212,7 +205,6 @@ target_link_libraries(
         pthread
 
         OpenMP::OpenMP_CXX
-        ${UUID_LIBRARIES}
 
         herd_proto
 )

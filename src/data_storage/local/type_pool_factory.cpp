@@ -3,9 +3,9 @@
 
 namespace herd::storage
 {
-	std::unordered_map<DataType, std::function<std::unique_ptr<ITypePool>()>> TypePoolFactory::factory_register;
+	std::unordered_map<common::DataType, std::function<std::unique_ptr<ITypePool>()>> TypePoolFactory::factory_register;
 
-	std::unique_ptr<ITypePool> TypePoolFactory::create_pool(DataType key)
+	std::unique_ptr<ITypePool> TypePoolFactory::create_pool(common::DataType key)
 	{
 		if(auto iter = factory_register.find(key); iter != std::end(factory_register))
 		{
@@ -14,7 +14,7 @@ namespace herd::storage
 		return nullptr;
 	}
 
-	bool TypePoolFactory::register_type(DataType key, std::function<std::unique_ptr<ITypePool>()> factory_fun)
+	bool TypePoolFactory::register_type(common::DataType key, std::function<std::unique_ptr<ITypePool>()> factory_fun)
 	{
 		if(auto iter = factory_register.find(key); iter == std::end(factory_register))
 		{
@@ -26,7 +26,7 @@ namespace herd::storage
 	}
 
 	namespace {
-		using enum DataType;
+		using enum common::DataType;
 
 		[[maybe_unused]] const bool bit_registered = TypePoolFactory::register_type<BIT>();
 

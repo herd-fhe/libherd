@@ -43,8 +43,8 @@ namespace herd
 	private:
 		friend class Session;
 
-		void destroy_session(const UUID& session_uuid);
-		utils::ProgressFuture<void> add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data);
+		void destroy_session(const common::UUID& session_uuid);
+		utils::ProgressFuture<void> add_key(const common::UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data);
 
 		[[nodiscard]] std::unique_ptr<storage::DataStorage> create_session_storage(Session& session);
 	};

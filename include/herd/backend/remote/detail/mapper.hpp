@@ -7,8 +7,8 @@
 #include <storage.pb.h>
 
 #include "herd/data_storage/data_table.hpp"
-#include "herd_common/data_type.hpp"
-#include "herd_common/schema_type.hpp"
+#include "herd/common/model/data_type.hpp"
+#include "herd/common/model/schema_type.hpp"
 
 
 namespace herd

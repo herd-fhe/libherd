@@ -38,12 +38,17 @@ namespace herd
 		void connect();
 
 		SessionInfo create_session(const std::string& name);
-		void destroy_session(const UUID& session_uuid);
+		void destroy_session(const common::UUID& session_uuid);
 		std::vector<SessionInfo> list_sessions();
 
-		utils::ProgressFuture<void> add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data);
+		utils::ProgressFuture<void> add_key(const common::UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data);
 
-		std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> create_table(const UUID& session_uuid, const std::string& name, const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row);
+		std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> create_table(
+				const common::UUID& session_uuid, const std::string& name,
+				const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type,
+				std::size_t row_count,
+				utils::MovableFunction<bool(std::vector<std::byte>&)> next_row
+		);
 	private:
 		RemoteBackend& backend_;
 		utils::ThreadPool& pool_;

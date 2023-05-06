@@ -2,8 +2,8 @@
 #define LIBHERD_REMOTE_DATA_TABLE_HPP
 
 #include "herd/data_storage/data_table.hpp"
-#include "herd/uuid.hpp"
-#include "herd_common/schema_type.hpp"
+#include "herd/common/uuid.hpp"
+#include "herd/common/model/schema_type.hpp"
 
 
 namespace herd
@@ -25,7 +25,7 @@ namespace herd::storage
 		friend class herd::RemoteBackend;
 		struct make_shared_enabler;
 
-		UUID uuid_;
+		common::UUID uuid_;
 		common::SchemaType schema_type_;
 
 		size_t rows_count_;
@@ -35,11 +35,11 @@ namespace herd::storage
 		bool uploaded_ = false;
 
 		RemoteDataTable(
-				UUID uuid, const std::string& name, size_t row_count,
+				common::UUID uuid, const std::string& name, size_t row_count,
 				const std::vector<ColumnParameters>& columns, common::SchemaType schema_type,
 				RemoteBackend& remote_backend);
 		static std::shared_ptr<RemoteDataTable> make_shared(
-				UUID uuid, const std::string& name, size_t row_count,
+				common::UUID uuid, const std::string& name, size_t row_count,
 				const std::vector<ColumnParameters>& columns, common::SchemaType schema_type,
 				RemoteBackend& remote_backend);
 	};

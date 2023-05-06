@@ -31,7 +31,7 @@ namespace herd
 		void do_upload_key(
 				utils::ProgressPackagedTask<void()>::ProgressUpdateProxy& progress_proxy,
 				UploadKeyState& state,
-			    UUID session_uuid, common::SchemaType type, std::vector<std::byte> key_data
+				common::UUID session_uuid, common::SchemaType type, std::vector<std::byte> key_data
 		)
 		{
 			progress_proxy.set_max_step(key_data.size()-1);
@@ -64,9 +64,9 @@ namespace herd
 			state.writer->Finish();
 		}
 
-		UUID do_init_upload_frame(
+		common::UUID do_init_upload_frame(
 				UploadTableState& state,
-				UUID session_uuid, const std::string& name,
+				common::UUID session_uuid, const std::string& name,
 				common::SchemaType type, const std::vector<storage::DataTable::ColumnParameters>& columns,
 				std::size_t row_count
 		)
@@ -87,7 +87,7 @@ namespace herd
 			proto::DataFrameAddResponse response;
 			state.reader_writer->Read(&response);
 
-			return UUID(response.metadata().uuid());
+			return common::UUID(response.metadata().uuid());
 		}
 
 		[[maybe_unused]] void do_upload_data_frame(utils::ProgressPackagedTask<std::shared_ptr<storage::DataTable>()>::ProgressUpdateProxy& progress_proxy,
@@ -228,11 +228,11 @@ namespace herd
 
 		return SessionInfo{
 				.name = name,
-				.uuid = UUID(response.uuid())
+				.uuid = common::UUID(response.uuid())
 		};
 	}
 
-	void RemoteBackend::RemoteBackendConnectionImpl::destroy_session(const UUID& session_uuid)
+	void RemoteBackend::RemoteBackendConnectionImpl::destroy_session(const common::UUID& session_uuid)
 	{
 		grpc::ClientContext client_context{};
 		setup_authenticated_context(client_context);
@@ -273,7 +273,7 @@ namespace herd
 				{
 					return SessionInfo{
 						info.name(),
-						UUID(info.uuid())
+						common::UUID(info.uuid())
 					};
 				}
 	   );
@@ -290,7 +290,7 @@ namespace herd
 		);
 	}
 
-	utils::ProgressFuture<void> RemoteBackend::RemoteBackendConnectionImpl::add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
+	utils::ProgressFuture<void> RemoteBackend::RemoteBackendConnectionImpl::add_key(const common::UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
 	{
 		assert(key_data.size() <= std::numeric_limits<uint32_t>::max());
 
@@ -321,7 +321,12 @@ namespace herd
 		return future;
 	}
 
-	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> RemoteBackend::RemoteBackendConnectionImpl::create_table(const UUID& session_uuid, const std::string& name, const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
+	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataTable>>, std::shared_ptr<storage::DataTable>> RemoteBackend::RemoteBackendConnectionImpl::create_table(
+			const common::UUID& session_uuid, const std::string& name,
+			const std::vector<storage::DataTable::ColumnParameters>& columns, common::SchemaType schema_type,
+			std::size_t row_count,
+			utils::MovableFunction<bool(std::vector<std::byte>&)> next_row
+	)
 	{
 		UploadTableState state;
 		state.context = std::make_unique<grpc::ClientContext>();

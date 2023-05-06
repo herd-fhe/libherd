@@ -7,7 +7,7 @@
 #include "herd/crypto/keyring.hpp"
 #include "herd/data_storage/remote/remote_data_storage.hpp"
 #include "herd/utils/progress_future.hpp"
-#include "herd/uuid.hpp"
+#include "herd/common/uuid.hpp"
 
 
 namespace herd
@@ -17,7 +17,7 @@ namespace herd
 	struct SessionInfo
 	{
 		std::string name;
-		UUID uuid;
+		common::UUID uuid;
 	};
 
 	class Session: public std::enable_shared_from_this<Session>
@@ -31,7 +31,7 @@ namespace herd
 
 		~Session();
 
-		[[nodiscard]] UUID uuid() const noexcept
+		[[nodiscard]] common::UUID uuid() const noexcept
 		{
 			return uuid_;
 		}
@@ -57,7 +57,7 @@ namespace herd
 		bool destroyed_{false};
 
 		std::string name_;
-		UUID uuid_;
+		common::UUID uuid_;
 
 		std::shared_ptr<Context> context_;
 
