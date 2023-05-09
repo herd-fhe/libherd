@@ -14,7 +14,7 @@ namespace herd::storage
 		bool empty() const override;
 
 	private:
-		void add_row(const utils::CSVRow &row);
+		void add_row(const utils::CSVRow& row);
 		void flush_rows();
 
 		friend class LocalDataStorage;
@@ -24,15 +24,13 @@ namespace herd::storage
 		static std::shared_ptr<LocalDataFrame> make_shared(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns);
 
 		std::vector<std::unique_ptr<ITypePool>> pools_;
-
 	};
 
 	struct LocalDataFrame::make_shared_enabler: public LocalDataFrame
 	{
 		template<typename... Args>
 		explicit make_shared_enabler(Args&&... args)
-				:
-			LocalDataFrame(std::forward<Args>(args)...)
+		:	LocalDataFrame(std::forward<Args>(args)...)
 		{}
 	};
 }

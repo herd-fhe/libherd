@@ -11,7 +11,7 @@ namespace
 {
 	template<typename Derived, typename Base>
 	Derived assert_cast(Base type)
-	requires std::is_pointer_v<Base> || std::is_pointer_v<Derived>
+		requires std::is_pointer_v<Base> || std::is_pointer_v<Derived>
 	{
 		auto derived = dynamic_cast<Derived>(type);
 		assert(derived);
@@ -22,9 +22,8 @@ namespace
 
 namespace herd::storage
 {
-	LocalDataFrame::LocalDataFrame(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters> &columns)
-	:
-		DataFrame(uuid, std::move(name), columns)
+	LocalDataFrame::LocalDataFrame(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns)
+	:	DataFrame(uuid, std::move(name), columns)
 	{
 		pools_.reserve(columns.size());
 
@@ -58,7 +57,7 @@ namespace herd::storage
 		}
 	}
 
-	void LocalDataFrame::add_row(const utils::CSVRow &row)
+	void LocalDataFrame::add_row(const utils::CSVRow& row)
 	{
 		for(const auto& [name, column]: columns())
 		{
@@ -70,31 +69,31 @@ namespace herd::storage
 				using enum common::DataType;
 
 				case BIT:
-					assert_cast<TypePool<bool> *>(pools_[index].get())->emplace_back(row.get<bool>(index));
+					assert_cast<TypePool<bool>*>(pools_[index].get())->emplace_back(row.get<bool>(index));
 					break;
 				case UINT8:
-					assert_cast<TypePool<uint8_t> *>(pools_[index].get())->emplace_back(row.get<uint8_t>(index));
+					assert_cast<TypePool<uint8_t>*>(pools_[index].get())->emplace_back(row.get<uint8_t>(index));
 					break;
 				case UINT16:
-					assert_cast<TypePool<uint16_t> *>(pools_[index].get())->emplace_back(row.get<uint16_t>(index));
+					assert_cast<TypePool<uint16_t>*>(pools_[index].get())->emplace_back(row.get<uint16_t>(index));
 					break;
 				case UINT32:
-					assert_cast<TypePool<uint32_t> *>(pools_[index].get())->emplace_back(row.get<uint32_t>(index));
+					assert_cast<TypePool<uint32_t>*>(pools_[index].get())->emplace_back(row.get<uint32_t>(index));
 					break;
 				case UINT64:
-					assert_cast<TypePool<uint64_t> *>(pools_[index].get())->emplace_back(row.get<uint64_t>(index));
+					assert_cast<TypePool<uint64_t>*>(pools_[index].get())->emplace_back(row.get<uint64_t>(index));
 					break;
 				case INT8:
-					assert_cast<TypePool<int8_t> *>(pools_[index].get())->emplace_back(row.get<int8_t>(index));
+					assert_cast<TypePool<int8_t>*>(pools_[index].get())->emplace_back(row.get<int8_t>(index));
 					break;
 				case INT16:
-					assert_cast<TypePool<int16_t> *>(pools_[index].get())->emplace_back(row.get<int16_t>(index));
+					assert_cast<TypePool<int16_t>*>(pools_[index].get())->emplace_back(row.get<int16_t>(index));
 					break;
 				case INT32:
-					assert_cast<TypePool<int32_t> *>(pools_[index].get())->emplace_back(row.get<int32_t>(index));
+					assert_cast<TypePool<int32_t>*>(pools_[index].get())->emplace_back(row.get<int32_t>(index));
 					break;
 				case INT64:
-					assert_cast<TypePool<int64_t> *>(pools_[index].get())->emplace_back(row.get<int64_t>(index));
+					assert_cast<TypePool<int64_t>*>(pools_[index].get())->emplace_back(row.get<int64_t>(index));
 			}
 		}
 	}

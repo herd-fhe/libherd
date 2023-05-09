@@ -26,13 +26,14 @@ namespace herd::utils
 	{
 	private:
 		friend class ProgressPromise<Res>;
-		template<typename> friend class ProgressPackagedTask;
+		template<typename>
+		friend class ProgressPackagedTask;
 
 		std::future<Res> future_;
 		std::shared_ptr<detail::ProgressFutureState> state_;
 
 		ProgressFuture(std::future<Res>&& fut, std::shared_ptr<detail::ProgressFutureState> state)
-			:future_(std::move(fut)), state_(std::move(state))
+		:	future_(std::move(fut)), state_(std::move(state))
 		{}
 
 	public:
@@ -53,7 +54,7 @@ namespace herd::utils
 
 		[[nodiscard]] float progress() const noexcept
 		{
-			return (static_cast<float>(current_step()) / static_cast<float>(max_step()))*100.0f;
+			return (static_cast<float>(current_step()) / static_cast<float>(max_step())) * 100.0f;
 		}
 
 		[[nodiscard]] bool valid() const noexcept
@@ -107,10 +108,11 @@ namespace herd::utils
 			}
 
 		private:
-			template<typename> friend class ProgressPackagedTask;
+			template<typename>
+			friend class ProgressPackagedTask;
 
 			explicit ProgressUpdateProxy(std::shared_ptr<detail::ProgressFutureState> state)
-				:state_(std::move(state))
+			:	state_(std::move(state))
 			{}
 
 			std::shared_ptr<detail::ProgressFutureState> state_;
@@ -122,10 +124,10 @@ namespace herd::utils
 		ProgressPackagedTask() noexcept = default;
 
 		template<typename Fun>
-		requires std::is_invocable_r_v<Res, Fun, ProgressUpdateProxy&, Args...>
-		         && (!std::is_same_v<ProgressPackagedTask, std::remove_cvref<Fun>>)
+			requires std::is_invocable_r_v<Res, Fun, ProgressUpdateProxy&, Args...>
+					 && (!std::is_same_v<ProgressPackagedTask, std::remove_cvref<Fun>>)
 		explicit ProgressPackagedTask(Fun&& fun)
-			:task_(std::forward<Fun>(fun))
+		:	task_(std::forward<Fun>(fun))
 		{
 			state_ = std::make_shared<detail::ProgressFutureState>();
 		}

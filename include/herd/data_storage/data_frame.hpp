@@ -7,9 +7,9 @@
 #include <set>
 #include <string>
 
+#include "herd/common/uuid.hpp"
 #include "herd/crypto/i_crypto.hpp"
 #include "herd/type.hpp"
-#include "herd/common/uuid.hpp"
 
 
 namespace herd::utils

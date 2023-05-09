@@ -4,9 +4,8 @@
 namespace herd::storage
 {
 
-	IDataRow::IDataRow(const std::shared_ptr<DataFrame> & frame)
-	:
-		frame_(frame)
+	IDataRow::IDataRow(const std::shared_ptr<DataFrame>& frame)
+	:	frame_(frame)
 	{
 	}
 }

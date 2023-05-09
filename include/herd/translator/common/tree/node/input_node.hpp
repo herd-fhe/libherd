@@ -3,8 +3,8 @@
 
 #include <unordered_set>
 
-#include "herd/translator/common/tree/node/abstract_node.hpp"
 #include "herd/operation.hpp"
+#include "herd/translator/common/tree/node/abstract_node.hpp"
 
 
 namespace herd::translator

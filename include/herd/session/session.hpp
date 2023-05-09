@@ -4,10 +4,10 @@
 #include <memory>
 #include <vector>
 
+#include "herd/common/uuid.hpp"
 #include "herd/crypto/keyring.hpp"
 #include "herd/data_storage/remote/remote_data_storage.hpp"
 #include "herd/utils/progress_future.hpp"
-#include "herd/common/uuid.hpp"
 
 
 namespace herd
@@ -69,8 +69,7 @@ namespace herd
 	{
 		template<typename... Args>
 		explicit make_shared_enabler(Args&&... args)
-		:
-			Session(std::forward<Args>(args)...)
+		:	Session(std::forward<Args>(args)...)
 		{}
 	};
 

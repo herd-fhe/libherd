@@ -8,20 +8,20 @@
 
 namespace herd::translator::xlscc::detail
 {
-    class Translator: public ITranslator
-    {
-    public:
-        Translator();
-        ~Translator() override;
+	class Translator: public ITranslator
+	{
+	public:
+		Translator();
+		~Translator() override;
 
-        std::shared_ptr<CircuitGraph> translate(std::string_view source) override;
+		std::shared_ptr<CircuitGraph> translate(std::string_view source) override;
 
-    private:
-        std::filesystem::path tmp_dir;
+	private:
+		std::filesystem::path tmp_dir;
 
-        void setup_tmpdir();
-        void clean_tmpdir();
-    };
+		void setup_tmpdir();
+		void clean_tmpdir();
+	};
 }
 
 #endif //LIBHERD_XLSCC_TRANSLATOR_HPP

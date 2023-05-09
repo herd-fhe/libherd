@@ -29,7 +29,7 @@ namespace herd
 		common::SchemaType output;
 
 		Operation(OperationType op_type, std::size_t op_cost, std::vector<common::SchemaType> op_input, common::SchemaType op_output)
-		: type(op_type), cost(op_cost), inputs(std::move(op_input)), output(op_output) {};
+		:	type(op_type), cost(op_cost), inputs(std::move(op_input)), output(op_output){};
 	};
 }
 

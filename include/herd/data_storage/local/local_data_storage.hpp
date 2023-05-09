@@ -6,7 +6,7 @@
 
 namespace herd::storage
 {
-	class LocalDataStorage : public DataStorage
+	class LocalDataStorage: public DataStorage
 	{
 	private:
 		std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<DataFrame::ColumnParameters>& columns, common::SchemaType schema_type) override;

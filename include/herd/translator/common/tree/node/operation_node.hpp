@@ -1,14 +1,14 @@
 #ifndef LIBHERD_OPERATION_NODE_HPP
 #define LIBHERD_OPERATION_NODE_HPP
 
-#include <memory>
-#include <vector>
 #include <algorithm>
 #include <cassert>
+#include <memory>
 #include <unordered_set>
+#include <vector>
 
-#include "herd/translator/common/tree/node/input_node.hpp"
 #include "herd/operation.hpp"
+#include "herd/translator/common/tree/node/input_node.hpp"
 
 
 namespace herd::translator
@@ -20,7 +20,7 @@ namespace herd::translator
 
 	public:
 		OperationNode(Operation operation, std::vector<std::shared_ptr<InputNode>> inputs)
-			:   operation_(std::move(operation)), inputs_(std::move(inputs))
+		:	operation_(std::move(operation)), inputs_(std::move(inputs))
 		{}
 
 		[[nodiscard]] std::size_t cost() const noexcept override

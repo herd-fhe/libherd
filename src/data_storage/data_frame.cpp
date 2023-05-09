@@ -6,15 +6,15 @@
 
 namespace herd::storage
 {
-	DataFrame::DataFrame(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters> &columns)
-	:uuid_(uuid), name_(std::move(name))
+	DataFrame::DataFrame(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns)
+	:	uuid_(uuid), name_(std::move(name))
 	{
 		for(std::size_t i = 0; const auto& column: columns)
 		{
 			column_descriptors_.try_emplace(
 				column.name,
 				i,
-			    column.type
+				column.type
 			);
 
 			++i;
@@ -39,8 +39,8 @@ namespace herd::storage
 	namespace
 	{
 		template<common::DataType key_type,
-				 typename NativeType=typename NativeTypeMapping<key_type>::native_type,
-				 std::size_t NativeTypeSize=NativeTypeMapping<key_type>::bit_size>
+				 typename NativeType = typename NativeTypeMapping<key_type>::native_type,
+				 std::size_t NativeTypeSize = NativeTypeMapping<key_type>::bit_size>
 		std::vector<std::byte> do_encrypt_column_value(NativeType value, const crypto::ICrypto& crypto)
 		{
 			std::vector<bool> bit_representation;

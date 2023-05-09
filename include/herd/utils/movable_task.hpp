@@ -1,8 +1,8 @@
 #ifndef LIBHERD_MOVABLE_TASK_HPP
 #define LIBHERD_MOVABLE_TASK_HPP
 
-#include <utility>
 #include <memory>
+#include <utility>
 
 
 namespace herd::utils
@@ -42,10 +42,9 @@ namespace herd::utils
 		MovableTask& operator=(MovableTask&&) = default;
 
 		template<typename F>
-			requires (!std::same_as<std::decay_t<F>, MovableTask>)
+			requires(!std::same_as<std::decay_t<F>, MovableTask>)
 		MovableTask(F&& fun)
-			:
-			pimpl_(make_pimpl(std::forward<F>(fun)))
+		:	pimpl_(make_pimpl(std::forward<F>(fun)))
 		{}
 
 		void operator()()

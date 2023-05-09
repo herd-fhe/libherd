@@ -25,7 +25,8 @@ namespace herd::storage
 		return false;
 	}
 
-	namespace {
+	namespace
+	{
 		using enum common::DataType;
 
 		[[maybe_unused]] const bool bit_registered = TypePoolFactory::register_type<BIT>();

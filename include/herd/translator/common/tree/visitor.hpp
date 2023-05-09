@@ -1,8 +1,8 @@
 #ifndef LIBHERD_VISITOR_HPP
 #define LIBHERD_VISITOR_HPP
 
-#include <functional>
 #include "herd/translator/common/tree/circuit_graph.hpp"
+#include <functional>
 
 
 namespace herd::translator
@@ -19,14 +19,14 @@ namespace herd::translator
 		DEPTH_FIRST_SEARCH
 	};
 
-	template <typename Func>
+	template<typename Func>
 	concept VisitFunction = requires(Func func, std::shared_ptr<AbstractNode>& node)
 	{
 		requires std::invocable<Func, std::shared_ptr<AbstractNode>&>;
 		{ func(node) } -> std::same_as<VisitStatus>;
 	};
 
-	template <typename Func>
+	template<typename Func>
 	concept ConstVisitFunction = requires(Func func, const std::shared_ptr<AbstractNode>& node)
 	{
 		requires std::invocable<Func, const std::shared_ptr<AbstractNode>&>;
@@ -35,8 +35,8 @@ namespace herd::translator
 
 	namespace detail
 	{
-		using visitor_function_t =  std::function<VisitStatus(std::shared_ptr<AbstractNode>&)>;
-		using const_visitor_function_t =  std::function<VisitStatus(const std::shared_ptr<AbstractNode>&)>;
+		using visitor_function_t = std::function<VisitStatus(std::shared_ptr<AbstractNode>&)>;
+		using const_visitor_function_t = std::function<VisitStatus(const std::shared_ptr<AbstractNode>&)>;
 
 		void visit_bfs(const std::vector<std::shared_ptr<AbstractNode>>& nodes, const visitor_function_t& visitor_func);
 		void visit_dfs(const std::vector<std::shared_ptr<AbstractNode>>& nodes, const visitor_function_t& visitor_func);
@@ -45,25 +45,25 @@ namespace herd::translator
 		void visit_dfs(const std::vector<std::shared_ptr<AbstractNode>>& nodes, const const_visitor_function_t& visitor_func);
 	}
 
-	template <typename Func, VisitStrategy visit_strategy = VisitStrategy::BREADTH_FIRST_SEARCH>
-	requires VisitFunction<Func>
+	template<typename Func, VisitStrategy visit_strategy = VisitStrategy::BREADTH_FIRST_SEARCH>
+		requires VisitFunction<Func>
 	void visit(const CircuitGraph& graph, Func fun)
 	{
 		visit<Func, visit_strategy>(graph.input_nodes(), std::move(fun));
 	}
 
-	template <typename Func, VisitStrategy visit_strategy = VisitStrategy::BREADTH_FIRST_SEARCH>
-	requires ConstVisitFunction<Func>
+	template<typename Func, VisitStrategy visit_strategy = VisitStrategy::BREADTH_FIRST_SEARCH>
+		requires ConstVisitFunction<Func>
 	void visit(const CircuitGraph& graph, Func fun)
 	{
 		visit<Func, visit_strategy>(graph.input_nodes(), std::move(fun));
 	}
 
-	template <typename Func, VisitStrategy visit_strategy = VisitStrategy::BREADTH_FIRST_SEARCH>
-	requires VisitFunction<Func>
+	template<typename Func, VisitStrategy visit_strategy = VisitStrategy::BREADTH_FIRST_SEARCH>
+		requires VisitFunction<Func>
 	void visit(const std::vector<std::shared_ptr<AbstractNode>>& node, Func fun)
 	{
-		if constexpr (visit_strategy == VisitStrategy::BREADTH_FIRST_SEARCH)
+		if constexpr(visit_strategy == VisitStrategy::BREADTH_FIRST_SEARCH)
 		{
 			detail::visit_bfs(node, fun);
 		}
@@ -73,11 +73,11 @@ namespace herd::translator
 		}
 	}
 
-	template <typename Func, VisitStrategy visit_strategy = VisitStrategy::BREADTH_FIRST_SEARCH>
-	requires ConstVisitFunction<Func>
+	template<typename Func, VisitStrategy visit_strategy = VisitStrategy::BREADTH_FIRST_SEARCH>
+		requires ConstVisitFunction<Func>
 	void visit(const std::vector<std::shared_ptr<AbstractNode>>& node, Func fun)
 	{
-		if constexpr (visit_strategy == VisitStrategy::BREADTH_FIRST_SEARCH)
+		if constexpr(visit_strategy == VisitStrategy::BREADTH_FIRST_SEARCH)
 		{
 			detail::visit_bfs(node, fun);
 		}

@@ -1,18 +1,19 @@
 #ifndef LIBHERD_CSV_VALUE_MAPPERS_HPP
 #define LIBHERD_CSV_VALUE_MAPPERS_HPP
 
-#include <string_view>
 #include <charconv>
-#include <stdexcept>
-#include <utility>
 #include <limits>
+#include <stdexcept>
+#include <string_view>
+#include <utility>
 
 
 namespace herd::utils
 {
 	namespace detail
 	{
-		template<typename T, typename... Ts> inline constexpr bool is_in_v = std::disjunction_v<std::is_same<T, Ts>...>;
+		template<typename T, typename... Ts>
+		inline constexpr bool is_in_v = std::disjunction_v<std::is_same<T, Ts>...>;
 
 		template<typename T>
 		concept CSVMapperSignedType = is_in_v<T, int8_t, int16_t, int32_t, int64_t>;
@@ -44,17 +45,16 @@ namespace herd::utils
 		}
 
 		template<detail::CSVMapperSignedType Type>
-		[[nodiscard]] static Type parse(const std::string_view &raw_view)
+		[[nodiscard]] static Type parse(const std::string_view& raw_view)
 		{
 			long long value;
 			const auto begin = raw_view.data();
 			const auto end = begin + raw_view.size();
 
-			if (
+			if(
 					const auto result = std::from_chars(begin, end, value);
 					result.ec == std::errc::invalid_argument || result.ec == std::errc::result_out_of_range
-					|| result.ptr != end || !std::in_range<Type>(value)
-	        )
+					|| result.ptr != end || !std::in_range<Type>(value))
 			{
 				throw InvalidCsvValueError("Invalid value for provided field type.");
 			}
@@ -63,17 +63,16 @@ namespace herd::utils
 		}
 
 		template<detail::CSVMapperUnsignedType Type>
-		[[nodiscard]] static Type parse(const std::string_view &raw_view)
+		[[nodiscard]] static Type parse(const std::string_view& raw_view)
 		{
 			unsigned long value;
 			const auto begin = raw_view.data();
 			const auto end = begin + raw_view.size();
 
-			if (
+			if(
 					const auto result = std::from_chars(begin, end, value);
 					result.ec == std::errc::invalid_argument || result.ec == std::errc::result_out_of_range
-					|| result.ptr != end || !std::in_range<Type>(value)
-	        )
+					|| result.ptr != end || !std::in_range<Type>(value))
 			{
 				throw InvalidCsvValueError("Invalid value for provided field type.");
 			}
@@ -82,10 +81,10 @@ namespace herd::utils
 		}
 
 		template<typename Type>
-		[[nodiscard]] bool parse(const std::string_view &raw_view)
-		requires std::is_same_v<bool, Type>
+		[[nodiscard]] bool parse(const std::string_view& raw_view)
+			requires std::is_same_v<bool, Type>
 		{
-			if (raw_view.size() != 1 || (raw_view[0] != '0' && raw_view[0] != '1'))
+			if(raw_view.size() != 1 || (raw_view[0] != '0' && raw_view[0] != '1'))
 			{
 				throw InvalidCsvValueError("Invalid value for BIT field");
 			}

@@ -6,7 +6,8 @@
 namespace herd::utils
 {
 	ThreadPool::ThreadPool(std::size_t max_thread_count) noexcept
-		:max_threads_(max_thread_count)
+		:
+		max_threads_(max_thread_count)
 	{}
 
 	ThreadPool::~ThreadPool()
@@ -37,12 +38,13 @@ namespace herd::utils
 	}
 
 	ThreadPool::PooledThread::PooledThread(ThreadPool& pool) noexcept
-		:pool_(pool)
+		:
+		pool_(pool)
 	{}
 
 	void ThreadPool::PooledThread::start()
 	{
-		thread_ = std::jthread([this, &pool=pool_]() {
+		thread_ = std::jthread([this, &pool = pool_]() {
 			ThreadPool::PooledThread::thread_body((*this), pool);
 		});
 	}

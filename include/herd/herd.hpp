@@ -3,8 +3,8 @@
 
 #include "context/context_builder.hpp"
 
-#include "crypto/keyring.hpp"
 #include "crypto/binfhe/binfhe.hpp"
+#include "crypto/keyring.hpp"
 
 #include "backend/remote/remote_backend.hpp"
 

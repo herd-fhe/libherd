@@ -1,8 +1,8 @@
 #ifndef LIBHERD_PROGRESS_BAR_HPP
 #define LIBHERD_PROGRESS_BAR_HPP
 
-#include <mutex>
 #include <iostream>
+#include <mutex>
 
 
 namespace herd::utils

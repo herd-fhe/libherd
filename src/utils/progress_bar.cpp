@@ -7,34 +7,34 @@ namespace herd::utils
 {
 	void ProgressBar::set_progress(float value)
 	{
-		std::unique_lock update_lock {mutex_};
+		std::unique_lock update_lock{mutex_};
 
 		progress_ = value;
 	}
 
 	void ProgressBar::set_completed(bool completed)
 	{
-		std::unique_lock update_lock {mutex_};
+		std::unique_lock update_lock{mutex_};
 
 		completed_ = completed;
 	}
 
 	void ProgressBar::set_status(std::string_view status)
 	{
-		std::unique_lock update_lock {mutex_};
+		std::unique_lock update_lock{mutex_};
 
 		status_ = status;
 	}
 
 	void ProgressBar::set_bar_width(std::size_t width)
 	{
-		std::unique_lock update_lock {mutex_};
+		std::unique_lock update_lock{mutex_};
 
 		width_ = width;
 	}
 	void ProgressBar::write(std::ostream& stream)
 	{
-		std::unique_lock write_lock {mutex_};
+		std::unique_lock write_lock{mutex_};
 		stream << "\r" << std::flush;
 
 		if(completed_)
@@ -60,8 +60,8 @@ namespace herd::utils
 		}
 		remaining -= full_symbols;
 
-		bool ends_with_half = halves%2 == 1;
-		if (ends_with_half)
+		bool ends_with_half = halves % 2 == 1;
+		if(ends_with_half)
 		{
 			stream << half_fill_left_;
 			remaining -= 1;
@@ -69,13 +69,13 @@ namespace herd::utils
 
 		stream << termcolor::bright_grey;
 
-		if (!ends_with_half && remaining > 0)
+		if(!ends_with_half && remaining > 0)
 		{
 			stream << half_fill_right_;
 			remaining -= 1;
 		}
 
-		for (std::size_t i = 0; i < remaining; ++i)
+		for(std::size_t i = 0; i < remaining; ++i)
 		{
 			stream << fill_;
 		}

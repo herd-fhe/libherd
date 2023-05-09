@@ -25,7 +25,7 @@ namespace herd::storage
 		using const_reference = const value_type&;
 
 		template<typename... Args>
-		requires std::is_constructible_v<CellType, Args...>
+			requires std::is_constructible_v<CellType, Args...>
 		void emplace_back(Args&&... args);
 
 		[[nodiscard]] const_reference at(size_type pos) const;
@@ -33,13 +33,14 @@ namespace herd::storage
 
 		[[nodiscard]] bool empty() const override;
 		[[nodiscard]] size_type size() const override;
+
 	private:
 		std::vector<CellType> values_;
 	};
 
 	template<typename CellType>
 	template<typename... Args>
-	requires std::is_constructible_v<CellType, Args...>
+		requires std::is_constructible_v<CellType, Args...>
 	void TypePool<CellType>::emplace_back(Args&&... args)
 	{
 		values_.emplace_back(std::forward<Args>(args)...);

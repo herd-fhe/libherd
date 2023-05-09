@@ -6,9 +6,9 @@
 #include <common.pb.h>
 #include <storage.pb.h>
 
-#include "herd/data_storage/data_frame.hpp"
 #include "herd/common/model/data_type.hpp"
 #include "herd/common/model/schema_type.hpp"
+#include "herd/data_storage/data_frame.hpp"
 
 
 namespace herd

@@ -24,7 +24,7 @@ namespace herd::crypto
 	std::set<common::SchemaType> CryptoFactory::registered_schemas() noexcept
 	{
 		std::set<common::SchemaType> schemas;
-		for (const auto& implementations = get_internal_map(); const auto&[key, val]: implementations)
+		for(const auto& implementations = get_internal_map(); const auto& [key, val]: implementations)
 		{
 			schemas.insert(key);
 		}
@@ -53,7 +53,8 @@ namespace herd::crypto
 
 	static bool binfhe_registered = CryptoFactory::register_crypto(
 			common::SchemaType::BINFHE,
-			[](IKeyset& keyset){
+			[](IKeyset& keyset)
+			{
 				return std::make_unique<binfhe::detail::CryptoImpl>(keyset);
 			}
 	);

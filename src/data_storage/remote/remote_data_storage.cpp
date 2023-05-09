@@ -10,8 +10,8 @@
 
 namespace herd::storage
 {
-	RemoteDataStorage::RemoteDataStorage(Session& session, RemoteBackend& backend)
-	:   session_(session), backend_(backend)
+	RemoteDataStorage::RemoteDataStorage(Session& session, RemoteBackend& backend):
+		session_(session), backend_(backend)
 	{
 	}
 
@@ -22,7 +22,7 @@ namespace herd::storage
 
 		std::vector<DataFrame::column_type_key_type> column_types;
 		column_types.reserve(columns.size());
-		std::ranges::transform(columns, std::back_inserter(column_types), [](const auto column){ return column.type; });
+		std::ranges::transform(columns, std::back_inserter(column_types), [](const auto column) { return column.type; });
 
 		auto next_row_bytes = [&stream, column_types, &crypto](std::vector<std::byte>& row_bytes)
 		{
@@ -70,7 +70,7 @@ namespace herd::storage
 				std::inserter(new_data_frame_uuids, std::begin(new_data_frame_uuids)),
 				std::less<>());
 
-		for (auto& [name, frame]: data_frames_)
+		for(auto& [name, frame]: data_frames_)
 		{
 			if(!alive_data_frame_uuids.contains(frame->uuid()))
 			{
@@ -78,9 +78,9 @@ namespace herd::storage
 			}
 		}
 
-		for (auto& frame: remote_data_frames)
+		for(auto& frame: remote_data_frames)
 		{
-			if (new_data_frame_uuids.contains(frame->uuid()))
+			if(new_data_frame_uuids.contains(frame->uuid()))
 			{
 				const auto name = frame->name();
 				data_frames_.try_emplace(name, frame);

@@ -1,12 +1,12 @@
 #ifndef LIBHERD_TYPE_POOL_FACTORY_HPP
 #define LIBHERD_TYPE_POOL_FACTORY_HPP
 
-#include <unordered_map>
-#include <memory>
 #include <functional>
+#include <memory>
+#include <unordered_map>
 
-#include "herd/type.hpp"
 #include "herd/data_storage/local/type_pool.hpp"
+#include "herd/type.hpp"
 
 
 namespace herd::storage

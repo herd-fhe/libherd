@@ -1,9 +1,9 @@
 #ifndef LIBHERD_REMOTE_DATA_FRAME_HPP
 #define LIBHERD_REMOTE_DATA_FRAME_HPP
 
-#include "herd/data_storage/data_frame.hpp"
-#include "herd/common/uuid.hpp"
 #include "herd/common/model/schema_type.hpp"
+#include "herd/common/uuid.hpp"
+#include "herd/data_storage/data_frame.hpp"
 
 
 namespace herd
@@ -44,11 +44,9 @@ namespace herd::storage
 				RemoteBackend& remote_backend);
 	};
 
-	struct RemoteDataFrame::make_shared_enabler: public RemoteDataFrame
-	{
+	struct RemoteDataFrame::make_shared_enabler: public RemoteDataFrame {
 		template<typename... Args>
-		explicit make_shared_enabler(Args&&... args)
-			:
+		explicit make_shared_enabler(Args&&... args):
 			RemoteDataFrame(std::forward<Args>(args)...)
 		{}
 	};

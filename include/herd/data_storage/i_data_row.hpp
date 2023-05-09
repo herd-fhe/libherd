@@ -17,7 +17,6 @@ namespace herd::storage
 		explicit IDataRow(const std::shared_ptr<DataFrame>& frame);
 
 		std::weak_ptr<DataFrame> frame_;
-
 	};
 }
 

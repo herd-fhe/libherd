@@ -1,8 +1,8 @@
 #ifndef LIBHERD_CIRCUIT_GRAPH_HPP
 #define LIBHERD_CIRCUIT_GRAPH_HPP
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "herd/translator/common/tree/node/input_node.hpp"
 #include "herd/translator/common/tree/node/output_node.hpp"

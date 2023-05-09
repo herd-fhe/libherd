@@ -35,7 +35,7 @@ namespace herd::storage
 		return std::move(future);
 	}
 
-	const std::unordered_map<std::string, std::shared_ptr<DataFrame>> &DataStorage::data_frames() const
+	const std::unordered_map<std::string, std::shared_ptr<DataFrame>>& DataStorage::data_frames() const
 	{
 		return data_frames_;
 	}

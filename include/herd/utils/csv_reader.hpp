@@ -4,8 +4,8 @@
 #include <istream>
 #include <vector>
 
-#include "herd/utils/csv_value_mappers.hpp"
 #include "herd/type.hpp"
+#include "herd/utils/csv_value_mappers.hpp"
 
 
 namespace herd::utils

@@ -31,10 +31,9 @@ namespace herd
 		void do_upload_key(
 				utils::ProgressPackagedTask<void()>::ProgressUpdateProxy& progress_proxy,
 				UploadKeyState& state,
-				common::UUID session_uuid, common::SchemaType type, std::vector<std::byte> key_data
-		)
+				common::UUID session_uuid, common::SchemaType type, std::vector<std::byte> key_data)
 		{
-			progress_proxy.set_max_step(key_data.size()-1);
+			progress_proxy.set_max_step(key_data.size() - 1);
 			//send metadata
 			{
 				proto::SessionAddKeyRequest request;
@@ -53,7 +52,7 @@ namespace herd
 
 				const size_t to_send = std::min(BLOCK_SIZE, key_data.size() - sent);
 				data_request->mutable_blob()->resize(to_send);
-			    std::memcpy(data_request->mutable_blob()->data(), reinterpret_cast<char*>(key_data.data()) + sent, to_send);
+				std::memcpy(data_request->mutable_blob()->data(), reinterpret_cast<char*>(key_data.data()) + sent, to_send);
 				state.writer->Write(request);
 
 				sent += to_send;
@@ -68,8 +67,7 @@ namespace herd
 				UploadFrameState& state,
 				common::UUID session_uuid, const std::string& name,
 				common::SchemaType type, const std::vector<storage::DataFrame::ColumnParameters>& columns,
-				std::size_t row_count
-		)
+				std::size_t row_count)
 		{
 			proto::DataFrameAddRequest request;
 			const auto info_request = request.mutable_info();
@@ -91,8 +89,8 @@ namespace herd
 		}
 
 		[[maybe_unused]] void do_upload_data_frame(utils::ProgressPackagedTask<std::shared_ptr<storage::DataFrame>()>::ProgressUpdateProxy& progress_proxy,
-								  UploadFrameState& state,
-								  std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
+												   UploadFrameState& state,
+												   std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 		{
 			progress_proxy.set_max_step(row_count);
 
@@ -127,7 +125,7 @@ namespace herd
 	namespace mapper
 	{
 		TokenMetadataCredentialsPlugin::TokenMetadataCredentialsPlugin(const std::string& token)
-			:token_(BEARER_PREFIX + token)
+		:	token_(BEARER_PREFIX + token)
 		{}
 
 		bool TokenMetadataCredentialsPlugin::IsBlocking() const
@@ -137,8 +135,7 @@ namespace herd
 
 		grpc::Status TokenMetadataCredentialsPlugin::GetMetadata(
 				grpc::string_ref service_url, grpc::string_ref method_name,
-				const grpc::AuthContext& channel_auth_context, std::multimap<grpc::string, grpc::string>* metadata
-		)
+				const grpc::AuthContext& channel_auth_context, std::multimap<grpc::string, grpc::string>* metadata)
 		{
 			static_cast<void>(service_url);
 			static_cast<void>(method_name);
@@ -155,8 +152,9 @@ namespace herd
 		}
 	}
 
-	RemoteBackend::RemoteBackendConnectionImpl::RemoteBackendConnectionImpl(RemoteBackend& backend, utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string  token) noexcept
-		: backend_(backend), pool_(pool), authentication_token_(std::move(token))
+	RemoteBackend::RemoteBackendConnectionImpl::RemoteBackendConnectionImpl(RemoteBackend& backend, utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string token) noexcept
+		:	backend_(backend),
+		pool_(pool), authentication_token_(std::move(token))
 	{
 		if(config.security.has_value())
 		{
@@ -284,10 +282,8 @@ namespace herd
 	void RemoteBackend::RemoteBackendConnectionImpl::setup_authenticated_context(grpc::ClientContext& context) const noexcept
 	{
 		context.set_credentials(
-			grpc::MetadataCredentialsFromPlugin(
-				std::make_unique<mapper::TokenMetadataCredentialsPlugin>(connection_token_)
-			)
-		);
+				grpc::MetadataCredentialsFromPlugin(
+						std::make_unique<mapper::TokenMetadataCredentialsPlugin>(connection_token_)));
 	}
 
 	utils::ProgressFuture<void> RemoteBackend::RemoteBackendConnectionImpl::add_key(const common::UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
@@ -325,8 +321,7 @@ namespace herd
 			const common::UUID& session_uuid, const std::string& name,
 			const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type,
 			std::size_t row_count,
-			utils::MovableFunction<bool(std::vector<std::byte>&)> next_row
-	)
+			utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 	{
 		UploadFrameState state;
 		state.context = std::make_unique<grpc::ClientContext>();

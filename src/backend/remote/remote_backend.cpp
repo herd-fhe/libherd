@@ -10,7 +10,7 @@
 namespace herd
 {
 	RemoteBackend::RemoteBackend(const RemoteBackendConfig& config, std::string token)
-		:pool_(std::make_unique<utils::ThreadPool>(DEFAULT_THREADS)), pimpl_(*this, *pool_, config, std::move(token))
+	:	pool_(std::make_unique<utils::ThreadPool>(DEFAULT_THREADS)), pimpl_(*this, *pool_, config, std::move(token))
 	{
 	}
 

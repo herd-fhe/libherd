@@ -31,7 +31,7 @@ namespace herd::translator::detail
 			auto visit_status = visitor_func(node);
 			if(visit_status == VisitStatus::CONTINUE)
 			{
-				for (const auto& child: node->children())
+				for(const auto& child: node->children())
 				{
 					node_queue.push_back(child.lock());
 				}
@@ -62,9 +62,9 @@ namespace herd::translator::detail
 			visited.insert(node);
 
 			const auto visit_status = visitor_func(node);
-			if (visit_status == VisitStatus::CONTINUE)
+			if(visit_status == VisitStatus::CONTINUE)
 			{
-				for (const auto& child: node->children())
+				for(const auto& child: node->children())
 				{
 					node_queue.push_back(child.lock());
 				}
@@ -97,7 +97,7 @@ namespace herd::translator::detail
 			const auto visit_status = visitor_func(node);
 			if(visit_status == VisitStatus::CONTINUE)
 			{
-				for (const auto& child: node->children())
+				for(const auto& child: node->children())
 				{
 					node_queue.push_back(child.lock());
 				}
@@ -128,9 +128,9 @@ namespace herd::translator::detail
 			visited.insert(node);
 
 			const auto visit_status = visitor_func(node);
-			if (visit_status == VisitStatus::CONTINUE)
+			if(visit_status == VisitStatus::CONTINUE)
 			{
-				for (const auto& child: node->children())
+				for(const auto& child: node->children())
 				{
 					node_queue.push_back(child.lock());
 				}

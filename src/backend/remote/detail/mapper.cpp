@@ -105,7 +105,7 @@ namespace herd::mapper
 		google::protobuf::RepeatedPtrField<proto::ColumnDescriptor> proto_columns;
 		proto_columns.Reserve(static_cast<int>(columns.size()));
 
-		for (const auto& column: columns)
+		for(const auto& column: columns)
 		{
 			const auto proto_column = proto_columns.Add();
 			proto_column->set_name(column.name);

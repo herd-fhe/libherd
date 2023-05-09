@@ -8,13 +8,13 @@
 
 namespace herd::translator
 {
-    class ITranslator
-    {
-    public:
-        virtual ~ITranslator() = default;
+	class ITranslator
+	{
+	public:
+		virtual ~ITranslator() = default;
 
-        virtual std::shared_ptr<CircuitGraph> translate(std::string_view source) = 0;
-    };
+		virtual std::shared_ptr<CircuitGraph> translate(std::string_view source) = 0;
+	};
 }
 
 #endif //LIBHERD_I_TRANSLATOR_HPP

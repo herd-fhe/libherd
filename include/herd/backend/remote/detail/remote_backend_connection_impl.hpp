@@ -33,7 +33,7 @@ namespace herd
 	class RemoteBackend::RemoteBackendConnectionImpl
 	{
 	public:
-		explicit RemoteBackendConnectionImpl(RemoteBackend& backend, utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string  token) noexcept;
+		explicit RemoteBackendConnectionImpl(RemoteBackend& backend, utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string token) noexcept;
 
 		void connect();
 
@@ -47,8 +47,7 @@ namespace herd
 				const common::UUID& session_uuid, const std::string& name,
 				const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type,
 				std::size_t row_count,
-				utils::MovableFunction<bool(std::vector<std::byte>&)> next_row
-		);
+				utils::MovableFunction<bool(std::vector<std::byte>&)> next_row);
 
 		std::vector<std::shared_ptr<storage::DataFrame>> list_data_frames(const common::UUID& session_uuid);
 
@@ -73,7 +72,6 @@ namespace herd
 		void authenticate();
 
 		void setup_authenticated_context(grpc::ClientContext& context) const noexcept;
-
 	};
 }
 

@@ -16,7 +16,7 @@ namespace herd::crypto
 		return keyring_.contains(key_type);
 	}
 
-	std::unique_ptr<IKeyset> &Keyring::get_keyset(common::SchemaType key_type)
+	std::unique_ptr<IKeyset>& Keyring::get_keyset(common::SchemaType key_type)
 	{
 		return keyring_.at(key_type);
 	}

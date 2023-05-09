@@ -40,7 +40,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 		{
 			std::cout << "UUID: " << session.uuid.as_string() << " Name: " << session.name << "\n";
 		}
-		std::cout<<std::endl;
+		std::cout << std::endl;
 	}
 
 	std::cout << "Outside scope\n";
@@ -49,7 +49,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	{
 		std::cout << "UUID: " << session.uuid.as_string() << " Name: " << session.name << "\n";
 	}
-	std::cout<<std::endl;
+	std::cout << std::endl;
 
 	return 0;
 }

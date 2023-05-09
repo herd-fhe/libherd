@@ -35,7 +35,7 @@ namespace herd
 		Context(const Context&) = delete;
 		Context& operator=(const Context&) = delete;
 
-		[[nodiscard]] std::shared_ptr<Session> create_session(const std::string& name, bool auto_destroy=true);
+		[[nodiscard]] std::shared_ptr<Session> create_session(const std::string& name, bool auto_destroy = true);
 		[[nodiscard]] std::vector<SessionInfo> list_sessions() const;
 
 		static ContextBuilder create();
@@ -53,7 +53,7 @@ namespace herd
 	{
 		template<typename... Args>
 		explicit make_shared_enabler(Args&&... args)
-			:   Context(std::forward<Args>(args)...)
+		:	Context(std::forward<Args>(args)...)
 		{}
 	};
 }
