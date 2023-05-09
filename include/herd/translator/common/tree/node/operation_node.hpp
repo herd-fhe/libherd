@@ -7,11 +7,11 @@
 #include <cassert>
 #include <unordered_set>
 
-#include "herd/tree/node/input_node.hpp"
+#include "herd/translator/common/tree/node/input_node.hpp"
 #include "herd/operation.hpp"
 
 
-namespace herd::tree
+namespace herd::translator
 {
 	class OperationNode: public InputNode
 	{

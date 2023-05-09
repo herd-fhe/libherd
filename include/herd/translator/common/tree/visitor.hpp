@@ -2,10 +2,10 @@
 #define LIBHERD_VISITOR_HPP
 
 #include <functional>
-#include "herd/tree/circuit_graph.hpp"
+#include "herd/translator/common/tree/circuit_graph.hpp"
 
 
-namespace herd::tree
+namespace herd::translator
 {
 	enum class VisitStatus
 	{

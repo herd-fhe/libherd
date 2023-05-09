@@ -3,11 +3,11 @@
 
 #include <unordered_set>
 
-#include "herd/tree/node/abstract_node.hpp"
+#include "herd/translator/common/tree/node/abstract_node.hpp"
 #include "herd/operation.hpp"
 
 
-namespace herd::tree
+namespace herd::translator
 {
 	class InputNode: public AbstractNode
 	{

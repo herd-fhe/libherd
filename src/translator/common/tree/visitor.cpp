@@ -1,10 +1,10 @@
-#include "herd/tree/visitor.hpp"
+#include "herd/translator/common/tree/visitor.hpp"
 
 #include <deque>
 #include <unordered_set>
 
 
-namespace herd::tree::detail
+namespace herd::translator::detail
 {
 	void visit_bfs(const std::vector<std::shared_ptr<AbstractNode>>& nodes, const visitor_function_t& visitor_func)
 	{

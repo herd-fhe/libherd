@@ -4,7 +4,7 @@
 #include <cstdint>
 
 
-namespace herd::tree
+namespace herd::translator
 {
 	class AbstractNode
 	{

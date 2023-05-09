@@ -74,6 +74,16 @@ find_package(OpenMP REQUIRED)
 add_subdirectory(third-party/spdlog EXCLUDE_FROM_ALL)
 add_subdirectory(third-party/termcolor EXCLUDE_FROM_ALL)
 
+include(FetchContent)
+
+FetchContent_Declare(
+        xlscc
+        URL https://github.com/herd-fhe/xlscc-builder/releases/download/xlscc-d9c688df88/xlscc-release.tar.gz
+
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/bin
+)
+FetchContent_MakeAvailable(xlscc)
+
 # Targets
 
 ## Herd - proto
@@ -93,8 +103,8 @@ target_sources(
         src/context/context.cpp
         src/context/context_builder.cpp
         src/session/session.cpp
-        src/tree/circuit_graph.cpp
-        src/tree/visitor.cpp
+        src/translator/common/tree/circuit_graph.cpp
+        src/translator/common/tree/visitor.cpp
 
         src/backend/remote/remote_backend.cpp
         src/backend/remote/detail/remote_backend_connection_impl.cpp
@@ -109,6 +119,8 @@ target_sources(
         src/crypto/binfhe/detail/crypto.cpp
         src/crypto/binfhe/detail/keyset.cpp
         src/crypto/binfhe/detail/ciphertext.cpp
+
+        src/translator/xlscc/detail/translator.cpp
 
         src/data_storage/data_storage.cpp
         src/data_storage/data_frame.cpp
@@ -137,12 +149,16 @@ target_sources(
         include/herd/backend/remote/detail/mapper.hpp
         include/herd/backend/remote/tree_dump.hpp
 
-        include/herd/tree/node/abstract_node.hpp
-        include/herd/tree/node/input_node.hpp
-        include/herd/tree/node/output_node.hpp
-        include/herd/tree/node/operation_node.hpp
-        include/herd/tree/circuit_graph.hpp
-        include/herd/tree/visitor.hpp
+        include/herd/translator/common/tree/node/abstract_node.hpp
+        include/herd/translator/common/tree/node/input_node.hpp
+        include/herd/translator/common/tree/node/output_node.hpp
+        include/herd/translator/common/tree/node/operation_node.hpp
+        include/herd/translator/common/tree/circuit_graph.hpp
+        include/herd/translator/common/tree/visitor.hpp
+
+        include/herd/translator/i_translator.hpp
+
+        include/herd/translator/xlscc/detail/translator.hpp
 
         include/herd/data_storage/data_storage.hpp
         include/herd/data_storage/data_frame.hpp

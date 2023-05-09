@@ -4,11 +4,11 @@
 #include <vector>
 #include <memory>
 
-#include "herd/tree/node/input_node.hpp"
-#include "herd/tree/node/output_node.hpp"
+#include "herd/translator/common/tree/node/input_node.hpp"
+#include "herd/translator/common/tree/node/output_node.hpp"
 
 
-namespace herd::tree
+namespace herd::translator
 {
 	class CircuitGraph
 	{
