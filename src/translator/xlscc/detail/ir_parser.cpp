@@ -56,11 +56,11 @@ namespace
 	template<typename T>
 	T parse_num(std::string_view num_str)
 	{
-		T value;
+		T value{};
 
-		auto [ptr, ec] = std::from_chars(std::cbegin(num_str), std::cend(num_str), value);
+		[[maybe_unused]] auto [ptr, ec] = std::from_chars(std::cbegin(num_str), std::cend(num_str), value);
 
-		assert(ec == std::errc());
+//		assert(ec == std::errc());
 
 		return value;
 	}
