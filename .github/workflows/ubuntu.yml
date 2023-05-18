@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install build-essential autoconf libtool pkg-config libomp-dev ninja-build
+          sudo apt install build-essential autoconf libtool pkg-config libomp-dev ninja-build clang-15
         shell: bash
 
       - uses: ./proto/action/install-grpc
@@ -90,7 +90,7 @@ jobs:
       - name: Install clang
         run: |
           sudo apt update
-          sudo apt install clang-13
+          sudo apt install clang-15
         shell: bash
 
       - name: Install dependencies
