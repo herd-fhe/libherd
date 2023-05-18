@@ -76,6 +76,8 @@ jobs:
       - name: Test
         working-directory: ${{github.workspace}}/build
         run: ctest -C Release
+        env:
+          HERD_HOME: ${{github.workspace}}/build/xls
 
   clang_build:
     runs-on: ubuntu-22.04
@@ -147,3 +149,5 @@ jobs:
       - name: Test
         working-directory: ${{github.workspace}}/build
         run: ctest -C Release
+        env:
+          HERD_HOME: ${{github.workspace}}/build/xls

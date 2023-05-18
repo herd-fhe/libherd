@@ -3,17 +3,18 @@
 
 #include <memory>
 
-#include "herd/translator/common/tree/circuit_graph.hpp"
+#include "herd/translator/common/tree/circuit.hpp"
 
 
 namespace herd::translator
 {
-	class ITranslator
+	class ICompiler
 	{
 	public:
-		virtual ~ITranslator() = default;
 
-		virtual std::shared_ptr<CircuitGraph> translate(std::string_view source) = 0;
+		virtual ~ICompiler() = default;
+
+		virtual Circuit translate(std::string_view source) = 0;
 	};
 }
 
