@@ -19,7 +19,7 @@ namespace herd::translator::xlscc::detail
 	{
 	}
 
-	Circuit Compiler::translate(std::string_view source)
+	common::Circuit Compiler::translate(std::string_view source)
 	{
 		const auto source_path = temp_storge_.create_temp_file();
 		utils::TempStorage::fill_file(source_path, source);

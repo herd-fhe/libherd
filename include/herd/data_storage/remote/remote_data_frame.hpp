@@ -25,7 +25,6 @@ namespace herd::storage
 		friend class herd::RemoteBackend;
 		struct make_shared_enabler;
 
-		common::UUID uuid_;
 		common::SchemaType schema_type_;
 
 		size_t rows_count_;
@@ -44,7 +43,8 @@ namespace herd::storage
 				RemoteBackend& remote_backend);
 	};
 
-	struct RemoteDataFrame::make_shared_enabler: public RemoteDataFrame {
+	struct RemoteDataFrame::make_shared_enabler: public RemoteDataFrame
+	{
 		template<typename... Args>
 		explicit make_shared_enabler(Args&&... args):
 			RemoteDataFrame(std::forward<Args>(args)...)

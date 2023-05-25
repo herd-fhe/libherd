@@ -7,6 +7,7 @@
 #include <auth.grpc.pb.h>
 #include <session.grpc.pb.h>
 #include <storage.grpc.pb.h>
+#include <execution.grpc.pb.h>
 
 #include "herd/backend/remote/remote_backend.hpp"
 #include "herd/session/session.hpp"
@@ -51,6 +52,11 @@ namespace herd
 
 		std::vector<std::shared_ptr<storage::DataFrame>> list_data_frames(const common::UUID& session_uuid);
 
+		executor::JobInfo schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan);
+		std::vector<executor::JobState> list_jobs(const common::UUID& session_uuid);
+		executor::JobInfo describe_job(const common::UUID& session_uuid, const common::UUID& uuid);
+		executor::JobState get_job_state(const common::UUID& session_uuid, const common::UUID& uuid);
+
 	private:
 		RemoteBackend& backend_;
 		utils::ThreadPool& pool_;
@@ -67,6 +73,7 @@ namespace herd
 		std::unique_ptr<herd::proto::Auth::Stub> auth_service_stub_;
 		std::unique_ptr<herd::proto::Session::Stub> session_service_stub_;
 		std::unique_ptr<herd::proto::Storage::Stub> storage_service_stub_;
+		std::unique_ptr<herd::proto::Execution::Stub> execution_service_stub_;
 
 		void create_stubs();
 		void authenticate();

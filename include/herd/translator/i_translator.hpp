@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "herd/translator/common/tree/circuit.hpp"
+#include "herd/common/model/circuit/circuit.hpp"
 
 
 namespace herd::translator
@@ -14,7 +14,7 @@ namespace herd::translator
 
 		virtual ~ICompiler() = default;
 
-		virtual Circuit translate(std::string_view source) = 0;
+		virtual common::Circuit translate(std::string_view source) = 0;
 	};
 }
 

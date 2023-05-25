@@ -5,9 +5,9 @@
 
 namespace herd::translator::xlscc::detail
 {
-	Circuit transpile_ir_program(const ProgramDefinition& definition)
+	common::Circuit transpile_ir_program(const ProgramDefinition& definition)
 	{
-		Circuit circuit;
+		common::Circuit circuit;
 
 		const auto& main = definition.main_function;
 		circuit.input = main.header.first;
@@ -15,7 +15,7 @@ namespace herd::translator::xlscc::detail
 
 		std::unordered_map<unsigned int, unsigned int> indirect_input_access;
 		std::unordered_map<unsigned int, std::vector<unsigned int>> indirect_output_access;
-		std::unordered_map<unsigned int, decltype(Circuit::circuit_graph)::const_iterator> id_node_map;
+		std::unordered_map<unsigned int, decltype(common::Circuit::circuit_graph)::const_iterator> id_node_map;
 
 		auto& graph = circuit.circuit_graph;
 
@@ -33,7 +33,7 @@ namespace herd::translator::xlscc::detail
 				{
 					assert(args[2] == 1);
 					const auto input_index = indirect_input_access[args[0]];
-					const auto iterator = graph.emplace(InputNode{input_index, args[1]});
+					const auto iterator = graph.emplace(common::InputNode{input_index, args[1]});
 					id_node_map.try_emplace(output, iterator);
 					break;
 				}
@@ -41,9 +41,9 @@ namespace herd::translator::xlscc::detail
 				case OperationType::OR:
 				{
 					const auto graph_operation = operation.type == OperationType::AND
-														 ? Operation::AND
-														 : Operation::OR;
-					const auto iterator = graph.emplace(OperationNode{graph_operation});
+														 ? common::Operation::AND
+														 : common::Operation::OR;
+					const auto iterator = graph.emplace(common::OperationNode{graph_operation});
 					id_node_map.try_emplace(output, iterator);
 					for(const auto arg: args)
 					{
@@ -56,7 +56,7 @@ namespace herd::translator::xlscc::detail
 				}
 				case OperationType::NOT:
 				{
-						const auto iterator = graph.emplace(OperationNode{Operation::NOT});
+						const auto iterator = graph.emplace(common::OperationNode{common::Operation::NOT});
 						id_node_map.try_emplace(output, iterator);
 
 						assert(id_node_map.contains(args[0]));
@@ -68,7 +68,7 @@ namespace herd::translator::xlscc::detail
 				{
 					assert(args[0] == 0 || args[0] == 1);
 					const bool value = args[0] == 1;
-					const auto iterator = graph.emplace(ConstantNode{value});
+					const auto iterator = graph.emplace(common::ConstantNode{value});
 					id_node_map.try_emplace(output, iterator);
 					break;
 				}
@@ -88,7 +88,7 @@ namespace herd::translator::xlscc::detail
 						{
 							assert(id_node_map.contains(bit_id));
 							const auto& input = id_node_map[bit_id];
-							graph.emplace(input, OutputNode{arg, bit_id});
+							graph.emplace(input, common::OutputNode{arg, bit_id});
 						}
 					}
 					break;

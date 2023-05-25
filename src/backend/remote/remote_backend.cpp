@@ -5,6 +5,8 @@
 #include <utility>
 
 #include "herd/backend/remote/detail/remote_backend_connection_impl.hpp"
+#include "herd/data_storage/remote/remote_data_storage.hpp"
+#include "herd/executor/remote/executor.hpp"
 
 
 namespace herd
@@ -44,6 +46,11 @@ namespace herd
 		return storage::RemoteDataStorage::make_unique(session, *this);
 	}
 
+	std::unique_ptr<executor::IExecutor> RemoteBackend::create_session_executor(Session& session)
+	{
+		return executor::remote::Executor::make_unique(session, *this);
+	}
+
 	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> RemoteBackend::create_data_frame(const common::UUID& session_uuid, const std::string& name, const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 	{
 		return pimpl_->create_data_frame(session_uuid, name, columns, schema_type, row_count, std::move(next_row));
@@ -52,6 +59,26 @@ namespace herd
 	std::vector<std::shared_ptr<storage::DataFrame>> RemoteBackend::list_data_frames(const common::UUID& session_uuid)
 	{
 		return pimpl_->list_data_frames(session_uuid);
+	}
+
+	executor::JobInfo RemoteBackend::schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan)
+	{
+		return pimpl_->schedule_job(session_uuid, plan);
+	}
+
+	std::vector<executor::JobState> RemoteBackend::list_jobs(const common::UUID& session_uuid)
+	{
+		return pimpl_->list_jobs(session_uuid);
+	}
+
+	executor::JobInfo RemoteBackend::describe_job(const common::UUID& session_uuid, const common::UUID& uuid)
+	{
+		return pimpl_->describe_job(session_uuid, uuid);
+	}
+
+	executor::JobState RemoteBackend::get_job_state(const common::UUID& session_uuid, const common::UUID& uuid)
+	{
+		return pimpl_->get_job_state(session_uuid, uuid);
 	}
 
 	RemoteBackend::~RemoteBackend() = default;

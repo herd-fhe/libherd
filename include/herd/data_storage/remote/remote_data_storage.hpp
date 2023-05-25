@@ -4,6 +4,7 @@
 #include "herd/common/uuid.hpp"
 #include "herd/data_storage/data_storage.hpp"
 
+
 namespace herd
 {
 	class RemoteBackend;
@@ -26,7 +27,7 @@ namespace herd::storage
 		Session& session_;
 		RemoteBackend& backend_;
 
-		explicit RemoteDataStorage(Session& session, RemoteBackend& backend);
+		RemoteDataStorage(Session& session, RemoteBackend& backend);
 		static std::unique_ptr<RemoteDataStorage> make_unique(
 				Session& session, RemoteBackend& backend);
 

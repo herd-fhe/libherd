@@ -22,6 +22,8 @@ namespace herd
 		virtual utils::ProgressFuture<void> add_key(const common::UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data) = 0;
 
 		virtual std::unique_ptr<storage::DataStorage> create_session_storage(Session& session) = 0;
+		virtual std::unique_ptr<executor::IExecutor> create_session_executor(Session& session) = 0;
+
 		virtual std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> create_data_frame(
 				const common::UUID& session_uuid, const std::string& name,
 				const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type,
@@ -30,6 +32,13 @@ namespace herd
 		) = 0;
 
 		virtual std::vector<std::shared_ptr<storage::DataFrame>> list_data_frames(const common::UUID& session_uuid) = 0;
+
+		virtual executor::JobInfo schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan) = 0;
+
+		virtual std::vector<executor::JobState> list_jobs(const common::UUID& session_uuid) = 0;
+		virtual executor::JobInfo describe_job(const common::UUID& session_uuid, const common::UUID& uuid) = 0;
+		virtual executor::JobState get_job_state(const common::UUID& session_uuid, const common::UUID& uuid) = 0;
+
 
 		virtual ~IBackend() = default;
 	};

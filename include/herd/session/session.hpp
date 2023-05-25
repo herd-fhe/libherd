@@ -6,7 +6,8 @@
 
 #include "herd/common/uuid.hpp"
 #include "herd/crypto/keyring.hpp"
-#include "herd/data_storage/remote/remote_data_storage.hpp"
+#include "herd/data_storage/data_storage.hpp"
+#include "herd/executor/i_executor.hpp"
 #include "herd/utils/progress_future.hpp"
 
 
@@ -37,7 +38,9 @@ namespace herd
 		}
 
 		[[nodiscard]] storage::DataStorage& data_storage();
+		[[nodiscard]] executor::IExecutor& executor();
 		[[nodiscard]] crypto::ICrypto& crypto(common::SchemaType schema_type);
+
 		utils::ProgressFuture<void> add_key(std::unique_ptr<crypto::IKeyset> keyset);
 
 		void destroy();
@@ -50,8 +53,10 @@ namespace herd
 		static std::shared_ptr<Session> make_shared(const SessionInfo& info, std::shared_ptr<Context> context, bool auto_destroy);
 
 		void set_storage(std::unique_ptr<storage::DataStorage> storage);
+		void set_executor(std::unique_ptr<executor::IExecutor> executor);
 
 		std::unique_ptr<storage::DataStorage> storage_;
+		std::unique_ptr<executor::IExecutor> executor_;
 
 		bool auto_destroy_;
 		bool destroyed_{false};

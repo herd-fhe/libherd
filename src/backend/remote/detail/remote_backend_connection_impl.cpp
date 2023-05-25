@@ -2,6 +2,8 @@
 
 #include <utility>
 
+#include "execution.grpc.pb.h"
+
 #include "herd/backend/remote/detail/mapper.hpp"
 #include "herd/backend/remote/detail/remote_backend_connection_impl.hpp"
 #include "herd/data_storage/remote/remote_data_frame.hpp"
@@ -187,6 +189,7 @@ namespace herd
 		auth_service_stub_ = herd::proto::Auth::NewStub(channel_);
 		session_service_stub_ = herd::proto::Session::NewStub(channel_);
 		storage_service_stub_ = herd::proto::Storage::NewStub(channel_);
+		execution_service_stub_ = herd::proto::Execution::NewStub(channel_);
 	}
 
 	void RemoteBackend::RemoteBackendConnectionImpl::authenticate()
@@ -383,5 +386,121 @@ namespace herd
 		);
 
 		return data_frames;
+	}
+
+	executor::JobInfo RemoteBackend::RemoteBackendConnectionImpl::schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan)
+	{
+		grpc::ClientContext client_context{};
+		setup_authenticated_context(client_context);
+
+		proto::ScheduleJobRequest request;
+		request.set_session_uuid(session_uuid.as_string());
+
+		const auto plan_proto = request.mutable_plan();
+		plan_proto->CopyFrom(mapper::to_proto(plan));
+
+		proto::JobDescription response;
+		if(auto status = execution_service_stub_->schedule_job(&client_context, request, &response); !status.ok())
+		{
+			//todo: only happy path properly handled by now
+			throw RemoteConnectionError(status.error_message());
+		}
+
+		return executor::JobInfo{
+				common::UUID(response.uuid()),
+				mapper::to_model(response.plan())
+		};
+	}
+
+	std::vector<executor::JobState> RemoteBackend::RemoteBackendConnectionImpl::list_jobs(const common::UUID& session_uuid)
+	{
+		grpc::ClientContext client_context;
+		setup_authenticated_context(client_context);
+
+		proto::ListJobsRequest request;
+		request.set_session_uuid(session_uuid.as_string());
+
+		proto::JobStateList response;
+		if(auto status = execution_service_stub_->list_jobs(&client_context, request, &response); !status.ok())
+		{
+			//todo: only happy path properly handled by now
+			throw RemoteConnectionError(status.error_message());
+		}
+
+		std::vector<executor::JobState> job_states;
+		job_states.reserve(static_cast<std::size_t>(response.states().size()));
+
+		for(auto job_state_proto: response.states())
+		{
+			const std::optional<unsigned long> current_stage = job_state_proto.has_current_stage()
+											   ? std::make_optional(job_state_proto.current_stage())
+											   : std::nullopt;
+
+			const std::optional<std::string> message = job_state_proto.has_message()
+										 ? std::make_optional(job_state_proto.message())
+										 : std::nullopt;
+
+			job_states.emplace_back(
+					executor::JobState{
+							common::UUID(job_state_proto.uuid()),
+							mapper::to_model(job_state_proto.status()),
+							current_stage,
+							message
+					}
+			);
+		}
+		return job_states;
+	}
+
+	executor::JobInfo RemoteBackend::RemoteBackendConnectionImpl::describe_job(const common::UUID& session_uuid, const common::UUID& uuid)
+	{
+		grpc::ClientContext client_context;
+		setup_authenticated_context(client_context);
+
+		proto::DescribeJobRequest request;
+		request.set_session_uuid(session_uuid.as_string());
+		request.set_uuid(uuid.as_string());
+
+		proto::JobDescription response;
+		if(auto status = execution_service_stub_->describe_job(&client_context, request, &response); !status.ok())
+		{
+			//todo: only happy path properly handled by now
+			throw RemoteConnectionError(status.error_message());
+		}
+
+		return executor::JobInfo{
+				common::UUID(response.uuid()),
+				mapper::to_model(response.plan())
+		};
+	}
+
+	executor::JobState RemoteBackend::RemoteBackendConnectionImpl::get_job_state(const common::UUID& session_uuid, const common::UUID& uuid)
+	{
+		grpc::ClientContext client_context;
+		setup_authenticated_context(client_context);
+
+		proto::GetJobStateRequest request;
+		request.set_session_uuid(session_uuid.as_string());
+		request.set_uuid(uuid.as_string());
+
+		proto::JobState response;
+		if(auto status = execution_service_stub_->get_job_state(&client_context, request, &response); !status.ok())
+		{
+			//todo: only happy path properly handled by now
+			throw RemoteConnectionError(status.error_message());
+		}
+		const std::optional<unsigned long> current_stage = response.has_current_stage()
+																   ? std::make_optional(response.current_stage())
+																   : std::nullopt;
+
+		const std::optional<std::string> message = response.has_message()
+														   ? std::make_optional(response.message())
+														   : std::nullopt;
+		return executor::JobState{
+				common::UUID(response.uuid()),
+				mapper::to_model(response.status()),
+				current_stage,
+				message
+		};
 	}
 }

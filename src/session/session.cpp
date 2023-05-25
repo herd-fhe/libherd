@@ -34,6 +34,11 @@ namespace herd
 		storage_ = std::move(storage);
 	}
 
+	void Session::set_executor(std::unique_ptr<executor::IExecutor> executor)
+	{
+		executor_ = std::move(executor);
+	}
+
 	void Session::destroy()
 	{
 		destroyed_ = true;
@@ -43,6 +48,11 @@ namespace herd
 	storage::DataStorage& Session::data_storage()
 	{
 		return *storage_;
+	}
+
+	executor::IExecutor& Session::executor()
+	{
+		return *executor_;
 	}
 
 	utils::ProgressFuture<void> Session::add_key(std::unique_ptr<crypto::IKeyset> keyset)

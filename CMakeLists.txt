@@ -136,13 +136,16 @@ target_sources(
         src/data_storage/remote/remote_data_storage.cpp
         src/data_storage/remote/remote_data_frame.cpp
 
+        src/executor/job.cpp
+
+        src/executor/remote/executor.cpp
+        src/executor/remote/job.cpp
+
         src/utils/csv_reader.cpp
         src/utils/progress_bar.cpp
         src/utils/thread_pool.cpp
         src/utils/temp_storage.cpp
         src/utils/path.cpp
-
-        include/herd/operation.hpp
 
         include/herd/context/context.hpp
         include/herd/context/context_builder.hpp
@@ -152,9 +155,6 @@ target_sources(
         include/herd/backend/remote/remote_backend.hpp
         include/herd/backend/remote/detail/remote_backend_connection_impl.hpp
         include/herd/backend/remote/detail/mapper.hpp
-
-        include/herd/translator/common/tree/node/nodes.hpp
-        include/herd/translator/common/tree/circuit.hpp
 
         include/herd/translator/i_translator.hpp
 
@@ -173,6 +173,12 @@ target_sources(
 
         include/herd/data_storage/remote/remote_data_storage.hpp
         include/herd/data_storage/remote/remote_data_frame.hpp
+
+        include/herd/executor/i_executor.hpp
+        include/herd/executor/job.hpp
+
+        include/herd/executor/remote/executor.hpp
+        include/herd/executor/remote/job.hpp
 
         include/herd/crypto/i_crypto.hpp
         include/herd/crypto/crypto_config.hpp

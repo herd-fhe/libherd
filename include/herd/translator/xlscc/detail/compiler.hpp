@@ -16,7 +16,7 @@ namespace herd::translator::xlscc::detail
 		Compiler(utils::TempStorage& temp_storage);
 		~Compiler() override;
 
-		Circuit translate(std::string_view source) override;
+		common::Circuit translate(std::string_view source) override;
 
 	private:
 		utils::TempStorage& temp_storge_;
