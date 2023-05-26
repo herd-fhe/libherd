@@ -46,4 +46,10 @@ namespace herd
 	{
 		return backend_->create_session_storage(session);
 	}
+
+	std::unique_ptr<executor::IExecutor> Context::create_session_executor(herd::Session& session)
+	{
+		return backend_->create_session_executor(session);
+	}
 }
+

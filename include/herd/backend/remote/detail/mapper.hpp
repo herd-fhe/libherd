@@ -32,6 +32,7 @@ namespace herd
 		[[nodiscard]] common::Circuit to_model(const proto::Circuit& circuit_proto);
 		[[nodiscard]] common::stage_t to_model(const proto::Stage& stage_proto);
 		[[nodiscard]] common::ExecutionPlan to_model(const proto::ExecutionPlan& execution_plan_proto);
+
 		[[nodiscard]] proto::SchemaType to_proto(common::SchemaType type);
 		[[nodiscard]] proto::DataType to_proto(common::DataType data_type);
 		[[nodiscard]] google::protobuf::RepeatedPtrField<proto::ColumnDescriptor> to_proto(const std::vector<storage::DataFrame::ColumnParameters>& columns);

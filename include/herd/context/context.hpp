@@ -47,6 +47,7 @@ namespace herd
 		utils::ProgressFuture<void> add_key(const common::UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data);
 
 		[[nodiscard]] std::unique_ptr<storage::DataStorage> create_session_storage(Session& session);
+		[[nodiscard]] std::unique_ptr<executor::IExecutor> create_session_executor(Session& session);
 	};
 
 	struct Context::make_shared_enabler: public Context

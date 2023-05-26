@@ -38,7 +38,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	setup_binfhe_keyset(session);
 
 	std::stringstream data_frame_csv;
-	for(size_t i = 0; i < 8; ++i)
+	for(size_t i = 0; i < 1; ++i)
 	{
 		data_frame_csv << std::to_string(i)
 					   << "\n";
@@ -68,18 +68,18 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	std::cout << std::flush;
 
 	const std::string mapper_code =
-			"struct in_output\n"
+			"struct in_input\n"
 			"{\n"
 			"    short in;\n"
 			"};\n"
-			"struct out_input\n"
+			"struct out_output\n"
 			"{\n"
 			"    short out;\n"
 			"};\n"
 			"#pragma hls_top\n"
 			"out_output top_add3(in_input input)\n"
 			"{\n"
-			"    return {input.a * 2};\n"
+			"    return {input.in * 2};\n"
 			"}";
 
 	herd::utils::TempStorage storage;
@@ -94,7 +94,18 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	prev = plan.execution_graph.emplace(prev, common::MapperStage{mapper_circuit});
 	plan.execution_graph.emplace(prev, common::OutputStage{"output"});
 
-	const auto job = session->executor().schedule(plan);
+	{
+		const auto job = session->executor().schedule(plan);
+		std::cout << "Job scheduled: " << job->uuid().as_string() << std::endl;
+	}
+	std::cout << "Listing jobs:\n";
+
+	auto jobs = session->executor().list_jobs(false);
+	for(std::size_t i = 0; const auto& job: jobs)
+	{
+		std::cout << "\t" << std::to_string(i) << "." << job->uuid().as_string() << "\n";
+	}
+	std::cout << std::endl;
 
 	return 0;
 }

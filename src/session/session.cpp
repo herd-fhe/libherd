@@ -24,7 +24,10 @@ namespace herd
 	{
 		auto session = std::make_shared<make_shared_enabler>(info, context, auto_destroy);
 		auto storage = context->create_session_storage(*session);
+		auto executor = context->create_session_executor(*session);
+
 		session->set_storage(std::move(storage));
+		session->set_executor(std::move(executor));
 
 		return session;
 	}
