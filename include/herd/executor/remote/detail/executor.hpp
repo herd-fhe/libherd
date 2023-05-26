@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include "herd/executor/i_executor.hpp"
-#include "herd/executor/remote/job.hpp"
+#include "herd/executor/remote/detail/job.hpp"
 
 
 namespace herd
@@ -13,11 +13,13 @@ namespace herd
 	class Session;
 }
 
-namespace herd::executor::remote
+namespace herd::executor::remote::detail
 {
 	class Executor: public IExecutor
 	{
 	public:
+		Executor(Session& session, RemoteBackend& backend);
+
 		std::shared_ptr<Job> schedule(const common::ExecutionPlan& plan) override;
 		std::vector<std::shared_ptr<Job>> list_jobs(bool pending_only) override;
 
@@ -30,20 +32,7 @@ namespace herd::executor::remote
 		Session& session_;
 		RemoteBackend& backend_;
 
-		Executor(Session& session, RemoteBackend& backend);
-		static std::unique_ptr<Executor> make_unique(
-				Session& session, RemoteBackend& backend
-		);
-
 		mutable std::unordered_map<common::UUID, std::shared_ptr<JobImpl>> jobs_;
-	};
-
-	struct Executor::make_unique_enabler: public Executor
-	{
-		template<typename... Args>
-		explicit make_unique_enabler(Args&&... args)
-		:	Executor(std::forward<Args>(args)...)
-		{}
 	};
 }
 

@@ -138,8 +138,8 @@ target_sources(
 
         src/executor/job.cpp
 
-        src/executor/remote/executor.cpp
-        src/executor/remote/job.cpp
+        src/executor/remote/detail/executor.cpp
+        src/executor/remote/detail/job.cpp
 
         src/utils/csv_reader.cpp
         src/utils/progress_bar.cpp
@@ -177,8 +177,8 @@ target_sources(
         include/herd/executor/i_executor.hpp
         include/herd/executor/job.hpp
 
-        include/herd/executor/remote/executor.hpp
-        include/herd/executor/remote/job.hpp
+        include/herd/executor/remote/detail/executor.hpp
+        include/herd/executor/remote/detail/job.hpp
 
         include/herd/crypto/i_crypto.hpp
         include/herd/crypto/crypto_config.hpp

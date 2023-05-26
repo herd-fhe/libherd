@@ -1,5 +1,4 @@
 #include "herd/executor/job.hpp"
-#include "herd/executor/remote/job.hpp"
 
 
 namespace herd::executor

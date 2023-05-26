@@ -6,7 +6,7 @@
 
 #include "herd/backend/remote/detail/remote_backend_connection_impl.hpp"
 #include "herd/data_storage/remote/remote_data_storage.hpp"
-#include "herd/executor/remote/executor.hpp"
+#include "herd/executor/remote/detail/executor.hpp"
 
 
 namespace herd
@@ -48,7 +48,7 @@ namespace herd
 
 	std::unique_ptr<executor::IExecutor> RemoteBackend::create_session_executor(Session& session)
 	{
-		return executor::remote::Executor::make_unique(session, *this);
+		return std::make_unique<executor::remote::detail::Executor>(session, *this);
 	}
 
 	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> RemoteBackend::create_data_frame(const common::UUID& session_uuid, const std::string& name, const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
