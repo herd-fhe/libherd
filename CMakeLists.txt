@@ -94,6 +94,7 @@ FetchContent_MakeAvailable(xlscc)
 add_subdirectory(proto)
 
 add_subdirectory(common)
+add_subdirectory(mappers)
 
 ## Herd
 add_library(libherd)
@@ -110,7 +111,6 @@ target_sources(
 
         src/backend/remote/remote_backend.cpp
         src/backend/remote/detail/remote_backend_connection_impl.cpp
-        src/backend/remote/detail/mapper.cpp
 
         src/crypto/crypto_factory.cpp
         src/crypto/crypto.cpp
@@ -154,7 +154,6 @@ target_sources(
         include/herd/backend/i_backend.hpp
         include/herd/backend/remote/remote_backend.hpp
         include/herd/backend/remote/detail/remote_backend_connection_impl.hpp
-        include/herd/backend/remote/detail/mapper.hpp
 
         include/herd/translator/i_translator.hpp
 
@@ -244,6 +243,7 @@ target_link_libraries(
         libclang::libclang
 
         herd_common
+        herd_dto_mappers
 )
 
 target_include_directories(

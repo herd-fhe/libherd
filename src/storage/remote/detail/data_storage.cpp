@@ -15,7 +15,7 @@ namespace herd::storage::remote::detail
 	{
 	}
 
-	std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> DataStorageImpl::populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<DataFrame::ColumnParameters>& columns, common::SchemaType schema_type)
+	std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> DataStorageImpl::populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type)
 	{
 		const auto& crypto = session_.crypto(schema_type);
 		const auto row_count = utils::CSVReader::row_count(stream);

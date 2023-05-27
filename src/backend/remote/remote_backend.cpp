@@ -51,7 +51,7 @@ namespace herd
 		return std::make_unique<executor::remote::detail::Executor>(session, *this);
 	}
 
-	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> RemoteBackend::create_data_frame(const common::UUID& session_uuid, const std::string& name, const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
+	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> RemoteBackend::create_data_frame(const common::UUID& session_uuid, const std::string& name, const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 	{
 		return pimpl_->create_data_frame(session_uuid, name, columns, schema_type, row_count, std::move(next_row));
 	}

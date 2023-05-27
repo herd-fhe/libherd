@@ -28,7 +28,7 @@ namespace herd::storage::remote::detail
 		Session& session_;
 		RemoteBackend& backend_;
 
-		[[nodiscard]] std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<DataFrame::ColumnParameters>& columns, common::SchemaType schema_type) override;
+		[[nodiscard]] std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type) override;
 	};
 }
 

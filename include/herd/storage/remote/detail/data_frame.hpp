@@ -18,7 +18,7 @@ namespace herd::storage::remote::detail
 	public:
 		DataFrameImpl(
 				common::UUID uuid, const std::string& name, size_t row_count,
-				const std::vector<ColumnParameters>& columns, common::SchemaType schema_type,
+				const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
 				RemoteBackend& remote_backend);
 
 		size_t size() const override;

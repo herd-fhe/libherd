@@ -7,6 +7,7 @@
 #include <set>
 #include <string>
 
+#include "herd/common/model/column_meta.hpp"
 #include "herd/common/uuid.hpp"
 #include "herd/crypto/i_crypto.hpp"
 #include "herd/type.hpp"
@@ -41,12 +42,7 @@ namespace herd::storage
 			}
 		};
 
-		struct ColumnParameters {
-			std::string name;
-			column_type_key_type type;
-		};
-
-		DataFrame(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns);
+		DataFrame(const common::UUID& uuid, std::string name, const std::vector<common::ColumnMeta>& columns);
 
 		virtual ~DataFrame() = default;
 

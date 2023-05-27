@@ -18,7 +18,7 @@ namespace herd::storage
 	public:
 		virtual ~DataStorage() = default;
 
-		[[nodiscard]] utils::ProgressFuture<std::shared_ptr<DataFrame>> load_from_csv(const std::vector<DataFrame::ColumnParameters>& columns, std::istream& stream, common::SchemaType schema_type, const std::string& frame_name = "");
+		[[nodiscard]] utils::ProgressFuture<std::shared_ptr<DataFrame>> load_from_csv(const std::vector<common::ColumnMeta>& columns, std::istream& stream, common::SchemaType schema_type, const std::string& frame_name = "");
 
 		[[nodiscard]] virtual const std::unordered_map<std::string, std::shared_ptr<DataFrame>>& data_frames() const;
 		[[nodiscard]] virtual std::shared_ptr<DataFrame> data_frame_by_name(const std::string& name);
@@ -29,7 +29,7 @@ namespace herd::storage
 		static void mark_as_not_alive(std::shared_ptr<DataFrame>& data_frame);
 
 	private:
-		virtual std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<DataFrame::ColumnParameters>& columns, common::SchemaType schema_type) = 0;
+		virtual std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type) = 0;
 	};
 }
 

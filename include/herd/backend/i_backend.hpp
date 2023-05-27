@@ -26,7 +26,7 @@ namespace herd
 
 		virtual std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> create_data_frame(
 				const common::UUID& session_uuid, const std::string& name,
-				const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type,
+				const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
 				std::size_t row_count,
 				utils::MovableFunction<bool(std::vector<std::byte>&)> next_row
 		) = 0;

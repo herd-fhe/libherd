@@ -6,7 +6,7 @@
 
 namespace herd::storage
 {
-	DataFrame::DataFrame(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns)
+	DataFrame::DataFrame(const common::UUID& uuid, std::string name, const std::vector<common::ColumnMeta>& columns)
 	:	uuid_(uuid), name_(std::move(name))
 	{
 		for(std::size_t i = 0; const auto& column: columns)
