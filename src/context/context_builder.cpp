@@ -8,7 +8,7 @@ namespace herd
 {
 	ContextBuilder::ContextBuilder() = default;
 
-	ContextBuilder &ContextBuilder::with(std::unique_ptr<IBackend> backend) noexcept
+	ContextBuilder& ContextBuilder::with(std::unique_ptr<IBackend> backend) noexcept
 	{
 		context_->backend_ = std::move(backend);
 		return *this;

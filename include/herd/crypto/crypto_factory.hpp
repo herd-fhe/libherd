@@ -1,9 +1,9 @@
 #ifndef LIBHERD_CRYPTO_FACTORY_HPP
 #define LIBHERD_CRYPTO_FACTORY_HPP
 
+#include <functional>
 #include <map>
 #include <set>
-#include <functional>
 
 #include "i_crypto.hpp"
 #include "i_keyset.hpp"

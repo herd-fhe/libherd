@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <herd/utils/csv_reader.hpp>
 
-#include <sstream>
 #include <ios>
+#include <sstream>
 
 using namespace herd::utils;
 

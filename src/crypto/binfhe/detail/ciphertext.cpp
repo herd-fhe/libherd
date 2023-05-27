@@ -6,7 +6,7 @@
 namespace herd::crypto::binfhe::detail
 {
 	CiphertextImpl::CiphertextImpl(std::vector<lbcrypto::LWECiphertext> encrypted_bits) noexcept
-		: encrypted_bits_(std::move(encrypted_bits))
+		:	encrypted_bits_(std::move(encrypted_bits))
 	{
 	}
 

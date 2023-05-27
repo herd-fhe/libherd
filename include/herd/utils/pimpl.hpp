@@ -11,7 +11,7 @@ namespace herd::utils
 	{
 	public:
 		PImpl();
-		template<typename ...Args>
+		template<typename... Args>
 		explicit PImpl(Args&&...);
 		~PImpl() = default;
 
@@ -30,13 +30,13 @@ namespace herd::utils
 
 	template<typename T>
 	PImpl<T>::PImpl()
-		:pimpl_(std::make_unique<T>())
+	:	pimpl_(std::make_unique<T>())
 	{}
 
 	template<typename T>
 	template<typename... Args>
 	PImpl<T>::PImpl(Args&&... args)
-		:pimpl_{std::make_unique<T>(std::forward<Args>(args)...)}
+	:	pimpl_{std::make_unique<T>(std::forward<Args>(args)...)}
 	{}
 
 	template<typename T>

@@ -2,9 +2,11 @@
 
 #include <utility>
 
+#include "execution.grpc.pb.h"
+
 #include "herd/backend/remote/detail/mapper.hpp"
 #include "herd/backend/remote/detail/remote_backend_connection_impl.hpp"
-#include "herd/data_storage/remote/remote_data_frame.hpp"
+#include "herd/storage/remote/detail/data_frame.hpp"
 
 
 namespace herd
@@ -31,10 +33,9 @@ namespace herd
 		void do_upload_key(
 				utils::ProgressPackagedTask<void()>::ProgressUpdateProxy& progress_proxy,
 				UploadKeyState& state,
-			    UUID session_uuid, common::SchemaType type, std::vector<std::byte> key_data
-		)
+				common::UUID session_uuid, common::SchemaType type, std::vector<std::byte> key_data)
 		{
-			progress_proxy.set_max_step(key_data.size()-1);
+			progress_proxy.set_max_step(key_data.size() - 1);
 			//send metadata
 			{
 				proto::SessionAddKeyRequest request;
@@ -53,7 +54,7 @@ namespace herd
 
 				const size_t to_send = std::min(BLOCK_SIZE, key_data.size() - sent);
 				data_request->mutable_blob()->resize(to_send);
-			    std::memcpy(data_request->mutable_blob()->data(), reinterpret_cast<char*>(key_data.data()) + sent, to_send);
+				std::memcpy(data_request->mutable_blob()->data(), reinterpret_cast<char*>(key_data.data()) + sent, to_send);
 				state.writer->Write(request);
 
 				sent += to_send;
@@ -64,12 +65,11 @@ namespace herd
 			state.writer->Finish();
 		}
 
-		UUID do_init_upload_frame(
+		common::UUID do_init_upload_frame(
 				UploadFrameState& state,
-				UUID session_uuid, const std::string& name,
+				common::UUID session_uuid, const std::string& name,
 				common::SchemaType type, const std::vector<storage::DataFrame::ColumnParameters>& columns,
-				std::size_t row_count
-		)
+				std::size_t row_count)
 		{
 			proto::DataFrameAddRequest request;
 			const auto info_request = request.mutable_info();
@@ -87,12 +87,12 @@ namespace herd
 			proto::DataFrameAddResponse response;
 			state.reader_writer->Read(&response);
 
-			return UUID(response.metadata().uuid());
+			return common::UUID(response.metadata().uuid());
 		}
 
 		[[maybe_unused]] void do_upload_data_frame(utils::ProgressPackagedTask<std::shared_ptr<storage::DataFrame>()>::ProgressUpdateProxy& progress_proxy,
 												   UploadFrameState& state,
-								  std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
+												   std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 		{
 			progress_proxy.set_max_step(row_count);
 
@@ -127,7 +127,7 @@ namespace herd
 	namespace mapper
 	{
 		TokenMetadataCredentialsPlugin::TokenMetadataCredentialsPlugin(const std::string& token)
-			:token_(BEARER_PREFIX + token)
+		:	token_(BEARER_PREFIX + token)
 		{}
 
 		bool TokenMetadataCredentialsPlugin::IsBlocking() const
@@ -137,8 +137,7 @@ namespace herd
 
 		grpc::Status TokenMetadataCredentialsPlugin::GetMetadata(
 				grpc::string_ref service_url, grpc::string_ref method_name,
-				const grpc::AuthContext& channel_auth_context, std::multimap<grpc::string, grpc::string>* metadata
-		)
+				const grpc::AuthContext& channel_auth_context, std::multimap<grpc::string, grpc::string>* metadata)
 		{
 			static_cast<void>(service_url);
 			static_cast<void>(method_name);
@@ -155,8 +154,9 @@ namespace herd
 		}
 	}
 
-	RemoteBackend::RemoteBackendConnectionImpl::RemoteBackendConnectionImpl(RemoteBackend& backend, utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string  token) noexcept
-		: backend_(backend), pool_(pool), authentication_token_(std::move(token))
+	RemoteBackend::RemoteBackendConnectionImpl::RemoteBackendConnectionImpl(RemoteBackend& backend, utils::ThreadPool& pool, const RemoteBackendConfig& config, std::string token) noexcept
+		:	backend_(backend),
+		pool_(pool), authentication_token_(std::move(token))
 	{
 		if(config.security.has_value())
 		{
@@ -189,6 +189,7 @@ namespace herd
 		auth_service_stub_ = herd::proto::Auth::NewStub(channel_);
 		session_service_stub_ = herd::proto::Session::NewStub(channel_);
 		storage_service_stub_ = herd::proto::Storage::NewStub(channel_);
+		execution_service_stub_ = herd::proto::Execution::NewStub(channel_);
 	}
 
 	void RemoteBackend::RemoteBackendConnectionImpl::authenticate()
@@ -228,11 +229,11 @@ namespace herd
 
 		return SessionInfo{
 				.name = name,
-				.uuid = UUID(response.uuid())
+				.uuid = common::UUID(response.uuid())
 		};
 	}
 
-	void RemoteBackend::RemoteBackendConnectionImpl::destroy_session(const UUID& session_uuid)
+	void RemoteBackend::RemoteBackendConnectionImpl::destroy_session(const common::UUID& session_uuid)
 	{
 		grpc::ClientContext client_context{};
 		setup_authenticated_context(client_context);
@@ -273,7 +274,7 @@ namespace herd
 				{
 					return SessionInfo{
 						info.name(),
-						UUID(info.uuid())
+						common::UUID(info.uuid())
 					};
 				}
 	   );
@@ -284,13 +285,11 @@ namespace herd
 	void RemoteBackend::RemoteBackendConnectionImpl::setup_authenticated_context(grpc::ClientContext& context) const noexcept
 	{
 		context.set_credentials(
-			grpc::MetadataCredentialsFromPlugin(
-				std::make_unique<mapper::TokenMetadataCredentialsPlugin>(connection_token_)
-			)
-		);
+				grpc::MetadataCredentialsFromPlugin(
+						std::make_unique<mapper::TokenMetadataCredentialsPlugin>(connection_token_)));
 	}
 
-	utils::ProgressFuture<void> RemoteBackend::RemoteBackendConnectionImpl::add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
+	utils::ProgressFuture<void> RemoteBackend::RemoteBackendConnectionImpl::add_key(const common::UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
 	{
 		assert(key_data.size() <= std::numeric_limits<uint32_t>::max());
 
@@ -321,7 +320,11 @@ namespace herd
 		return future;
 	}
 
-	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> RemoteBackend::RemoteBackendConnectionImpl::create_data_frame(const UUID& session_uuid, const std::string& name, const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
+	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> RemoteBackend::RemoteBackendConnectionImpl::create_data_frame(
+			const common::UUID& session_uuid, const std::string& name,
+			const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type,
+			std::size_t row_count,
+			utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 	{
 		UploadFrameState state;
 		state.context = std::make_unique<grpc::ClientContext>();
@@ -331,7 +334,7 @@ namespace herd
 
 		const auto data_frame_uuid = do_init_upload_frame(state, session_uuid, name, schema_type, columns, row_count);
 
-		auto data_frame = storage::RemoteDataFrame::make_shared(data_frame_uuid, name, row_count, columns, schema_type, backend_);
+		auto data_frame = std::make_shared<storage::remote::detail::DataFrameImpl>(data_frame_uuid, name, row_count, columns, schema_type, backend_);
 		auto task = utils::ProgressPackagedTask<std::shared_ptr<storage::DataFrame>()>(
 				[
 						state=std::move(state),
@@ -351,7 +354,7 @@ namespace herd
 		return std::make_pair(std::move(future), data_frame);
 	}
 
-	std::vector<std::shared_ptr<storage::DataFrame>> RemoteBackend::RemoteBackendConnectionImpl::list_data_frames(const UUID& session_uuid)
+	std::vector<std::shared_ptr<storage::DataFrame>> RemoteBackend::RemoteBackendConnectionImpl::list_data_frames(const common::UUID& session_uuid)
 	{
 		grpc::ClientContext client_context{};
 		setup_authenticated_context(client_context);
@@ -374,8 +377,8 @@ namespace herd
 				response.dataframes(), std::back_inserter(data_frames),
 				[&](const auto& data_frame)
 				{
-					return storage::RemoteDataFrame::make_shared(
-									UUID(data_frame.uuid()), data_frame.name(),
+					return std::make_shared<storage::remote::detail::DataFrameImpl>(
+									common::UUID(data_frame.uuid()), data_frame.name(),
 									data_frame.rows_count(),
 									mapper::to_model(data_frame.columns()), mapper::to_model(data_frame.schema_type()),
 									backend_);
@@ -383,5 +386,121 @@ namespace herd
 		);
 
 		return data_frames;
+	}
+
+	executor::JobInfo RemoteBackend::RemoteBackendConnectionImpl::schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan)
+	{
+		grpc::ClientContext client_context{};
+		setup_authenticated_context(client_context);
+
+		proto::ScheduleJobRequest request;
+		request.set_session_uuid(session_uuid.as_string());
+
+		const auto plan_proto = request.mutable_plan();
+		plan_proto->CopyFrom(mapper::to_proto(plan));
+
+		proto::JobDescription response;
+		if(auto status = execution_service_stub_->schedule_job(&client_context, request, &response); !status.ok())
+		{
+			//todo: only happy path properly handled by now
+			throw RemoteConnectionError(status.error_message());
+		}
+
+		return executor::JobInfo{
+				common::UUID(response.uuid()),
+				mapper::to_model(response.plan())
+		};
+	}
+
+	std::vector<executor::JobState> RemoteBackend::RemoteBackendConnectionImpl::list_jobs(const common::UUID& session_uuid)
+	{
+		grpc::ClientContext client_context;
+		setup_authenticated_context(client_context);
+
+		proto::ListJobsRequest request;
+		request.set_session_uuid(session_uuid.as_string());
+
+		proto::JobStateList response;
+		if(auto status = execution_service_stub_->list_jobs(&client_context, request, &response); !status.ok())
+		{
+			//todo: only happy path properly handled by now
+			throw RemoteConnectionError(status.error_message());
+		}
+
+		std::vector<executor::JobState> job_states;
+		job_states.reserve(static_cast<std::size_t>(response.states().size()));
+
+		for(auto job_state_proto: response.states())
+		{
+			const std::optional<unsigned long> current_stage = job_state_proto.has_current_stage()
+											   ? std::make_optional(job_state_proto.current_stage())
+											   : std::nullopt;
+
+			const std::optional<std::string> message = job_state_proto.has_message()
+										 ? std::make_optional(job_state_proto.message())
+										 : std::nullopt;
+
+			job_states.emplace_back(
+					executor::JobState{
+							common::UUID(job_state_proto.uuid()),
+							mapper::to_model(job_state_proto.status()),
+							current_stage,
+							message
+					}
+			);
+		}
+		return job_states;
+	}
+
+	executor::JobInfo RemoteBackend::RemoteBackendConnectionImpl::describe_job(const common::UUID& session_uuid, const common::UUID& uuid)
+	{
+		grpc::ClientContext client_context;
+		setup_authenticated_context(client_context);
+
+		proto::DescribeJobRequest request;
+		request.set_session_uuid(session_uuid.as_string());
+		request.set_uuid(uuid.as_string());
+
+		proto::JobDescription response;
+		if(auto status = execution_service_stub_->describe_job(&client_context, request, &response); !status.ok())
+		{
+			//todo: only happy path properly handled by now
+			throw RemoteConnectionError(status.error_message());
+		}
+
+		return executor::JobInfo{
+				common::UUID(response.uuid()),
+				mapper::to_model(response.plan())
+		};
+	}
+
+	executor::JobState RemoteBackend::RemoteBackendConnectionImpl::get_job_state(const common::UUID& session_uuid, const common::UUID& uuid)
+	{
+		grpc::ClientContext client_context;
+		setup_authenticated_context(client_context);
+
+		proto::GetJobStateRequest request;
+		request.set_session_uuid(session_uuid.as_string());
+		request.set_uuid(uuid.as_string());
+
+		proto::JobState response;
+		if(auto status = execution_service_stub_->get_job_state(&client_context, request, &response); !status.ok())
+		{
+			//todo: only happy path properly handled by now
+			throw RemoteConnectionError(status.error_message());
+		}
+		const std::optional<unsigned long> current_stage = response.has_current_stage()
+																   ? std::make_optional(response.current_stage())
+																   : std::nullopt;
+
+		const std::optional<std::string> message = response.has_message()
+														   ? std::make_optional(response.message())
+														   : std::nullopt;
+		return executor::JobState{
+				common::UUID(response.uuid()),
+				mapper::to_model(response.status()),
+				current_stage,
+				message
+		};
 	}
 }

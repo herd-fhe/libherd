@@ -1,8 +1,8 @@
 #ifndef LIBHERD_I_CRYPTO_HPP
 #define LIBHERD_I_CRYPTO_HPP
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "herd/crypto/ciphertext.hpp"
 

@@ -3,8 +3,10 @@ project(
         libherd
         VERSION 0.1
         DESCRIPTION "herd library"
-        LANGUAGES CXX
+        LANGUAGES CXX C
 )
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Warnings config
 add_library(warnings_target INTERFACE)
@@ -68,14 +70,23 @@ find_package(PkgConfig REQUIRED)
 # External
 find_package(OpenFHE REQUIRED)
 
+find_package(LLVM 15 REQUIRED)
+find_package(libclang REQUIRED)
 find_package(Threads REQUIRED)
 find_package(OpenMP REQUIRED)
 
-## UUID
-pkg_search_module(UUID REQUIRED uuid)
-
 add_subdirectory(third-party/spdlog EXCLUDE_FROM_ALL)
 add_subdirectory(third-party/termcolor EXCLUDE_FROM_ALL)
+
+include(FetchContent)
+
+FetchContent_Declare(
+        xlscc
+        URL https://github.com/herd-fhe/xlscc-builder/releases/download/xlscc-d9c688df88/xlscc-release.tar.gz
+
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/xls
+)
+FetchContent_MakeAvailable(xlscc)
 
 # Targets
 
@@ -96,13 +107,10 @@ target_sources(
         src/context/context.cpp
         src/context/context_builder.cpp
         src/session/session.cpp
-        src/tree/circuit_graph.cpp
-        src/tree/visitor.cpp
 
         src/backend/remote/remote_backend.cpp
         src/backend/remote/detail/remote_backend_connection_impl.cpp
         src/backend/remote/detail/mapper.cpp
-        src/backend/remote/tree_dump.cpp
 
         src/crypto/crypto_factory.cpp
         src/crypto/crypto.cpp
@@ -113,24 +121,31 @@ target_sources(
         src/crypto/binfhe/detail/keyset.cpp
         src/crypto/binfhe/detail/ciphertext.cpp
 
-        src/data_storage/data_storage.cpp
-        src/data_storage/data_frame.cpp
-        src/data_storage/i_data_row.cpp
+        src/translator/xlscc/detail/ir_parser.cpp
+        src/translator/xlscc/detail/ir_transpiler.cpp
+        src/translator/xlscc/detail/translator.cpp
 
-        src/data_storage/local/local_data_storage.cpp
-        src/data_storage/local/local_data_frame.cpp
-        src/data_storage/local/type_pool_factory.cpp
+        src/storage/data_storage.cpp
+        src/storage/data_frame.cpp
+        src/storage/i_data_row.cpp
 
-        src/data_storage/remote/remote_data_storage.cpp
-        src/data_storage/remote/remote_data_frame.cpp
+        src/storage/local/detail/data_storage.cpp
+        src/storage/local/detail/data_frame.cpp
+        src/storage/local/type_pool_factory.cpp
+
+        src/storage/remote/detail/data_storage.cpp
+        src/storage/remote/detail/data_frame.cpp
+
+        src/executor/job.cpp
+
+        src/executor/remote/detail/executor.cpp
+        src/executor/remote/detail/job.cpp
 
         src/utils/csv_reader.cpp
-        src/utils/thread_pool.cpp
         src/utils/progress_bar.cpp
-
-        src/uuid.cpp
-
-        include/herd/operation.hpp
+        src/utils/thread_pool.cpp
+        src/utils/temp_storage.cpp
+        src/utils/path.cpp
 
         include/herd/context/context.hpp
         include/herd/context/context_builder.hpp
@@ -140,26 +155,30 @@ target_sources(
         include/herd/backend/remote/remote_backend.hpp
         include/herd/backend/remote/detail/remote_backend_connection_impl.hpp
         include/herd/backend/remote/detail/mapper.hpp
-        include/herd/backend/remote/tree_dump.hpp
 
-        include/herd/tree/node/abstract_node.hpp
-        include/herd/tree/node/input_node.hpp
-        include/herd/tree/node/output_node.hpp
-        include/herd/tree/node/operation_node.hpp
-        include/herd/tree/circuit_graph.hpp
-        include/herd/tree/visitor.hpp
+        include/herd/translator/i_translator.hpp
 
-        include/herd/data_storage/data_storage.hpp
-        include/herd/data_storage/data_frame.hpp
-        include/herd/data_storage/i_data_row.hpp
+        include/herd/translator/xlscc/detail/ir_parser.hpp
+        include/herd/translator/xlscc/detail/ir_transpiler.hpp
+        include/herd/translator/xlscc/detail/compiler.hpp
 
-        include/herd/data_storage/local/local_data_storage.hpp
-        include/herd/data_storage/local/local_data_frame.hpp
-        include/herd/data_storage/local/type_pool.hpp
-        include/herd/data_storage/local/type_pool_factory.hpp
+        include/herd/storage/data_storage.hpp
+        include/herd/storage/data_frame.hpp
+        include/herd/storage/i_data_row.hpp
 
-        include/herd/data_storage/remote/remote_data_storage.hpp
-        include/herd/data_storage/remote/remote_data_frame.hpp
+        include/herd/storage/local/detail/data_storage.hpp
+        include/herd/storage/local/detail/data_frame.hpp
+        include/herd/storage/local/type_pool.hpp
+        include/herd/storage/local/type_pool_factory.hpp
+
+        include/herd/storage/remote/detail/data_storage.hpp
+        include/herd/storage/remote/detail/data_frame.hpp
+
+        include/herd/executor/i_executor.hpp
+        include/herd/executor/job.hpp
+
+        include/herd/executor/remote/detail/executor.hpp
+        include/herd/executor/remote/detail/job.hpp
 
         include/herd/crypto/i_crypto.hpp
         include/herd/crypto/crypto_config.hpp
@@ -183,10 +202,10 @@ target_sources(
         include/herd/utils/movable_task.hpp
         include/herd/utils/movable_function.hpp
         include/herd/utils/progress_bar.hpp
+        include/herd/utils/temp_storage.hpp
+        include/herd/utils/path.hpp
 
         include/herd/utils/pimpl.hpp
-
-        include/herd/uuid.hpp
 
         include/herd/herd.hpp
 )
@@ -212,7 +231,6 @@ target_link_libraries(
         pthread
 
         OpenMP::OpenMP_CXX
-        ${UUID_LIBRARIES}
 
         herd_proto
 )
@@ -223,6 +241,7 @@ target_link_libraries(
         OPENFHEcore
         OPENFHEbinfhe
         termcolor
+        libclang::libclang
 
         herd_common
 )
@@ -242,44 +261,7 @@ target_include_directories(
 option(ENABLE_TESTS "Enable tests" FALSE)
 
 if(ENABLE_TESTS)
-    enable_testing()
-    find_package(GTest QUIET)
-
-    if (NOT GTest_FOUND)
-        include(FetchContent)
-        FetchContent_Declare(
-                googletest
-                GIT_REPOSITORY https://github.com/google/googletest.git
-                GIT_TAG        release-1.12.1
-        )
-
-        FetchContent_GetProperties(googletest)
-        if(NOT googletest_POPULATED)
-            FetchContent_Populate(googletest)
-            set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")
-            add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
-            unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-        endif()
-    endif()
-
-    add_executable(libherd_test "")
-    target_link_libraries(
-            libherd_test
-            libherd
-            GTest::gtest GTest::gtest_main
-            options_target
-            warnings_target
-    )
-
-    target_sources(
-            libherd_test
-            PRIVATE
-            test/utils/csv_reader_test.cpp
-            test/utils/csv_value_mappers_test.cpp
-            test/utils/progress_bar_test.cpp
-
-            test/storage/local/local_data_storage_test.cpp
-    )
+    add_subdirectory(test)
 endif()
 
 option(ENABLE_EXAMPLES "Enable examples building" FALSE)

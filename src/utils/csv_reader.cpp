@@ -16,10 +16,10 @@ namespace herd::utils
 	}
 
 	CSVReader::CSVReader(CSVOptions options)
-	:options_(options)
+	:	options_(options)
 	{}
 
-	CSVRow CSVReader::read_row(std::istream &stream) const
+	CSVRow CSVReader::read_row(std::istream& stream) const
 	{
 		CSVRow row;
 
@@ -53,7 +53,7 @@ namespace herd::utils
 	// https://stackoverflow.com/questions/3072795/how-to-count-lines-of-a-file-in-c
 	std::size_t CSVReader::row_count(std::istream& stream)
 	{
-		if (!stream || stream.bad())
+		if(!stream || stream.bad())
 		{
 			return 0;
 		}

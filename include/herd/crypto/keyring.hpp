@@ -1,12 +1,12 @@
 #ifndef LIBHERD_KEYRING_HPP
 #define LIBHERD_KEYRING_HPP
 
-#include <unordered_map>
-#include <typeindex>
 #include <memory>
+#include <typeindex>
+#include <unordered_map>
 
+#include "herd/common/model/schema_type.hpp"
 #include "herd/crypto/i_keyset.hpp"
-#include "herd_common/schema_type.hpp"
 
 
 namespace herd::crypto

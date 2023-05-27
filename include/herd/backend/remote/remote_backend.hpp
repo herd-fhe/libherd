@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "herd/backend/i_backend.hpp"
-#include "herd/data_storage/data_frame.hpp"
+#include "herd/storage/data_frame.hpp"
 #include "herd/session/session.hpp"
 #include "herd/utils/movable_function.hpp"
 #include "herd/utils/pimpl.hpp"
@@ -55,16 +55,29 @@ namespace herd
 
 		void connect() override;
 
-		SessionInfo create_session(const std::string &name) override;
-		void destroy_session(const UUID& session_uuid) override;
+		SessionInfo create_session(const std::string& name) override;
+		void destroy_session(const common::UUID& session_uuid) override;
 		std::vector<SessionInfo> list_sessions() override;
 
-		utils::ProgressFuture<void> add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data) override;
+		utils::ProgressFuture<void> add_key(
+				const common::UUID& session_uuid,
+				common::SchemaType type, std::vector<std::byte>&& key_data) override;
 
 		std::unique_ptr<storage::DataStorage> create_session_storage(Session& session) override;
+		std::unique_ptr<executor::IExecutor> create_session_executor(Session& session) override;
 
-		std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> create_data_frame(const UUID& session_uuid, const std::string& name, const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type, std::size_t row_count, utils::MovableFunction<bool(std::vector<std::byte>&)> next_row) override;
-		std::vector<std::shared_ptr<storage::DataFrame>> list_data_frames(const UUID& session_uuid) override;
+		std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> create_data_frame(
+				const common::UUID& session_uuid, const std::string& name,
+				const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type,
+				std::size_t row_count,
+				utils::MovableFunction<bool(std::vector<std::byte>&)> next_row) override;
+
+		std::vector<std::shared_ptr<storage::DataFrame>> list_data_frames(const common::UUID& session_uuid) override;
+
+		executor::JobInfo schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan) override;
+		std::vector<executor::JobState> list_jobs(const common::UUID& session_uuid) override;
+		executor::JobInfo describe_job(const common::UUID& session_uuid, const common::UUID& uuid) override;
+		executor::JobState get_job_state(const common::UUID& session_uuid, const common::UUID& uuid) override;
 
 	private:
 		class RemoteBackendConnectionImpl;

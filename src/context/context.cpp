@@ -28,7 +28,7 @@ namespace herd
 		return std::make_shared<make_shared_enabler>();
 	}
 
-	void Context::destroy_session(const UUID& session_uuid)
+	void Context::destroy_session(const common::UUID& session_uuid)
 	{
 		backend_->destroy_session(session_uuid);
 	}
@@ -37,7 +37,7 @@ namespace herd
 	{
 		return backend_->list_sessions();
 	}
-	utils::ProgressFuture<void> Context::add_key(const UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
+	utils::ProgressFuture<void> Context::add_key(const common::UUID& session_uuid, common::SchemaType type, std::vector<std::byte>&& key_data)
 	{
 		return backend_->add_key(session_uuid, type, std::move(key_data));
 	}
@@ -46,4 +46,10 @@ namespace herd
 	{
 		return backend_->create_session_storage(session);
 	}
+
+	std::unique_ptr<executor::IExecutor> Context::create_session_executor(herd::Session& session)
+	{
+		return backend_->create_session_executor(session);
+	}
 }
+

@@ -1,8 +1,8 @@
 #ifndef LIBHERD_MOVABLE_FUNCTION_HPP
 #define LIBHERD_MOVABLE_FUNCTION_HPP
 
-#include <utility>
 #include <memory>
+#include <utility>
 
 
 namespace herd::utils
@@ -29,7 +29,7 @@ namespace herd::utils
 		public:
 			template<typename T>
 			MovableFunctionImpl(T&& fun)
-					:   fun_(std::forward<T>(fun))
+			:	fun_(std::forward<T>(fun))
 			{}
 
 			Ret invoke(Args&&... args) const override
@@ -47,7 +47,7 @@ namespace herd::utils
 		public:
 			template<typename T>
 			MovableFunctionImpl(T&& fun)
-				:   fun_(std::forward<T>(fun))
+			:	fun_(std::forward<T>(fun))
 			{}
 
 			void invoke(Args&&... args) const override
@@ -78,15 +78,15 @@ namespace herd::utils
 			return static_cast<bool>(pimpl_);
 		}
 
-		Ret operator()(Args&&... args) const {
+		Ret operator()(Args&&... args) const
+		{
 			return pimpl_->invoke(std::forward<Args>(args)...);
 		}
 
 		template<typename F>
-			requires (!std::same_as<std::decay_t<F>, MovableFunction<Ret(Args...)>>)
+			requires(!std::same_as<std::decay_t<F>, MovableFunction<Ret(Args...)>>)
 		MovableFunction(F&& fun)
-			:
-			pimpl_(make_pimpl(std::forward<F>(fun)))
+		:	pimpl_(make_pimpl(std::forward<F>(fun)))
 		{}
 
 

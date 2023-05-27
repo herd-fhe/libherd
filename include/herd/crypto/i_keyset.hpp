@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "herd_common/schema_type.hpp"
+#include "herd/common/model/schema_type.hpp"
 
 
 namespace herd::crypto

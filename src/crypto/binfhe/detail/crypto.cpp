@@ -20,7 +20,7 @@ namespace herd::crypto::binfhe::detail
 	}
 
 	CryptoImpl::CryptoImpl(IKeyset& keyset)
-	: keyset_(validate_keyset(keyset))
+	:	keyset_(validate_keyset(keyset))
 	{
 	}
 
@@ -33,12 +33,12 @@ namespace herd::crypto::binfhe::detail
 		auto const& private_key = keyset_.private_key();
 
 		std::ranges::transform(
-			plaintext, std::back_inserter(encrypted_bits),
-			[&context, &private_key](bool bit)
-			{
+				plaintext, std::back_inserter(encrypted_bits),
+				[&context, &private_key](bool bit)
+				{
 					return context.Encrypt(private_key, bit ? 1 : 0);
-			}
-        );
+				}
+		);
 
 		return std::make_unique<CiphertextImpl>(std::move(encrypted_bits));
 	}

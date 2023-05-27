@@ -1,8 +1,8 @@
 #ifndef LIBHERD_CIPHERTEXT_HPP
 #define LIBHERD_CIPHERTEXT_HPP
 
-#include <vector>
 #include <ostream>
+#include <vector>
 
 namespace herd::crypto
 {
