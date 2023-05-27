@@ -10,3 +10,6 @@
 [submodule "third-party/termcolor"]
 	path = third-party/termcolor
 	url = https://github.com/ikalnytskyi/termcolor
+[submodule "mappers"]
+	path = mappers
+	url = https://github.com/herd-fhe/dto_mappers.git

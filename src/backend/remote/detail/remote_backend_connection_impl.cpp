@@ -4,9 +4,11 @@
 
 #include "execution.grpc.pb.h"
 
-#include "herd/backend/remote/detail/mapper.hpp"
 #include "herd/backend/remote/detail/remote_backend_connection_impl.hpp"
 #include "herd/storage/remote/detail/data_frame.hpp"
+#include "herd/mapper/crypto.hpp"
+#include "herd/mapper/storage.hpp"
+#include "herd/mapper/executor.hpp"
 
 
 namespace herd
@@ -68,7 +70,7 @@ namespace herd
 		common::UUID do_init_upload_frame(
 				UploadFrameState& state,
 				common::UUID session_uuid, const std::string& name,
-				common::SchemaType type, const std::vector<storage::DataFrame::ColumnParameters>& columns,
+				common::SchemaType type, const std::vector<common::ColumnMeta>& columns,
 				std::size_t row_count)
 		{
 			proto::DataFrameAddRequest request;
@@ -322,7 +324,7 @@ namespace herd
 
 	std::pair<utils::ProgressFuture<std::shared_ptr<storage::DataFrame>>, std::shared_ptr<storage::DataFrame>> RemoteBackend::RemoteBackendConnectionImpl::create_data_frame(
 			const common::UUID& session_uuid, const std::string& name,
-			const std::vector<storage::DataFrame::ColumnParameters>& columns, common::SchemaType schema_type,
+			const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
 			std::size_t row_count,
 			utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
 	{

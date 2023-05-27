@@ -43,7 +43,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 					   << "\n";
 	}
 
-	auto data_frame_future = session->data_storage().load_from_csv({storage::DataFrame::ColumnParameters{"id", herd::common::DataType::INT16}}, data_frame_csv, herd::common::SchemaType::BINFHE);
+	auto data_frame_future = session->data_storage().load_from_csv({common::ColumnMeta{"id", herd::common::DataType::INT16}}, data_frame_csv, herd::common::SchemaType::BINFHE);
 
 	std::cout << std::endl;
 

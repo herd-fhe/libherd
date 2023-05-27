@@ -17,7 +17,7 @@ TEST(LocalDataStorage, load_from_csv_stream)
 	std::stringstream stream;
 	stream << "0,10,-21,256";
 
-	std::vector<herd::storage::DataFrame::ColumnParameters> columns = {
+	std::vector<herd::common::ColumnMeta> columns = {
 			{"first", BIT},
 			{"second", UINT8},
 			{"third", INT16},
@@ -43,7 +43,7 @@ TEST(LocalDataStorage, load_from_csv_stream_multiline)
 	stream << "\n";
 	stream << "1,129,0,11111111";
 
-	std::vector<herd::storage::DataFrame::ColumnParameters> columns = {
+	std::vector<herd::common::ColumnMeta> columns = {
 			{"first", BIT},
 			{"second", UINT8},
 			{"third", INT16},
@@ -69,7 +69,7 @@ TEST(LocalDataStorage, not_none_schema)
 	stream << "\n";
 	stream << "1,129,0,11111111";
 
-	std::vector<herd::storage::DataFrame::ColumnParameters> columns = {
+	std::vector<herd::common::ColumnMeta> columns = {
 			{"first", BIT},
 			{"second", UINT8},
 			{"third", INT16},
