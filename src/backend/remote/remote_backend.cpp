@@ -5,7 +5,7 @@
 #include <utility>
 
 #include "herd/backend/remote/detail/remote_backend_connection_impl.hpp"
-#include "herd/data_storage/remote/remote_data_storage.hpp"
+#include "herd/storage/remote/detail/data_storage.hpp"
 #include "herd/executor/remote/detail/executor.hpp"
 
 
@@ -43,7 +43,7 @@ namespace herd
 
 	std::unique_ptr<storage::DataStorage> RemoteBackend::create_session_storage(Session& session)
 	{
-		return storage::RemoteDataStorage::make_unique(session, *this);
+		return std::make_unique<storage::remote::detail::DataStorageImpl>(session, *this);
 	}
 
 	std::unique_ptr<executor::IExecutor> RemoteBackend::create_session_executor(Session& session)

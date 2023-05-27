@@ -12,7 +12,7 @@
 #include "herd/common/model/executor/execution_plan.hpp"
 #include "herd/common/model/job.hpp"
 #include "herd/common/model/schema_type.hpp"
-#include "herd/data_storage/data_frame.hpp"
+#include "herd/storage/data_frame.hpp"
 
 
 namespace herd

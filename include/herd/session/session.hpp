@@ -6,7 +6,7 @@
 
 #include "herd/common/uuid.hpp"
 #include "herd/crypto/keyring.hpp"
-#include "herd/data_storage/data_storage.hpp"
+#include "herd/storage/data_storage.hpp"
 #include "herd/executor/i_executor.hpp"
 #include "herd/utils/progress_future.hpp"
 

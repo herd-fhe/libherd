@@ -1,4 +1,4 @@
-#include "herd/data_storage/i_data_row.hpp"
+#include "herd/storage/i_data_row.hpp"
 
 
 namespace herd::storage

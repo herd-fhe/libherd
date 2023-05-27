@@ -5,7 +5,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "herd/data_storage/local/type_pool.hpp"
+#include "herd/storage/local/type_pool.hpp"
 #include "herd/type.hpp"
 
 

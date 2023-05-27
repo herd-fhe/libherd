@@ -2,7 +2,7 @@
 #define LIBHERD_REMOTE_DATA_STORAGE_HPP
 
 #include "herd/common/uuid.hpp"
-#include "herd/data_storage/data_storage.hpp"
+#include "herd/storage/data_storage.hpp"
 
 
 namespace herd
@@ -11,35 +11,24 @@ namespace herd
 	class Session;
 }
 
-namespace herd::storage
+namespace herd::storage::remote::detail
 {
-	class RemoteDataStorage: public DataStorage
+	class DataStorageImpl: public DataStorage
 	{
 	public:
+		DataStorageImpl(Session& session, RemoteBackend& backend);
+
 		[[nodiscard]] const std::unordered_map<std::string, std::shared_ptr<DataFrame>>& data_frames() const override;
 
 		void sync_cache() const;
 
 	private:
 		friend class herd::RemoteBackend;
-		struct make_unique_enabler;
 
 		Session& session_;
 		RemoteBackend& backend_;
 
-		RemoteDataStorage(Session& session, RemoteBackend& backend);
-		static std::unique_ptr<RemoteDataStorage> make_unique(
-				Session& session, RemoteBackend& backend);
-
 		[[nodiscard]] std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<DataFrame::ColumnParameters>& columns, common::SchemaType schema_type) override;
-	};
-
-	struct RemoteDataStorage::make_unique_enabler: public RemoteDataStorage
-	{
-		template<typename... Args>
-		explicit make_unique_enabler(Args&&... args)
-		:	RemoteDataStorage(std::forward<Args>(args)...)
-		{}
 	};
 }
 

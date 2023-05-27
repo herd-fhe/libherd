@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "herd/backend/i_backend.hpp"
-#include "herd/data_storage/data_frame.hpp"
+#include "herd/storage/data_frame.hpp"
 #include "herd/session/session.hpp"
 #include "herd/utils/movable_function.hpp"
 #include "herd/utils/pimpl.hpp"

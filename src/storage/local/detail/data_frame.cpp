@@ -1,9 +1,9 @@
-#include "herd/data_storage/local/detail/local_data_frame.hpp"
+#include "herd/storage/local/detail/data_frame.hpp"
 
 #include <cassert>
 #include <type_traits>
 
-#include "herd/data_storage/local/type_pool_factory.hpp"
+#include "herd/storage/local/type_pool_factory.hpp"
 #include "herd/utils/csv_reader.hpp"
 
 
@@ -20,9 +20,9 @@ namespace
 	}
 }
 
-namespace herd::storage
+namespace herd::storage::local::detail
 {
-	LocalDataFrame::LocalDataFrame(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns)
+	DataFrameImpl::DataFrameImpl(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns)
 	:	DataFrame(uuid, std::move(name), columns)
 	{
 		pools_.reserve(columns.size());
@@ -33,7 +33,7 @@ namespace herd::storage
 		}
 	}
 
-	size_t LocalDataFrame::size() const
+	size_t DataFrameImpl::size() const
 	{
 		if(pools_.empty())
 		{
@@ -45,7 +45,7 @@ namespace herd::storage
 		}
 	}
 
-	bool LocalDataFrame::empty() const
+	bool DataFrameImpl::empty() const
 	{
 		if(pools_.empty())
 		{
@@ -57,7 +57,7 @@ namespace herd::storage
 		}
 	}
 
-	void LocalDataFrame::add_row(const utils::CSVRow& row)
+	void DataFrameImpl::add_row(const utils::CSVRow& row)
 	{
 		for(const auto& [name, column]: columns())
 		{
@@ -98,13 +98,8 @@ namespace herd::storage
 		}
 	}
 
-	void LocalDataFrame::flush_rows()
+	void DataFrameImpl::flush_rows()
 	{
 		//do nothing
-	}
-
-	std::shared_ptr<LocalDataFrame> LocalDataFrame::make_shared(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns)
-	{
-		return std::make_shared<make_shared_enabler>(uuid, std::move(name), columns);
 	}
 }

@@ -1,8 +1,8 @@
 #ifndef LIBHERD_LOCAL_DATA_FRAME_HPP
 #define LIBHERD_LOCAL_DATA_FRAME_HPP
 
-#include "herd/data_storage/data_frame.hpp"
-#include "herd/data_storage/local/type_pool.hpp"
+#include "herd/storage/data_frame.hpp"
+#include "herd/storage/local/type_pool.hpp"
 
 
 namespace herd::storage::local::detail
@@ -10,29 +10,19 @@ namespace herd::storage::local::detail
 	class DataFrameImpl: public DataFrame
 	{
 	public:
+		DataFrameImpl(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns);
+
 		size_t size() const override;
 		bool empty() const override;
 
 	private:
+		std::vector<std::unique_ptr<ITypePool>> pools_;
+
 		void add_row(const utils::CSVRow& row);
 		void flush_rows();
 
-		friend class LocalDataStorage;
-		struct make_shared_enabler;
-
-		LocalDataFrame(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns);
-		static std::shared_ptr<LocalDataFrame> make_shared(const common::UUID& uuid, std::string name, const std::vector<ColumnParameters>& columns);
-
-		std::vector<std::unique_ptr<ITypePool>> pools_;
-	};
-
-	struct LocalDataFrame::make_shared_enabler: public LocalDataFrame
-	{
-		template<typename... Args>
-		explicit make_shared_enabler(Args&&... args)
-		:	LocalDataFrame(std::forward<Args>(args)...)
-		{}
+		friend class DataStorageImpl;
 	};
 }
 
-#endif //LIBHERD_DATA_FRAME_HPP
+#endif //LIBHERD_LOCAL_DATA_FRAME_HPP

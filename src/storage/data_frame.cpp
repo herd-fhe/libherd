@@ -1,7 +1,7 @@
 #include <sstream>
 #include <utility>
 
-#include "herd/data_storage/data_frame.hpp"
+#include "herd/storage/data_frame.hpp"
 #include "herd/utils/csv_reader.hpp"
 
 namespace herd::storage

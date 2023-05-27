@@ -1,7 +1,7 @@
 #ifndef LIBHERD_LOCAL_DATA_STORAGE_HPP
 #define LIBHERD_LOCAL_DATA_STORAGE_HPP
 
-#include "herd/data_storage/data_storage.hpp"
+#include "herd/storage/data_storage.hpp"
 
 
 namespace herd::storage::local::detail

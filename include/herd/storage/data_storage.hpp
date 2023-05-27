@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 #include "herd/common/model/schema_type.hpp"
-#include "herd/data_storage/data_frame.hpp"
+#include "herd/storage/data_frame.hpp"
 #include "herd/utils/progress_future.hpp"
 
 

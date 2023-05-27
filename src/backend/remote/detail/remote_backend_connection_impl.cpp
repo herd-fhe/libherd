@@ -6,7 +6,7 @@
 
 #include "herd/backend/remote/detail/mapper.hpp"
 #include "herd/backend/remote/detail/remote_backend_connection_impl.hpp"
-#include "herd/data_storage/remote/remote_data_frame.hpp"
+#include "herd/storage/remote/detail/data_frame.hpp"
 
 
 namespace herd
@@ -334,7 +334,7 @@ namespace herd
 
 		const auto data_frame_uuid = do_init_upload_frame(state, session_uuid, name, schema_type, columns, row_count);
 
-		auto data_frame = storage::RemoteDataFrame::make_shared(data_frame_uuid, name, row_count, columns, schema_type, backend_);
+		auto data_frame = std::make_shared<storage::remote::detail::DataFrameImpl>(data_frame_uuid, name, row_count, columns, schema_type, backend_);
 		auto task = utils::ProgressPackagedTask<std::shared_ptr<storage::DataFrame>()>(
 				[
 						state=std::move(state),
@@ -377,7 +377,7 @@ namespace herd
 				response.dataframes(), std::back_inserter(data_frames),
 				[&](const auto& data_frame)
 				{
-					return storage::RemoteDataFrame::make_shared(
+					return std::make_shared<storage::remote::detail::DataFrameImpl>(
 									common::UUID(data_frame.uuid()), data_frame.name(),
 									data_frame.rows_count(),
 									mapper::to_model(data_frame.columns()), mapper::to_model(data_frame.schema_type()),

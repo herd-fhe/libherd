@@ -3,7 +3,7 @@
 
 #include "herd/common/model/schema_type.hpp"
 #include "herd/common/uuid.hpp"
-#include "herd/data_storage/data_frame.hpp"
+#include "herd/storage/data_frame.hpp"
 
 
 namespace herd
@@ -11,11 +11,16 @@ namespace herd
 	class RemoteBackend;
 }
 
-namespace herd::storage
+namespace herd::storage::remote::detail
 {
-	class RemoteDataFrame: public DataFrame
+	class DataFrameImpl: public DataFrame
 	{
 	public:
+		DataFrameImpl(
+				common::UUID uuid, const std::string& name, size_t row_count,
+				const std::vector<ColumnParameters>& columns, common::SchemaType schema_type,
+				RemoteBackend& remote_backend);
+
 		size_t size() const override;
 		bool empty() const override;
 
@@ -32,23 +37,6 @@ namespace herd::storage
 		RemoteBackend& backend_;
 
 		bool uploaded_ = false;
-
-		RemoteDataFrame(
-				common::UUID uuid, const std::string& name, size_t row_count,
-				const std::vector<ColumnParameters>& columns, common::SchemaType schema_type,
-				RemoteBackend& remote_backend);
-		static std::shared_ptr<RemoteDataFrame> make_shared(
-				common::UUID uuid, const std::string& name, size_t row_count,
-				const std::vector<ColumnParameters>& columns, common::SchemaType schema_type,
-				RemoteBackend& remote_backend);
-	};
-
-	struct RemoteDataFrame::make_shared_enabler: public RemoteDataFrame
-	{
-		template<typename... Args>
-		explicit make_shared_enabler(Args&&... args):
-			RemoteDataFrame(std::forward<Args>(args)...)
-		{}
 	};
 }
 

@@ -1,7 +1,7 @@
 #ifndef LIBHERD_I_DATA_ROW_HPP
 #define LIBHERD_I_DATA_ROW_HPP
 
-#include "herd/data_storage/data_frame.hpp"
+#include "herd/storage/data_frame.hpp"
 
 
 namespace herd::storage

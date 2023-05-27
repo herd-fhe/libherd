@@ -1,4 +1,4 @@
-#include "herd/data_storage/local/type_pool_factory.hpp"
+#include "herd/storage/local/type_pool_factory.hpp"
 
 
 namespace herd::storage

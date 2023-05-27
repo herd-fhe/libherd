@@ -125,16 +125,16 @@ target_sources(
         src/translator/xlscc/detail/ir_transpiler.cpp
         src/translator/xlscc/detail/translator.cpp
 
-        src/data_storage/data_storage.cpp
-        src/data_storage/data_frame.cpp
-        src/data_storage/i_data_row.cpp
+        src/storage/data_storage.cpp
+        src/storage/data_frame.cpp
+        src/storage/i_data_row.cpp
 
-        src/data_storage/local/local_data_storage.cpp
-        src/data_storage/local/local_data_frame.cpp
-        src/data_storage/local/type_pool_factory.cpp
+        src/storage/local/detail/data_storage.cpp
+        src/storage/local/detail/data_frame.cpp
+        src/storage/local/type_pool_factory.cpp
 
-        src/data_storage/remote/remote_data_storage.cpp
-        src/data_storage/remote/remote_data_frame.cpp
+        src/storage/remote/detail/data_storage.cpp
+        src/storage/remote/detail/data_frame.cpp
 
         src/executor/job.cpp
 
@@ -162,17 +162,17 @@ target_sources(
         include/herd/translator/xlscc/detail/ir_transpiler.hpp
         include/herd/translator/xlscc/detail/compiler.hpp
 
-        include/herd/data_storage/data_storage.hpp
-        include/herd/data_storage/data_frame.hpp
-        include/herd/data_storage/i_data_row.hpp
+        include/herd/storage/data_storage.hpp
+        include/herd/storage/data_frame.hpp
+        include/herd/storage/i_data_row.hpp
 
-        include/herd/data_storage/local/local_data_storage.hpp
-        include/herd/data_storage/local/local_data_frame.hpp
-        include/herd/data_storage/local/type_pool.hpp
-        include/herd/data_storage/local/type_pool_factory.hpp
+        include/herd/storage/local/detail/data_storage.hpp
+        include/herd/storage/local/detail/data_frame.hpp
+        include/herd/storage/local/type_pool.hpp
+        include/herd/storage/local/type_pool_factory.hpp
 
-        include/herd/data_storage/remote/remote_data_storage.hpp
-        include/herd/data_storage/remote/remote_data_frame.hpp
+        include/herd/storage/remote/detail/data_storage.hpp
+        include/herd/storage/remote/detail/data_frame.hpp
 
         include/herd/executor/i_executor.hpp
         include/herd/executor/job.hpp
