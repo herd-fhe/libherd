@@ -12,4 +12,4 @@
 	url = https://github.com/ikalnytskyi/termcolor
 [submodule "mappers"]
 	path = mappers
-	url = https://github.com/herd-fhe/herd_dto_mappers.git
+	url = https://github.com/herd-fhe/dto_mappers.git
