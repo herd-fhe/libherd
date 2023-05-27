@@ -1,4 +1,4 @@
-#include "herd/data_storage/local/local_data_frame.hpp"
+#include "herd/data_storage/local/detail/local_data_frame.hpp"
 
 #include <cassert>
 #include <type_traits>

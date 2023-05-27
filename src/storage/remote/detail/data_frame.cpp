@@ -1,4 +1,4 @@
-#include "herd/data_storage/remote/remote_data_frame.hpp"
+#include "herd/data_storage/remote/detail/remote_data_frame.hpp"
 
 namespace herd::storage
 {

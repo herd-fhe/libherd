@@ -5,9 +5,9 @@
 #include "herd/data_storage/local/type_pool.hpp"
 
 
-namespace herd::storage
+namespace herd::storage::local::detail
 {
-	class LocalDataFrame: public DataFrame
+	class DataFrameImpl: public DataFrame
 	{
 	public:
 		size_t size() const override;
@@ -35,4 +35,4 @@ namespace herd::storage
 	};
 }
 
-#endif //LIBHERD_LOCAL_DATA_FRAME_HPP
+#endif //LIBHERD_DATA_FRAME_HPP
