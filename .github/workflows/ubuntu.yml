@@ -33,34 +33,10 @@ jobs:
       - name: Create Build Environment
         run: cmake -E make_directory ${{github.workspace}}/build
 
-      - name: Cache OpenFHE build
-        id: openfhe-build
-        uses: actions/cache@v3
+      - uses: ./common/action/install-openfhe
         with:
-          path: ${{github.workspace}}/external/openfhe/
-          key: openfhe-v1.0.0
-
-      - name: Download OpenFHE
-        if: steps.openfhe-build.outputs.cache-hit != 'true'
-        uses: actions/checkout@v2
-        with:
-          repository: openfheorg/openfhe-development
-          ref: v1.0.0
-          path: ${{github.workspace}}/external/openfhe
-
-      - name: Build OpenFHE
-        if: steps.openfhe-build.outputs.cache-hit != 'true'
-        working-directory: ${{github.workspace}}/external/openfhe
-        run: |
-          mkdir build -p
-          cd build
-          cmake -DBUILD_UNITTESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF -DBUILD_EXTRAS=OFF .. 
-          make
-
-      - name: Install OpenFHE
-        working-directory: ${{github.workspace}}/external/openfhe/build
-        run: |
-          sudo make install     
+          prefix: ${{ github.workspace }}/external/openfhe
+          parallel: '4'
 
       - name: Configure CMake
         working-directory: ${{github.workspace}}/build
@@ -103,37 +79,13 @@ jobs:
         with:
           prefix: ${{github.workspace}}/external/grpc
 
+      - uses: ./common/action/install-openfhe
+        with:
+          prefix: ${{ github.workspace }}/external/openfhe
+          parallel: '4'
+
       - name: Create Build Environment
         run: cmake -E make_directory ${{github.workspace}}/build
-
-      - name: Cache OpenFHE build
-        id: openfhe-build
-        uses: actions/cache@v3
-        with:
-          path: ${{github.workspace}}/external/openfhe/
-          key: openfhe-v1.0.0
-
-      - name: Download OpenFHE
-        if: steps.openfhe-build.outputs.cache-hit != 'true'
-        uses: actions/checkout@v2
-        with:
-          repository: openfheorg/openfhe-development
-          ref: v1.0.0
-          path: ${{github.workspace}}/external/openfhe
-
-      - name: Build OpenFHE
-        if: steps.openfhe-build.outputs.cache-hit != 'true'
-        working-directory: ${{github.workspace}}/external/openfhe
-        run: |
-          mkdir build -p
-          cd build
-          cmake -DBUILD_UNITTESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF -DBUILD_EXTRAS=OFF .. 
-          make
-
-      - name: Install OpenFHE
-        working-directory: ${{github.workspace}}/external/openfhe/build
-        run: |
-          sudo make install         
 
       - name: Configure CMake
         working-directory: ${{github.workspace}}/build
