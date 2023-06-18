@@ -17,14 +17,15 @@ namespace herd::storage::remote::detail
 	{
 	public:
 		DataFrameImpl(
-				common::UUID uuid, const std::string& name, size_t row_count,
+				common::UUID uuid, const std::string& name, size_t row_count, std::size_t partitions,
 				const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
 				RemoteBackend& remote_backend);
 
-		size_t size() const override;
-		bool empty() const override;
+		[[nodiscard]] std::size_t partitions() const override;
+		[[nodiscard]] size_t size() const override;
+		[[nodiscard]] bool empty() const override;
 
-		common::SchemaType schema_type() const;
+		[[nodiscard]] common::SchemaType schema_type() const;
 
 	private:
 		friend class herd::RemoteBackend;
@@ -32,7 +33,8 @@ namespace herd::storage::remote::detail
 
 		common::SchemaType schema_type_;
 
-		size_t rows_count_;
+		std::size_t partitions_;
+		std::size_t rows_count_;
 
 		RemoteBackend& backend_;
 

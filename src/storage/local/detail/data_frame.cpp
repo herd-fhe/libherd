@@ -33,6 +33,11 @@ namespace herd::storage::local::detail
 		}
 	}
 
+	std::size_t DataFrameImpl::partitions() const
+	{
+		return 1;
+	}
+
 	size_t DataFrameImpl::size() const
 	{
 		if(pools_.empty())

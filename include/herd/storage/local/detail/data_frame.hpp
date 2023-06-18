@@ -12,8 +12,9 @@ namespace herd::storage::local::detail
 	public:
 		DataFrameImpl(const common::UUID& uuid, std::string name, const std::vector<common::ColumnMeta>& columns);
 
-		size_t size() const override;
-		bool empty() const override;
+		[[nodiscard]] std::size_t partitions() const override;
+		[[nodiscard]] size_t size() const override;
+		[[nodiscard]] bool empty() const override;
 
 	private:
 		std::vector<std::unique_ptr<ITypePool>> pools_;

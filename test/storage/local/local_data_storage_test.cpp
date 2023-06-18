@@ -24,7 +24,12 @@ TEST(LocalDataStorage, load_from_csv_stream)
 			{"fourth", INT64},
 	};
 
-	auto frame = storage.load_from_csv(columns, stream, herd::common::SchemaType::NONE).get();
+	herd::storage::ImportOptions options;
+	options.set_columns(columns);
+	options.set_schema(herd::common::SchemaType::NONE);
+	options.set_partitions(2);
+
+	auto frame = storage.import_from_csv(stream, options).get();
 
 	EXPECT_NE(nullptr, frame);
 	EXPECT_EQ(4, frame->columns().size());
@@ -50,7 +55,12 @@ TEST(LocalDataStorage, load_from_csv_stream_multiline)
 			{"fourth", INT64},
 	};
 
-	auto frame = storage.load_from_csv(columns, stream, herd::common::SchemaType::NONE).get();
+	herd::storage::ImportOptions options;
+	options.set_columns(columns);
+	options.set_schema(herd::common::SchemaType::NONE);
+	options.set_partitions(2);
+
+	auto frame = storage.import_from_csv(stream, options).get();
 
 	EXPECT_NE(nullptr, frame);
 	EXPECT_EQ(4, frame->columns().size());
@@ -76,5 +86,10 @@ TEST(LocalDataStorage, not_none_schema)
 			{"fourth", INT64},
 	};
 
-	EXPECT_THROW(static_cast<void>(storage.load_from_csv(columns, stream, herd::common::SchemaType::BINFHE)), std::runtime_error);
+	herd::storage::ImportOptions options;
+	options.set_columns(columns);
+	options.set_schema(herd::common::SchemaType::BINFHE);
+	options.set_partitions(2);
+
+	EXPECT_THROW(static_cast<void>(storage.import_from_csv(stream, options)), std::runtime_error);
 }

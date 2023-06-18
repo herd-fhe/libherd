@@ -49,7 +49,9 @@ namespace herd::storage
 		const std::string& name() const;
 		const common::UUID& uuid() const;
 
-		[[nodiscard]] virtual size_t size() const = 0;
+		[[nodiscard]] virtual std::size_t partitions() const = 0;
+
+		[[nodiscard]] virtual std::size_t size() const = 0;
 		[[nodiscard]] virtual bool empty() const = 0;
 		[[nodiscard]] bool alive() const;
 

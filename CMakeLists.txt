@@ -128,6 +128,7 @@ target_sources(
         src/storage/data_storage.cpp
         src/storage/data_frame.cpp
         src/storage/i_data_row.cpp
+        src/storage/import_options.cpp
 
         src/storage/local/detail/data_storage.cpp
         src/storage/local/detail/data_frame.cpp
@@ -164,6 +165,7 @@ target_sources(
         include/herd/storage/data_storage.hpp
         include/herd/storage/data_frame.hpp
         include/herd/storage/i_data_row.hpp
+        include/herd/storage/import_options.hpp
 
         include/herd/storage/local/detail/data_storage.hpp
         include/herd/storage/local/detail/data_frame.hpp

@@ -71,13 +71,15 @@ namespace herd
 				UploadFrameState& state,
 				common::UUID session_uuid, const std::string& name,
 				common::SchemaType type, const std::vector<common::ColumnMeta>& columns,
-				std::size_t row_count)
+				std::size_t row_count,
+				std::size_t partitions)
 		{
 			proto::DataFrameAddRequest request;
 			const auto info_request = request.mutable_info();
 			info_request->set_session_uuid(session_uuid.as_string());
 			info_request->set_name(name);
 			info_request->set_type(mapper::to_proto(type));
+			info_request->set_partitions(static_cast<uint32_t>(partitions));
 
 			const auto columns_proto = info_request->mutable_columns();
 			columns_proto->CopyFrom(mapper::to_proto(columns));
@@ -326,7 +328,8 @@ namespace herd
 			const common::UUID& session_uuid, const std::string& name,
 			const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
 			std::size_t row_count,
-			utils::MovableFunction<bool(std::vector<std::byte>&)> next_row)
+			utils::MovableFunction<bool(std::vector<std::byte>&)> next_row,
+			std::size_t partitions)
 	{
 		UploadFrameState state;
 		state.context = std::make_unique<grpc::ClientContext>();
@@ -334,9 +337,13 @@ namespace herd
 
 		state.reader_writer = storage_service_stub_->add_data_frame(state.context.get());
 
-		const auto data_frame_uuid = do_init_upload_frame(state, session_uuid, name, schema_type, columns, row_count);
+		const auto data_frame_uuid = do_init_upload_frame(state, session_uuid, name, schema_type, columns, row_count, partitions);
 
-		auto data_frame = std::make_shared<storage::remote::detail::DataFrameImpl>(data_frame_uuid, name, row_count, columns, schema_type, backend_);
+		auto data_frame = std::make_shared<storage::remote::detail::DataFrameImpl>(
+				data_frame_uuid, name,
+				row_count, partitions,
+				columns, schema_type,
+				backend_);
 		auto task = utils::ProgressPackagedTask<std::shared_ptr<storage::DataFrame>()>(
 				[
 						state=std::move(state),
@@ -381,7 +388,7 @@ namespace herd
 				{
 					return std::make_shared<storage::remote::detail::DataFrameImpl>(
 									common::UUID(data_frame.uuid()), data_frame.name(),
-									data_frame.rows_count(),
+									data_frame.rows_count(), data_frame.partitions(),
 									mapper::to_model(data_frame.columns()), mapper::to_model(data_frame.schema_type()),
 									backend_);
 				}

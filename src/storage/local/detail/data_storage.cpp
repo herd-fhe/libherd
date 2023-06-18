@@ -8,7 +8,12 @@
 
 namespace herd::storage::local::detail
 {
-	std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> DataStorageImpl::populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type)
+	std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> DataStorageImpl::populate_frame_from_csv(
+			std::istream& stream,
+			std::string name,
+			const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
+			[[maybe_unused]] std::size_t partitions
+	)
 	{
 		if(schema_type != common::SchemaType::NONE)
 		{
