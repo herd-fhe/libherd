@@ -15,9 +15,9 @@ namespace
 
 namespace herd::storage
 {
-	utils::ProgressFuture<std::shared_ptr<DataFrame>> DataStorage::load_from_csv(const std::vector<common::ColumnMeta>& columns, std::istream& stream, common::SchemaType schema_type, const std::string& frame_name)
+	utils::ProgressFuture<std::shared_ptr<DataFrame>> DataStorage::import_from_csv(std::istream& stream, const ImportOptions& options)
 	{
-		std::string name = frame_name;
+		std::string name = options.name;
 		if(name.empty())
 		{
 			size_t retry = 0;
@@ -29,7 +29,7 @@ namespace herd::storage
 			while(data_frames_.contains(name));
 		}
 
-		auto [future, frame] = populate_frame_from_csv(stream, name, columns, schema_type);
+		auto [future, frame] = populate_frame_from_csv(stream, name, options.columns, options.schema, options.partition_count);
 		data_frames_.try_emplace(name, frame);
 
 		return std::move(future);

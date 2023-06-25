@@ -15,7 +15,11 @@ namespace herd::storage::remote::detail
 	{
 	}
 
-	std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> DataStorageImpl::populate_frame_from_csv(std::istream& stream, std::string name, const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type)
+	std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> DataStorageImpl::populate_frame_from_csv(
+			std::istream& stream,
+			std::string name,
+			const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
+			std::size_t partitions)
 	{
 		const auto& crypto = session_.crypto(schema_type);
 		const auto row_count = utils::CSVReader::row_count(stream);
@@ -33,7 +37,7 @@ namespace herd::storage::remote::detail
 			return true;
 		};
 
-		return backend_.create_data_frame(session_.uuid(), name, columns, schema_type, row_count, std::move(next_row_bytes));
+		return backend_.create_data_frame(session_.uuid(), name, columns, schema_type, row_count, std::move(next_row_bytes), partitions);
 	}
 
 	const std::unordered_map<std::string, std::shared_ptr<DataFrame>>& DataStorageImpl::data_frames() const

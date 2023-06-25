@@ -28,7 +28,8 @@ namespace herd
 				const common::UUID& session_uuid, const std::string& name,
 				const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
 				std::size_t row_count,
-				utils::MovableFunction<bool(std::vector<std::byte>&)> next_row
+				utils::MovableFunction<bool(std::vector<std::byte>&)> next_row,
+				std::size_t partitions
 		) = 0;
 
 		virtual std::vector<std::shared_ptr<storage::DataFrame>> list_data_frames(const common::UUID& session_uuid) = 0;

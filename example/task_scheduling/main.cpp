@@ -38,13 +38,18 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	setup_binfhe_keyset(session);
 
 	std::stringstream data_frame_csv;
-	for(size_t i = 0; i < 1; ++i)
+	for(size_t i = 0; i < 10; ++i)
 	{
 		data_frame_csv << std::to_string(i)
 					   << "\n";
 	}
 
-	auto data_frame_future = session->data_storage().load_from_csv({common::ColumnMeta{"id", herd::common::DataType::INT16}}, data_frame_csv, herd::common::SchemaType::BINFHE);
+	herd::storage::ImportOptions options;
+	options.set_columns({common::ColumnMeta{"id", herd::common::DataType::INT16}});
+	options.set_schema(herd::common::SchemaType::BINFHE);
+	options.set_partitions(2);
+
+	auto data_frame_future = session->data_storage().import_from_csv(data_frame_csv, options);
 
 	std::cout << std::endl;
 
