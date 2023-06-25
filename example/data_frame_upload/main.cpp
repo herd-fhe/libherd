@@ -37,7 +37,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	setup_binfhe_keyset(session);
 
 	std::stringstream data_frame_csv;
-	for(size_t i = 0; i < 128; ++i)
+	for(size_t i = 0; i < 8; ++i)
 	{
 		data_frame_csv << std::to_string(i)
 					   << "\n";
