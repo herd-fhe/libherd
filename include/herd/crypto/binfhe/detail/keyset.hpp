@@ -3,18 +3,19 @@
 
 #include <binfhecontext.h>
 
-#include "herd/crypto/i_keyset.hpp"
+#include "herd/crypto/keyset.hpp"
 
 
 namespace herd::crypto::binfhe::detail
 {
-	class KeysetImpl: public IKeyset
+	class KeysetImpl: public Keyset
 	{
 	public:
 		KeysetImpl();
 
 		[[nodiscard]] common::SchemaType get_schema_type() const noexcept override;
-		[[nodiscard]] std::vector<std::byte> to_bytes() const override;
+		[[nodiscard]] std::vector<std::byte> cloud_key_to_bytes() const override;
+		[[nodiscard]] std::vector<std::byte> private_key_to_bytes() const override;
 
 		const lbcrypto::BinFHEContext& context();
 		const lbcrypto::LWEPrivateKey& private_key();

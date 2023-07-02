@@ -6,7 +6,7 @@
 #include <set>
 
 #include "i_crypto.hpp"
-#include "i_keyset.hpp"
+#include "keyset.hpp"
 
 
 namespace herd::crypto
@@ -14,7 +14,7 @@ namespace herd::crypto
 	class CryptoFactory
 	{
 	public:
-		using FactoryMethod = std::function<std::unique_ptr<ICrypto>(IKeyset&)>;
+		using FactoryMethod = std::function<std::unique_ptr<ICrypto>(Keyset&)>;
 
 		CryptoFactory() = delete;
 
@@ -22,7 +22,7 @@ namespace herd::crypto
 		static bool is_registered(common::SchemaType type) noexcept;
 		static std::set<common::SchemaType> registered_schemas() noexcept;
 
-		static std::unique_ptr<ICrypto> create_crypto(IKeyset& keyset);
+		static std::unique_ptr<ICrypto> create_crypto(Keyset& keyset);
 
 	private:
 		static std::unordered_map<common::SchemaType, FactoryMethod>& get_internal_map();

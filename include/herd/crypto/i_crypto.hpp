@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "herd/crypto/ciphertext.hpp"
+#include "herd/crypto/keyset.hpp"
 
 
 namespace herd::crypto
@@ -14,7 +15,8 @@ namespace herd::crypto
 	public:
 		virtual ~ICrypto() = default;
 
-		virtual std::unique_ptr<Ciphertext> encrypt(const std::vector<bool>& plaintext) const = 0;
+		[[nodiscard]] virtual const Keyset& keyset() const noexcept = 0;
+		[[nodiscard]] virtual std::unique_ptr<Ciphertext> encrypt(const std::vector<bool>& plaintext) const = 0;
 	};
 }
 

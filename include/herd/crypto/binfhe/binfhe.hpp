@@ -3,11 +3,11 @@
 
 #include <memory>
 
-#include "herd/crypto/i_keyset.hpp"
+#include "herd/crypto/keyset.hpp"
 
 
 namespace herd::crypto::binfhe
 {
-	std::unique_ptr<IKeyset> create_binfhe_keyset();
+	std::unique_ptr<Keyset> create_binfhe_keyset();
 }
 #endif //LIBHERD_BINFHE_HPP

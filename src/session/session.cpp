@@ -58,12 +58,12 @@ namespace herd
 		return *executor_;
 	}
 
-	utils::ProgressFuture<void> Session::add_key(std::unique_ptr<crypto::IKeyset> keyset)
+	utils::ProgressFuture<void> Session::add_key(std::unique_ptr<crypto::Keyset> keyset)
 	{
 		const auto type = keyset->get_schema_type();
 		keyring_.add_keyset(std::move(keyset));
 
-		auto cloud_key = keyring_.get_keyset(type)->to_bytes();
+		auto cloud_key = keyring_.get_keyset(type)->cloud_key_to_bytes();
 		return context_->add_key(uuid_, type, std::move(cloud_key));
 	}
 

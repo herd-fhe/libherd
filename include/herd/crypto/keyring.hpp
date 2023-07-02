@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include "herd/common/model/schema_type.hpp"
-#include "herd/crypto/i_keyset.hpp"
+#include "herd/crypto/keyset.hpp"
 
 
 namespace herd::crypto
@@ -19,12 +19,12 @@ namespace herd::crypto
 	class Keyring
 	{
 	public:
-		void add_keyset(std::unique_ptr<IKeyset> keyset);
-		[[nodiscard]] std::unique_ptr<IKeyset>& get_keyset(common::SchemaType key_type);
+		void add_keyset(std::unique_ptr<Keyset> keyset);
+		[[nodiscard]] std::unique_ptr<Keyset>& get_keyset(common::SchemaType key_type);
 		[[nodiscard]] bool contains_key(common::SchemaType key_type) const noexcept;
 
 	private:
-		std::unordered_map<common::SchemaType, std::unique_ptr<IKeyset>> keyring_;
+		std::unordered_map<common::SchemaType, std::unique_ptr<Keyset>> keyring_;
 	};
 }
 

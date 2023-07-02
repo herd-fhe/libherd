@@ -5,7 +5,7 @@
 
 namespace herd::crypto::binfhe
 {
-	std::unique_ptr<IKeyset> create_binfhe_keyset()
+	std::unique_ptr<Keyset> create_binfhe_keyset()
 	{
 		return std::make_unique<detail::KeysetImpl>();
 	}

@@ -41,7 +41,7 @@ namespace herd
 		[[nodiscard]] executor::IExecutor& executor();
 		[[nodiscard]] crypto::ICrypto& crypto(common::SchemaType schema_type);
 
-		utils::ProgressFuture<void> add_key(std::unique_ptr<crypto::IKeyset> keyset);
+		utils::ProgressFuture<void> add_key(std::unique_ptr<crypto::Keyset> keyset);
 
 		void destroy();
 

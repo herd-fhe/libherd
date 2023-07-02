@@ -115,6 +115,7 @@ target_sources(
         src/crypto/crypto_factory.cpp
         src/crypto/crypto.cpp
         src/crypto/keyring.cpp
+        src/crypto/keyset.cpp
 
         src/crypto/binfhe/binfhe.cpp
         src/crypto/binfhe/detail/crypto.cpp
@@ -183,7 +184,7 @@ target_sources(
 
         include/herd/crypto/i_crypto.hpp
         include/herd/crypto/crypto_config.hpp
-        include/herd/crypto/i_keyset.hpp
+        include/herd/crypto/keyset.hpp
         include/herd/crypto/keyring.hpp
         include/herd/crypto/ciphertext.hpp
         include/herd/crypto/crypto_factory.hpp

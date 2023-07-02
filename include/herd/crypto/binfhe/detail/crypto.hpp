@@ -10,9 +10,10 @@ namespace herd::crypto::binfhe::detail
 	class CryptoImpl final: public ICrypto
 	{
 	public:
-		explicit CryptoImpl(IKeyset& keyset);
+		explicit CryptoImpl(Keyset& keyset);
 
-		std::unique_ptr<Ciphertext> encrypt(const std::vector<bool>& plaintext) const override;
+		[[nodiscard]] const Keyset& keyset() const noexcept override;
+		[[nodiscard]] std::unique_ptr<Ciphertext> encrypt(const std::vector<bool>& plaintext) const override;
 
 	private:
 		KeysetImpl& keyset_;

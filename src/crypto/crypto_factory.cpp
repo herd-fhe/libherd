@@ -32,7 +32,7 @@ namespace herd::crypto
 		return schemas;
 	}
 
-	std::unique_ptr<ICrypto> CryptoFactory::create_crypto(herd::crypto::IKeyset& keyset)
+	std::unique_ptr<ICrypto> CryptoFactory::create_crypto(herd::crypto::Keyset& keyset)
 	{
 		const auto schema_type = keyset.get_schema_type();
 
@@ -53,7 +53,7 @@ namespace herd::crypto
 
 	static bool binfhe_registered = CryptoFactory::register_crypto(
 			common::SchemaType::BINFHE,
-			[](IKeyset& keyset)
+			[](Keyset& keyset)
 			{
 				return std::make_unique<binfhe::detail::CryptoImpl>(keyset);
 			}

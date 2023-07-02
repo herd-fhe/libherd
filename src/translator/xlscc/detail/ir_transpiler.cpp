@@ -80,15 +80,18 @@ namespace herd::translator::xlscc::detail
 				}
 				case OperationType::RETURN:
 				{
-					for(const auto arg: args)
+					for(auto tuple_index = static_cast<unsigned int>(args.size()); const auto arg: args)
 					{
 						assert(indirect_output_access.contains(arg));
 						const auto& value_bits = indirect_output_access[arg];
-						for(const auto bit_id: value_bits)
+						--tuple_index;
+						for(auto bit_index = static_cast<unsigned int>(value_bits.size()); const auto bit_id: value_bits)
 						{
 							assert(id_node_map.contains(bit_id));
 							const auto& input = id_node_map[bit_id];
-							graph.emplace(input, common::OutputNode{arg, bit_id});
+							--bit_index;
+							graph.emplace(input, common::OutputNode{tuple_index, bit_index});
+
 						}
 					}
 					break;

@@ -12,16 +12,21 @@ namespace herd::crypto::binfhe::detail
 {
 	namespace
 	{
-		KeysetImpl& validate_keyset(herd::crypto::IKeyset& keyset)
+		KeysetImpl& validate_keyset(herd::crypto::Keyset& keyset)
 		{
 			assert(keyset.get_schema_type() == common::SchemaType::BINFHE);
 			return dynamic_cast<KeysetImpl&>(keyset);
 		}
 	}
 
-	CryptoImpl::CryptoImpl(IKeyset& keyset)
+	CryptoImpl::CryptoImpl(Keyset& keyset)
 	:	keyset_(validate_keyset(keyset))
 	{
+	}
+
+	const Keyset& CryptoImpl::keyset() const noexcept
+	{
+		return keyset_;
 	}
 
 	std::unique_ptr<Ciphertext> CryptoImpl::encrypt(const std::vector<bool>& plaintext) const
