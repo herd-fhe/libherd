@@ -17,7 +17,7 @@ namespace herd::crypto::binfhe::detail
 		[[nodiscard]] std::vector<std::byte> cloud_key_to_bytes() const override;
 		[[nodiscard]] std::vector<std::byte> private_key_to_bytes() const override;
 
-		const lbcrypto::BinFHEContext& context();
+		const lbcrypto::BinFHEContext& context() const;
 		const lbcrypto::LWEPrivateKey& private_key();
 
 		void recreate_keys();

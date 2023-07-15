@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include "herd/storage/local/type_pool.hpp"
-#include "herd/type.hpp"
+#include "herd/common/native_type_mapping.hpp"
 
 
 namespace herd::storage
@@ -17,7 +17,7 @@ namespace herd::storage
 		template<common::DataType key>
 		[[nodiscard]] static bool register_type()
 		{
-			using mapping = NativeTypeMapping<key>;
+			using mapping = common::NativeTypeMapping<key>;
 			return register_type(
 					mapping::key,
 					[]() -> std::unique_ptr<ITypePool>

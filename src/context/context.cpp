@@ -6,10 +6,6 @@
 
 namespace herd
 {
-	Context::Context() noexcept
-	{
-	}
-
 	ContextBuilder Context::create()
 	{
 		return {};

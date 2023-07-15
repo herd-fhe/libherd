@@ -4,7 +4,7 @@
 #ifdef __linux__
 	#include <unistd.h>
 
-	static const char* herd_home_internal = "/usr/bin";
+	static const char* const herd_home_internal = "/usr/bin";
 
 #else
 	#error "System not supported"

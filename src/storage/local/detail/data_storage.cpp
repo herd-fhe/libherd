@@ -10,7 +10,7 @@ namespace herd::storage::local::detail
 {
 	std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> DataStorageImpl::populate_frame_from_csv(
 			std::istream& stream,
-			std::string name,
+			const std::string& name,
 			const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
 			[[maybe_unused]] std::size_t partitions
 	)
@@ -20,7 +20,7 @@ namespace herd::storage::local::detail
 			throw std::runtime_error("Encryption not supported for local storage");
 		}
 
-		auto frame = std::make_shared<DataFrameImpl>(common::UUID(), std::move(name), columns);
+		auto frame = std::make_shared<DataFrameImpl>(common::UUID(), name, columns);
 
 		utils::CSVReader reader;
 

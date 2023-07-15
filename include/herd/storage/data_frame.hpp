@@ -10,7 +10,7 @@
 #include "herd/common/model/column_meta.hpp"
 #include "herd/common/uuid.hpp"
 #include "herd/crypto/i_crypto.hpp"
-#include "herd/type.hpp"
+#include "herd/common/native_type_mapping.hpp"
 
 
 namespace herd::utils

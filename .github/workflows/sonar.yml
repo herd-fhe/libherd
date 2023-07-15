@@ -52,7 +52,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install build-essential autoconf libtool pkg-config libomp-dev ninja-build clang-15 libclang-15-dev
+          sudo apt install build-essential autoconf libtool pkg-config libomp-dev ninja-build clang-14 libclang-14-dev libclang-cpp14
         shell: bash
 
       - uses: ./proto/action/install-grpc

@@ -10,7 +10,7 @@ namespace herd::storage::local::detail
 	class DataFrameImpl: public DataFrame
 	{
 	public:
-		DataFrameImpl(const common::UUID& uuid, std::string name, const std::vector<common::ColumnMeta>& columns);
+		DataFrameImpl(const common::UUID& uuid, const std::string& name, const std::vector<common::ColumnMeta>& columns);
 
 		[[nodiscard]] std::size_t partitions() const override;
 		[[nodiscard]] size_t size() const override;

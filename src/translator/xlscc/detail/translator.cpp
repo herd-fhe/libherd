@@ -3,6 +3,7 @@
 #include "herd/common/uuid.hpp"
 #include "herd/translator/xlscc/detail/ir_parser.hpp"
 #include "herd/translator/xlscc/detail/ir_transpiler.hpp"
+#include "herd/translator/xlscc/detail/source_analyzer.hpp"
 #include "herd/utils/path.hpp"
 
 
@@ -15,14 +16,13 @@ namespace herd::translator::xlscc::detail
 		find_toolset();
 	}
 
-	Compiler::~Compiler()
-	{
-	}
-
 	common::Circuit Compiler::translate(std::string_view source)
 	{
-		const auto source_path = temp_storge_.create_temp_file();
+		const auto source_path = temp_storge_.create_temp_file(".cpp");
 		utils::TempStorage::fill_file(source_path, source);
+		SourceAnalyzer analyzer;
+		const auto metadata = analyzer.parse(source);
+
 		auto temp_code = transpile_to_ir(source_path);
 
 		const auto ir_path = temp_storge_.create_temp_file();
@@ -34,7 +34,7 @@ namespace herd::translator::xlscc::detail
 		temp_code = booleanify_ir(optimized_ir_path);
 
 		const auto definition = parse_ir(temp_code);
-		auto stage_circuit = transpile_ir_program(definition);
+		auto stage_circuit = transpile_ir_program(definition, metadata);
 
 		return stage_circuit;
 	}
@@ -68,7 +68,7 @@ namespace herd::translator::xlscc::detail
 
 		std::array<char, 64> temp_buffer;
 		std::string output;
-		while(fgets(temp_buffer.data(), temp_buffer.size(), exec_pipe.get()) != 0)
+		while(fgets(temp_buffer.data(), temp_buffer.size(), exec_pipe.get()) != nullptr)
 		{
 			output += temp_buffer.data();
 		}

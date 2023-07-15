@@ -22,9 +22,16 @@ add_executable(libherd_test "")
 target_link_libraries(
         libherd_test
         libherd
+
         GTest::gtest GTest::gmock GTest::gtest_main
         options_target
         warnings_target
+)
+
+target_include_directories(
+        libherd_test
+        SYSTEM PRIVATE
+        ${LLVM_INCLUDE_DIRS}
 )
 
 target_sources(

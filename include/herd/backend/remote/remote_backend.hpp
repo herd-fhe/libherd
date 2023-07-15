@@ -83,7 +83,7 @@ namespace herd
 	private:
 		class RemoteBackendConnectionImpl;
 
-		std::unique_ptr<utils::ThreadPool> pool_;
+		std::unique_ptr<utils::ThreadPool> pool_{std::make_unique<utils::ThreadPool>(DEFAULT_THREADS)};
 		utils::PImpl<RemoteBackendConnectionImpl> pimpl_;
 	};
 }

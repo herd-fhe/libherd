@@ -69,9 +69,8 @@ find_package(PkgConfig REQUIRED)
 
 # External
 find_package(OpenFHE REQUIRED)
-
-find_package(LLVM 15 REQUIRED)
 find_package(libclang REQUIRED)
+find_package(LLVM 14 REQUIRED CONFIG)
 find_package(Threads REQUIRED)
 find_package(OpenMP REQUIRED)
 
@@ -122,6 +121,7 @@ target_sources(
         src/crypto/binfhe/detail/keyset.cpp
         src/crypto/binfhe/detail/ciphertext.cpp
 
+        src/translator/xlscc/detail/source_analyzer.cpp
         src/translator/xlscc/detail/ir_parser.cpp
         src/translator/xlscc/detail/ir_transpiler.cpp
         src/translator/xlscc/detail/translator.cpp
@@ -148,6 +148,7 @@ target_sources(
         src/utils/thread_pool.cpp
         src/utils/temp_storage.cpp
         src/utils/path.cpp
+        src/utils/string_utils.cpp
 
         include/herd/context/context.hpp
         include/herd/context/context_builder.hpp
@@ -158,7 +159,9 @@ target_sources(
         include/herd/backend/remote/detail/remote_backend_connection_impl.hpp
 
         include/herd/translator/i_translator.hpp
+        include/herd/translator/exception.hpp
 
+        include/herd/translator/xlscc/detail/source_analyzer.hpp
         include/herd/translator/xlscc/detail/ir_parser.hpp
         include/herd/translator/xlscc/detail/ir_transpiler.hpp
         include/herd/translator/xlscc/detail/compiler.hpp
@@ -194,8 +197,6 @@ target_sources(
         include/herd/crypto/binfhe/detail/keyset.hpp
         include/herd/crypto/binfhe/detail/ciphertext.hpp
 
-        include/herd/type.hpp
-
         include/herd/utils/csv_reader.hpp
         include/herd/utils/csv_value_mappers.hpp
 
@@ -206,6 +207,7 @@ target_sources(
         include/herd/utils/progress_bar.hpp
         include/herd/utils/temp_storage.hpp
         include/herd/utils/path.hpp
+        include/herd/utils/string_utils.hpp
 
         include/herd/utils/pimpl.hpp
 
@@ -237,17 +239,31 @@ target_link_libraries(
         herd_proto
 )
 
+llvm_map_components_to_libnames(LLVM_LIBS
+        coverage
+        irreader
+        mcparser
+        objcarcopts
+        option
+        passes
+        profiledata
+        support
+)
+
 target_link_libraries(
         libherd
         PUBLIC
         OPENFHEcore
         OPENFHEbinfhe
         termcolor
-        libclang::libclang
 
         herd_common
         herd_dto_mappers
+
+        LLVM-14
+        clang-cpp
 )
+
 
 target_include_directories(
         libherd
@@ -257,6 +273,8 @@ target_include_directories(
         ${OpenFHE_INCLUDE}/core
         ${OpenFHE_INCLUDE}/pke
         ${OpenFHE_INCLUDE}/binfhe
+
+        ${LLVM_INCLUDE_DIRS}
 )
 
 # Test
