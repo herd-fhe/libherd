@@ -141,7 +141,7 @@ namespace herd::translator::xlscc::detail
 	}
 
 	void visit_unary(
-			const std::vector<unsigned int>& args, unsigned int output, OperationType type,
+			const std::vector<unsigned int>& args, unsigned int output, [[maybe_unused]] OperationType type,
 			common::DAG<common::node_t>& graph, std::unordered_map<unsigned int, decltype(common::Circuit::circuit_graph)::const_iterator>& id_node_map
 	)
 	{

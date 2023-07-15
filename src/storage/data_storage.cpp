@@ -52,8 +52,8 @@ namespace herd::storage
 	}
 
 
-	void DataStorage::mark_as_not_alive(std::shared_ptr<DataFrame>& data_frame)
+	void DataStorage::mark_as_not_alive(DataFrame& data_frame)
 	{
-		data_frame->set_alive_status(false);
+		data_frame.set_alive_status(false);
 	}
 }

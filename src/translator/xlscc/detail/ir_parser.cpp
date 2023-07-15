@@ -245,23 +245,25 @@ namespace herd::translator::xlscc::detail
 		{
 			switch(state)
 			{
-				case ParserState::ARGUMENTS_START:
+				using enum ParserState;
+
+				case ARGUMENTS_START:
 				{
 					if(*iter == '[')
 					{
 						value_begin = iter;
-						state = ParserState::ARGUMENTS_END;
+						state = ARGUMENTS_END;
 					}
 					break;
 				}
-				case ParserState::ARGUMENTS_END:
+				case ARGUMENTS_END:
 				{
 					if(*iter == ']')
 					{
 						const std::string_view bit_size_str = {value_begin + 1, iter};
 						args_bit_sizes.emplace_back(utils::parse_num<uint8_t>(bit_size_str));
 
-						state = ParserState::ARGUMENTS_START;
+						state = ARGUMENTS_START;
 					}
 					break;
 				}

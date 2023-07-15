@@ -17,7 +17,7 @@ namespace herd::storage::remote::detail
 
 	std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> DataStorageImpl::populate_frame_from_csv(
 			std::istream& stream,
-			std::string name,
+			const std::string& name,
 			const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
 			std::size_t partitions)
 	{
@@ -63,9 +63,9 @@ namespace herd::storage::remote::detail
 		}
 
 		std::set<common::UUID> new_data_frame_uuids;
-		std::set_difference(
-				std::begin(alive_data_frame_uuids), std::end(alive_data_frame_uuids),
-				std::begin(cached_data_frame_uuids), std::end(cached_data_frame_uuids),
+		std::ranges::set_difference(
+				alive_data_frame_uuids,
+				cached_data_frame_uuids,
 				std::inserter(new_data_frame_uuids, std::begin(new_data_frame_uuids)),
 				std::less<>());
 
@@ -73,7 +73,7 @@ namespace herd::storage::remote::detail
 		{
 			if(!alive_data_frame_uuids.contains(frame->uuid()))
 			{
-				DataStorage::mark_as_not_alive(frame);
+				DataStorage::mark_as_not_alive(*frame);
 			}
 		}
 

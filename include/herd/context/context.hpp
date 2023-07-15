@@ -23,7 +23,7 @@ namespace herd
 		friend class ContextBuilder;
 		struct make_shared_enabler;
 
-		Context() noexcept;
+		Context() noexcept = default;
 		static std::shared_ptr<Context> make_shared();
 
 		std::unique_ptr<IBackend> backend_{};

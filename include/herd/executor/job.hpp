@@ -20,6 +20,10 @@ namespace herd::executor
 
 		std::optional<unsigned long> current_stage;
 		std::optional<std::string> message;
+
+		JobState(common::UUID job_uuid, common::JobStatus job_status, std::optional<unsigned long> job_stage, std::optional<std::string> state_message)
+		:	uuid(std::move(job_uuid)), status(job_status),  current_stage(job_stage), message(std::move(state_message))
+		{};
 	};
 
 	class Job

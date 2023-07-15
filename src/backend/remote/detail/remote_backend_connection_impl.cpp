@@ -102,9 +102,9 @@ namespace herd
 
 			std::vector<std::byte> buffer;
 
-			for(std::size_t i = 0; i < row_count; i += 64lu)
+			for(std::size_t i = 0; i < row_count; i += 64LU)
 			{
-				std::size_t current_block_size = std::min(64lu, row_count - i);
+				std::size_t current_block_size = std::min(64LU, row_count - i);
 
 				buffer.clear();
 				for(std::size_t j = 0; j < current_block_size; ++j)
@@ -439,7 +439,7 @@ namespace herd
 		std::vector<executor::JobState> job_states;
 		job_states.reserve(static_cast<std::size_t>(response.states().size()));
 
-		for(auto job_state_proto: response.states())
+		for(const auto& job_state_proto: response.states())
 		{
 			const std::optional<unsigned long> current_stage = job_state_proto.has_current_stage()
 											   ? std::make_optional(job_state_proto.current_stage())
@@ -450,12 +450,10 @@ namespace herd
 										 : std::nullopt;
 
 			job_states.emplace_back(
-					executor::JobState{
-							common::UUID(job_state_proto.uuid()),
-							mapper::to_model(job_state_proto.status()),
-							current_stage,
-							message
-					}
+					common::UUID(job_state_proto.uuid()),
+					mapper::to_model(job_state_proto.status()),
+					current_stage,
+					message
 			);
 		}
 		return job_states;

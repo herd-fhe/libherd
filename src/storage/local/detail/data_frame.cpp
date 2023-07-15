@@ -22,8 +22,8 @@ namespace
 
 namespace herd::storage::local::detail
 {
-	DataFrameImpl::DataFrameImpl(const common::UUID& uuid, std::string name, const std::vector<common::ColumnMeta>& columns)
-	:	DataFrame(uuid, std::move(name), columns)
+	DataFrameImpl::DataFrameImpl(const common::UUID& uuid, const std::string& name, const std::vector<common::ColumnMeta>& columns)
+	:	DataFrame(uuid, name, columns)
 	{
 		pools_.reserve(columns.size());
 

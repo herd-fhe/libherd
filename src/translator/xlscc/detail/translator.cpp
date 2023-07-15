@@ -16,10 +16,6 @@ namespace herd::translator::xlscc::detail
 		find_toolset();
 	}
 
-	Compiler::~Compiler()
-	{
-	}
-
 	common::Circuit Compiler::translate(std::string_view source)
 	{
 		const auto source_path = temp_storge_.create_temp_file(".cpp");
@@ -72,7 +68,7 @@ namespace herd::translator::xlscc::detail
 
 		std::array<char, 64> temp_buffer;
 		std::string output;
-		while(fgets(temp_buffer.data(), temp_buffer.size(), exec_pipe.get()) != 0)
+		while(fgets(temp_buffer.data(), temp_buffer.size(), exec_pipe.get()) != nullptr)
 		{
 			output += temp_buffer.data();
 		}

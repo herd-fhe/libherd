@@ -14,7 +14,6 @@ namespace herd::translator::xlscc::detail
 	{
 	public:
 		Compiler(utils::TempStorage& temp_storage);
-		~Compiler() override;
 
 		common::Circuit translate(std::string_view source) override;
 

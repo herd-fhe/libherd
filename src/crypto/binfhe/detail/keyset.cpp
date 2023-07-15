@@ -74,7 +74,7 @@ namespace herd::crypto::binfhe::detail
 		return out;
 	}
 
-	const lbcrypto::BinFHEContext& KeysetImpl::context()
+	const lbcrypto::BinFHEContext& KeysetImpl::context() const
 	{
 		return context_;
 	}

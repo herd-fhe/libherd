@@ -51,7 +51,7 @@ namespace herd::crypto
 		return implementations_;
 	}
 
-	static bool binfhe_registered = CryptoFactory::register_crypto(
+	static const bool binfhe_registered = CryptoFactory::register_crypto(
 			common::SchemaType::BINFHE,
 			[](Keyset& keyset)
 			{

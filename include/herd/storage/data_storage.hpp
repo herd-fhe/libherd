@@ -27,11 +27,11 @@ namespace herd::storage
 	protected:
 		mutable std::unordered_map<std::string, std::shared_ptr<DataFrame>> data_frames_;
 
-		static void mark_as_not_alive(std::shared_ptr<DataFrame>& data_frame);
+		static void mark_as_not_alive(DataFrame& data_frame);
 
 	private:
 		virtual std::pair<utils::ProgressFuture<std::shared_ptr<DataFrame>>, std::shared_ptr<DataFrame>> populate_frame_from_csv(std::istream& stream,
-																																 std::string name,
+																																 const std::string& name,
 																																 const std::vector<common::ColumnMeta>& columns, common::SchemaType schema_type,
 																																 std::size_t partitions) = 0;
 	};
