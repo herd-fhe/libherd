@@ -1,4 +1,4 @@
-find_program(libclang_LLVM_CONFIG_EXECUTABLE NAMES llvm-config-15)
+find_program(libclang_LLVM_CONFIG_EXECUTABLE NAMES llvm-config-14)
 
 execute_process(COMMAND ${libclang_LLVM_CONFIG_EXECUTABLE} --includedir OUTPUT_VARIABLE libclang_INCLUDE_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
 execute_process(COMMAND ${libclang_LLVM_CONFIG_EXECUTABLE} --libdir OUTPUT_VARIABLE libclang_LIB_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)

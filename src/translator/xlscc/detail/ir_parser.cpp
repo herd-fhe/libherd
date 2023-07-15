@@ -1,70 +1,12 @@
 #include "herd/translator/xlscc/detail/ir_parser.hpp"
 
 #include <cassert>
-#include <charconv>
 #include <locale>
 #include <map>
 #include <functional>
 
+#include "herd/utils/string_utils.hpp"
 
-namespace
-{
-	std::string_view next_line(std::string_view::const_iterator start, std::string_view::const_iterator end)
-	{
-		auto line_end = start;
-		while(line_end != end)
-		{
-			if(*line_end == '\n')
-			{
-				++line_end;
-				break;
-			}
-
-			++line_end;
-		}
-
-		return {start, line_end};
-	}
-
-	std::string_view trim(std::string_view text)
-	{
-		auto start = std::cbegin(text);
-		const auto end = std::cend(text);
-		while(start != end)
-		{
-			if(!std::isspace(*start))
-			{
-				break;
-			}
-			++start;
-		}
-
-		auto rstart = std::crbegin(text);
-		const auto rend = std::crend(text);
-		while(rstart != rend)
-		{
-			if(!std::isspace(*rstart))
-			{
-				break;
-			}
-			++rstart;
-		}
-
-		return {start, rstart.base()};
-	}
-
-	template<typename T>
-	T parse_num(std::string_view num_str)
-	{
-		T value{};
-
-		[[maybe_unused]] auto [ptr, ec] = std::from_chars(std::cbegin(num_str), std::cend(num_str), value);
-
-//		assert(ec == std::errc());
-
-		return value;
-	}
-}
 
 namespace herd::translator::xlscc::detail
 {
@@ -107,14 +49,14 @@ namespace herd::translator::xlscc::detail
 
 		do
 		{
-			auto line = next_line(current_line_start, std::cend(source));
+			auto line = utils::next_line(current_line_start, std::cend(source));
 			if (std::cbegin(line) == std::cend(source))
 			{
 				break;
 			}
 
 			current_line_start = std::cend(line);
-			line = trim(line);
+			line = utils::trim(line);
 
 			switch(state)
 			{
@@ -167,13 +109,13 @@ namespace herd::translator::xlscc::detail
 
 		do
 		{
-			auto line = next_line(current_line_start, std::cend(source));
+			auto line = utils::next_line(current_line_start, std::cend(source));
 			if(std::cbegin(line) == std::cend(source))
 			{
 				break;
 			}
 			current_line_start = std::cend(line);
-			line = trim(line);
+			line = utils::trim(line);
 
 			switch(state)
 			{
@@ -317,7 +259,7 @@ namespace herd::translator::xlscc::detail
 					if(*iter == ']')
 					{
 						const std::string_view bit_size_str = {value_begin + 1, iter};
-						args_bit_sizes.emplace_back(parse_num<uint8_t>(bit_size_str));
+						args_bit_sizes.emplace_back(utils::parse_num<uint8_t>(bit_size_str));
 
 						state = ParserState::ARGUMENTS_START;
 					}
@@ -368,18 +310,18 @@ namespace herd::translator::xlscc::detail
 	{
 		const auto tuple_pos = source.find('.') + 1;
 		const auto tuple_end_pos = source.find(',', tuple_pos);
-		const auto tuple = parse_num<unsigned int>(std::string_view(std::begin(source) + tuple_pos, std::begin(source) + tuple_end_pos));
+		const auto tuple = utils::parse_num<unsigned int>(std::string_view(std::begin(source) + tuple_pos, std::begin(source) + tuple_end_pos));
 
 		const auto start_pos = source.find('=', tuple_end_pos) + 1;
 		const auto start_end_pos = source.find(',', start_pos);
-		const auto start = parse_num<unsigned int>(std::string_view(std::begin(source) + start_pos, std::begin(source) + start_end_pos));
+		const auto start = utils::parse_num<unsigned int>(std::string_view(std::begin(source) + start_pos, std::begin(source) + start_end_pos));
 
 		const auto width_pos = source.find('=', start_end_pos) + 1;
 		const auto width_end_pos = source.find(',', width_pos);
-		const auto width = parse_num<unsigned int>(std::string_view(std::begin(source) + width_pos, std::begin(source) + width_end_pos));
+		const auto width = utils::parse_num<unsigned int>(std::string_view(std::begin(source) + width_pos, std::begin(source) + width_end_pos));
 
 		const auto id_pos = source.find('=', width_end_pos) + 1;
-		const auto id = parse_num<unsigned int>(source.substr(id_pos));
+		const auto id = utils::parse_num<unsigned int>(source.substr(id_pos));
 
 		return {{tuple, start, width}, id};
 	}
@@ -388,10 +330,10 @@ namespace herd::translator::xlscc::detail
 	{
 		const auto value_pos = source.find('=') + 1;
 		const auto value_end_pos = source.find(',', value_pos);
-		const auto value = parse_num<unsigned int>(std::string_view(std::begin(source) + value_pos, std::begin(source) + value_end_pos));
+		const auto value = utils::parse_num<unsigned int>(std::string_view(std::begin(source) + value_pos, std::begin(source) + value_end_pos));
 
 		const auto id_pos = source.find('=', value_end_pos) + 1;
-		const auto id = parse_num<unsigned int>(source.substr(id_pos));
+		const auto id = utils::parse_num<unsigned int>(source.substr(id_pos));
 
 		return {{value}, id};
 	}
@@ -407,14 +349,14 @@ namespace herd::translator::xlscc::detail
 			++argument_pos;
 
 			const auto argument_end_pos = source.find(',', argument_pos);
-			const auto argument = parse_num<unsigned int>(source.substr(argument_pos, argument_end_pos - argument_pos));
+			const auto argument = utils::parse_num<unsigned int>(source.substr(argument_pos, argument_end_pos - argument_pos));
 			arguments.emplace_back(argument);
 
 			argument_pos = source.find('.', argument_pos);
 		}
 
 		const auto id_pos = source.find('=') + 1;
-		const auto id = parse_num<unsigned int>(source.substr(id_pos));
+		const auto id = utils::parse_num<unsigned int>(source.substr(id_pos));
 
 		return {arguments, id};
 	}

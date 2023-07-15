@@ -4,7 +4,7 @@
 #include <istream>
 #include <vector>
 
-#include "herd/type.hpp"
+#include "herd/common/native_type_mapping.hpp"
 #include "herd/utils/csv_value_mappers.hpp"
 
 

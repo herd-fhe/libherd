@@ -55,7 +55,20 @@ TEST(XlsccIrTranspiler, transpile_ir_program)
 			OperationDefinition{OperationType::RETURN, {83, 84}, 85},
 	};
 
-	const auto stage = transpile_ir_program(definition);
+	const auto stage = transpile_ir_program(
+			definition,
+			ProgramMetadata{
+					{
+							{
+									{"in", herd::common::DataType::UINT8}
+							}
+					},
+					{
+							{"out_1", herd::common::DataType::UINT8},
+							{"out_2", herd::common::DataType::UINT8}
+					}
+			}
+		);
 
 	const auto& circuit = stage.circuit_graph;
 
@@ -64,4 +77,14 @@ TEST(XlsccIrTranspiler, transpile_ir_program)
 
 	EXPECT_EQ(circuit.node_size(), 50);
 	EXPECT_EQ(circuit.edges_size(), 56);
+
+	ASSERT_EQ(stage.input.size(), 1);
+	ASSERT_EQ(stage.input.size(), 1);
+	EXPECT_EQ(stage.input[0], herd::common::DataType::UINT8);
+
+	ASSERT_EQ(stage.output.size(), 2);
+	EXPECT_EQ(stage.output[0].name, "out_1");
+	EXPECT_EQ(stage.output[0].data_type, herd::common::DataType::UINT8);
+	EXPECT_EQ(stage.output[1].name, "out_2");
+	EXPECT_EQ(stage.output[1].data_type, herd::common::DataType::UINT8);
 }

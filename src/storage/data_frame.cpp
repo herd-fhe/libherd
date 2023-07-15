@@ -39,8 +39,8 @@ namespace herd::storage
 	namespace
 	{
 		template<common::DataType key_type,
-				 typename NativeType = typename NativeTypeMapping<key_type>::native_type,
-				 std::size_t NativeTypeSize = NativeTypeMapping<key_type>::bit_size>
+				 typename NativeType = typename common::NativeTypeMapping<key_type>::native_type,
+				 std::size_t NativeTypeSize = common::NativeTypeMapping<key_type>::bit_size>
 		std::vector<std::byte> do_encrypt_column_value(NativeType value, const crypto::ICrypto& crypto)
 		{
 			std::vector<bool> bit_representation;

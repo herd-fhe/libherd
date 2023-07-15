@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-#include <herd/type.hpp>
+#include "herd/common/native_type_mapping.hpp"
 
 using namespace herd::storage::local::detail;
 
