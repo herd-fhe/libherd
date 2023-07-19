@@ -60,14 +60,14 @@ TEST(XlsccIrParser, parse_type_list_one_ine_one_out)
 	{
 		const auto [input, output] = parse_function_header("top fn top_add3(input: (bits[32])) -> (bits[32]) {");
 
-		EXPECT_THAT(input, ElementsAre(32));
+		EXPECT_THAT(input, ElementsAre(ElementsAre(32)));
 		EXPECT_THAT(output, ElementsAre(32));
 	}
 
 	{
 		const auto [input, output] = parse_function_header("top fn top_add3(input: (bits[8])) -> (bits[16]) {");
 
-		EXPECT_THAT(input, ElementsAre(8));
+		EXPECT_THAT(input, ElementsAre(ElementsAre(8)));
 		EXPECT_THAT(output, ElementsAre(16));
 	}
 }
@@ -79,14 +79,14 @@ TEST(XlsccIrParser, parse_function_one_named_argument)
 	{
 		const auto [arguments, output] = parse_function_one_named_argument("value=0, id=5");
 
-		EXPECT_THAT(arguments, ElementsAre(0));
+		EXPECT_THAT(arguments, ElementsAre(VariantWith<unsigned int>(0)));
 		EXPECT_EQ(output, 5);
 	}
 
 	{
 		const auto [arguments, output] = parse_function_one_named_argument("input, index=1, id=34");
 
-		EXPECT_THAT(arguments, ElementsAre(1));
+		EXPECT_THAT(arguments, ElementsAre(VariantWith<unsigned int>(1)));
 		EXPECT_EQ(output, 34);
 	}
 }
@@ -98,14 +98,26 @@ TEST(XlsccIrParser, parse_function_bit_slice_statement_arguments)
 	{
 		const auto [arguments, output] = parse_function_bit_slice_statement_arguments("tuple_index.34, start=0, width=1, id=35");
 
-		EXPECT_THAT(arguments, ElementsAre(34, 0, 1));
+		EXPECT_THAT(arguments,
+					ElementsAre(
+							VariantWith<unsigned int>(34),
+							VariantWith<unsigned int>(0),
+							VariantWith<unsigned int>(1)
+					)
+		);
 		EXPECT_EQ(output, 35);
 	}
 
 	{
 		const auto [arguments, output] = parse_function_bit_slice_statement_arguments("tuple_index.25, start=0, width=1, id=26");
 
-		EXPECT_THAT(arguments, ElementsAre(25, 0, 1));
+		EXPECT_THAT(arguments,
+					ElementsAre(
+							VariantWith<unsigned int>(25),
+							VariantWith<unsigned int>(0),
+							VariantWith<unsigned int>(1)
+					)
+		);
 		EXPECT_EQ(output, 26);
 	}
 }
@@ -117,21 +129,32 @@ TEST(XlsccIrParser, parse_function_variadic_statement_arguments)
 	{
 		const auto [arguments, output] = parse_function_variadic_statement_arguments("bit_slice.9, bit_slice.41, id=83");
 
-		EXPECT_THAT(arguments, ElementsAre(9, 41));
+		EXPECT_THAT(arguments, ElementsAre(VariantWith<unsigned int>(9), VariantWith<unsigned int>(41)));
 		EXPECT_EQ(output, 83);
 	}
 
 	{
 		const auto [arguments, output] = parse_function_variadic_statement_arguments("and.67, id=68");
 
-		EXPECT_THAT(arguments, ElementsAre(67));
+		EXPECT_THAT(arguments, ElementsAre(VariantWith<unsigned int>(67)));
 		EXPECT_EQ(output, 68);
 	}
 
 	{
 		const auto [arguments, output] = parse_function_variadic_statement_arguments("and.353, and.344, and.335, and.326, and.317, and.308, and.299, and.290, id=356");
 
-		EXPECT_THAT(arguments, ElementsAre(353, 344, 335, 326, 317, 308, 299, 290));
+		EXPECT_THAT(arguments,
+					ElementsAre(
+							VariantWith<unsigned int>(353),
+							VariantWith<unsigned int>(344),
+							VariantWith<unsigned int>(335),
+							VariantWith<unsigned int>(326),
+							VariantWith<unsigned int>(317),
+							VariantWith<unsigned int>(308),
+							VariantWith<unsigned int>(299),
+							VariantWith<unsigned int>(290)
+					)
+		);
 		EXPECT_EQ(output, 356);
 	}
 }
@@ -144,15 +167,39 @@ TEST(XlsccIrParser, parse_function_statement)
 		const auto definition = parse_function_statement("tuple_index.34: bits[32] = tuple_index(input, index=1, id=34)");
 
 		EXPECT_EQ(definition.type, OperationType::TUPLE_INDEX);
-		EXPECT_THAT(definition.arguments, ElementsAre(1));
+		EXPECT_THAT(definition.arguments,
+					ElementsAre(
+							VariantWith<std::string>("input"),
+							VariantWith<unsigned int>(1)
+					)
+		);
 		EXPECT_EQ(definition.output, 34);
 	}
 
 	{
-		const auto definition = parse_function_statement("bit_slice.35: bits[1] = bit_slice(tuple_index.34, start=0, width=1, id=35)");
+		const auto definition = parse_function_statement("tuple_index.34: bits[32] = tuple_index(agg, index=1, id=34)");
+
+		EXPECT_EQ(definition.type, OperationType::TUPLE_INDEX);
+		EXPECT_THAT(definition.arguments,
+					ElementsAre(
+							VariantWith<std::string>("agg"),
+							VariantWith<unsigned int>(1)
+									)
+		);
+		EXPECT_EQ(definition.output, 34);
+	}
+
+	{
+		const auto definition = parse_function_statement("bit_slice.35: bits[1] = bit_slice(field_index.34, start=0, width=1, id=35)");
 
 		EXPECT_EQ(definition.type, OperationType::BIT_SLICE);
-		EXPECT_THAT(definition.arguments, ElementsAre(34, 0, 1));
+		EXPECT_THAT(definition.arguments,
+					ElementsAre(
+							VariantWith<unsigned int>(34),
+							VariantWith<unsigned int>(0),
+							VariantWith<unsigned int>(1)
+					)
+		);
 		EXPECT_EQ(definition.output, 35);
 	}
 
@@ -160,7 +207,7 @@ TEST(XlsccIrParser, parse_function_statement)
 		const auto definition = parse_function_statement("and.67: bits[1] = and(bit_slice.35, bit_slice.26, id=67)");
 
 		EXPECT_EQ(definition.type, OperationType::AND);
-		EXPECT_THAT(definition.arguments, ElementsAre(35, 26));
+		EXPECT_THAT(definition.arguments, ElementsAre(VariantWith<unsigned int>(35), VariantWith<unsigned int>(26)));
 		EXPECT_EQ(definition.output, 67);
 	}
 
@@ -168,7 +215,7 @@ TEST(XlsccIrParser, parse_function_statement)
 		const auto definition = parse_function_statement("or.69: bits[1] = or(bit_slice.35, bit_slice.26, id=69)");
 
 		EXPECT_EQ(definition.type, OperationType::OR);
-		EXPECT_THAT(definition.arguments, ElementsAre(35, 26));
+		EXPECT_THAT(definition.arguments, ElementsAre(VariantWith<unsigned int>(35), VariantWith<unsigned int>(26)));
 		EXPECT_EQ(definition.output, 69);
 	}
 
@@ -176,7 +223,7 @@ TEST(XlsccIrParser, parse_function_statement)
 		const auto definition = parse_function_statement("not.68: bits[1] = not(and.67, id=68)");
 
 		EXPECT_EQ(definition.type, OperationType::NOT);
-		EXPECT_THAT(definition.arguments, ElementsAre(67));
+		EXPECT_THAT(definition.arguments, ElementsAre(VariantWith<unsigned int>(67)));
 		EXPECT_EQ(definition.output, 68);
 	}
 
@@ -184,7 +231,7 @@ TEST(XlsccIrParser, parse_function_statement)
 		const auto definition = parse_function_statement("literal.23: bits[1] = literal(value=0, id=23)");
 
 		EXPECT_EQ(definition.type, OperationType::LITERAL);
-		EXPECT_THAT(definition.arguments, ElementsAre(0));
+		EXPECT_THAT(definition.arguments, ElementsAre(VariantWith<unsigned int>(0)));
 		EXPECT_EQ(definition.output, 23);
 	}
 
@@ -192,7 +239,18 @@ TEST(XlsccIrParser, parse_function_statement)
 		const auto definition = parse_function_statement("concat.360: bits[8] = concat(and.358, and.349, and.340, and.331, and.322, and.313, and.304, and.295, id=360)");
 
 		EXPECT_EQ(definition.type, OperationType::CONCAT);
-		EXPECT_THAT(definition.arguments, ElementsAre(358, 349, 340, 331, 322, 313, 304, 295));
+		EXPECT_THAT(definition.arguments,
+					ElementsAre(
+							VariantWith<unsigned int>(358),
+							VariantWith<unsigned int>(349),
+							VariantWith<unsigned int>(340),
+							VariantWith<unsigned int>(331),
+							VariantWith<unsigned int>(322),
+							VariantWith<unsigned int>(313),
+							VariantWith<unsigned int>(304),
+							VariantWith<unsigned int>(295)
+					)
+		);
 		EXPECT_EQ(definition.output, 360);
 	}
 
@@ -200,7 +258,7 @@ TEST(XlsccIrParser, parse_function_statement)
 		const auto definition = parse_function_statement("ret tuple.357: (bits[32], bits[32]) = tuple(concat.355, concat.356, id=357)");
 
 		EXPECT_EQ(definition.type, OperationType::RETURN);
-		EXPECT_THAT(definition.arguments, ElementsAre(355, 356));
+		EXPECT_THAT(definition.arguments, ElementsAre(VariantWith<unsigned int>(355), VariantWith<unsigned int>(356)));
 		EXPECT_EQ(definition.output, 357);
 	}
 }
@@ -212,15 +270,15 @@ TEST(XlsccIrParser, parse_function)
 	{
 		const auto function = "top fn top_add3(input: (bits[8])) -> (bits[8], bits[8]) {\n"
 							  "  tuple_index.50: bits[8] = tuple_index(input, index=0, id=50)\n"
-							  "  bit_slice.58: bits[1] = bit_slice(tuple_index.50, start=7, width=1, id=58)\n"
+							  "  bit_slice.58: bits[1] = bit_slice(field_index.50, start=7, width=1, id=58)\n"
 							  "  literal.47: bits[1] = literal(value=1, id=47)\n"
-							  "  bit_slice.57: bits[1] = bit_slice(tuple_index.50, start=6, width=1, id=57)\n"
-							  "  bit_slice.56: bits[1] = bit_slice(tuple_index.50, start=5, width=1, id=56)\n"
-							  "  bit_slice.55: bits[1] = bit_slice(tuple_index.50, start=4, width=1, id=55)\n"
-							  "  bit_slice.54: bits[1] = bit_slice(tuple_index.50, start=3, width=1, id=54)\n"
-							  "  bit_slice.53: bits[1] = bit_slice(tuple_index.50, start=2, width=1, id=53)\n"
-							  "  bit_slice.52: bits[1] = bit_slice(tuple_index.50, start=1, width=1, id=52)\n"
-							  "  bit_slice.51: bits[1] = bit_slice(tuple_index.50, start=0, width=1, id=51)\n"
+							  "  bit_slice.57: bits[1] = bit_slice(field_index.50, start=6, width=1, id=57)\n"
+							  "  bit_slice.56: bits[1] = bit_slice(field_index.50, start=5, width=1, id=56)\n"
+							  "  bit_slice.55: bits[1] = bit_slice(field_index.50, start=4, width=1, id=55)\n"
+							  "  bit_slice.54: bits[1] = bit_slice(field_index.50, start=3, width=1, id=54)\n"
+							  "  bit_slice.53: bits[1] = bit_slice(field_index.50, start=2, width=1, id=53)\n"
+							  "  bit_slice.52: bits[1] = bit_slice(field_index.50, start=1, width=1, id=52)\n"
+							  "  bit_slice.51: bits[1] = bit_slice(field_index.50, start=0, width=1, id=51)\n"
 							  "  literal.48: bits[1] = literal(value=0, id=48)\n"
 							  "  and.74: bits[1] = and(bit_slice.58, literal.47, id=74)\n"
 							  "  and.73: bits[1] = and(bit_slice.57, literal.47, id=73)\n"
@@ -253,11 +311,11 @@ TEST(XlsccIrParser, parse_function)
 
 		const auto definition = parse_function(function);
 
-		EXPECT_THAT(definition.header.first, ElementsAre(8));
+		EXPECT_THAT(definition.header.first, ElementsAre(ElementsAre(8)));
 		EXPECT_THAT(definition.header.second, ElementsAre(8, 8));
 
 		EXPECT_EQ(definition.operations.back().type, OperationType::RETURN);
-		EXPECT_THAT(definition.operations.back().arguments, ElementsAre(83, 84));
+		EXPECT_THAT(definition.operations.back().arguments, ElementsAre(VariantWith<unsigned int>(83), VariantWith<unsigned int>(84)));
 		EXPECT_EQ(definition.operations.back().output, 85);
 
 		EXPECT_EQ(definition.operations.size(), 38);
@@ -273,15 +331,15 @@ TEST(XlsccIrParser, parse_ir)
 							  "\n"
 							  "top fn top_add3(input: (bits[8])) -> (bits[8], bits[8]) {\n"
 							  "  tuple_index.50: bits[8] = tuple_index(input, index=0, id=50)\n"
-							  "  bit_slice.58: bits[1] = bit_slice(tuple_index.50, start=7, width=1, id=58)\n"
+							  "  bit_slice.58: bits[1] = bit_slice(field_index.50, start=7, width=1, id=58)\n"
 							  "  literal.47: bits[1] = literal(value=1, id=47)\n"
-							  "  bit_slice.57: bits[1] = bit_slice(tuple_index.50, start=6, width=1, id=57)\n"
-							  "  bit_slice.56: bits[1] = bit_slice(tuple_index.50, start=5, width=1, id=56)\n"
-							  "  bit_slice.55: bits[1] = bit_slice(tuple_index.50, start=4, width=1, id=55)\n"
-							  "  bit_slice.54: bits[1] = bit_slice(tuple_index.50, start=3, width=1, id=54)\n"
-							  "  bit_slice.53: bits[1] = bit_slice(tuple_index.50, start=2, width=1, id=53)\n"
-							  "  bit_slice.52: bits[1] = bit_slice(tuple_index.50, start=1, width=1, id=52)\n"
-							  "  bit_slice.51: bits[1] = bit_slice(tuple_index.50, start=0, width=1, id=51)\n"
+							  "  bit_slice.57: bits[1] = bit_slice(field_index.50, start=6, width=1, id=57)\n"
+							  "  bit_slice.56: bits[1] = bit_slice(field_index.50, start=5, width=1, id=56)\n"
+							  "  bit_slice.55: bits[1] = bit_slice(field_index.50, start=4, width=1, id=55)\n"
+							  "  bit_slice.54: bits[1] = bit_slice(field_index.50, start=3, width=1, id=54)\n"
+							  "  bit_slice.53: bits[1] = bit_slice(field_index.50, start=2, width=1, id=53)\n"
+							  "  bit_slice.52: bits[1] = bit_slice(field_index.50, start=1, width=1, id=52)\n"
+							  "  bit_slice.51: bits[1] = bit_slice(field_index.50, start=0, width=1, id=51)\n"
 							  "  literal.48: bits[1] = literal(value=0, id=48)\n"
 							  "  and.74: bits[1] = and(bit_slice.58, literal.47, id=74)\n"
 							  "  and.73: bits[1] = and(bit_slice.57, literal.47, id=73)\n"
@@ -315,11 +373,11 @@ TEST(XlsccIrParser, parse_ir)
 		const auto definition = parse_ir(function);
 		const auto& main = definition.main_function;
 
-		EXPECT_THAT(main.header.first, ElementsAre(8));
+		EXPECT_THAT(main.header.first, ElementsAre(ElementsAre(8)));
 		EXPECT_THAT(main.header.second, ElementsAre(8, 8));
 
 		EXPECT_EQ(main.operations.back().type, OperationType::RETURN);
-		EXPECT_THAT(main.operations.back().arguments, ElementsAre(83, 84));
+		EXPECT_THAT(main.operations.back().arguments, ElementsAre(VariantWith<unsigned int>(83), VariantWith<unsigned int>(84)));
 		EXPECT_EQ(main.operations.back().output, 85);
 
 		EXPECT_EQ(main.operations.size(), 38);

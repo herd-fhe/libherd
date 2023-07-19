@@ -10,58 +10,61 @@ TEST(XlsccIrTranspiler, transpile_ir_program)
 
 	ProgramDefinition definition;
 	definition.main_function.header = {
-			{8},
+			{{8}},
 			{8, 8}
 	};
 
 	definition.main_function.operations = {
-			OperationDefinition{OperationType::TUPLE_INDEX, {0}, 50},
-			OperationDefinition{OperationType::BIT_SLICE, {50, 7, 1}, 58},
-			OperationDefinition{OperationType::LITERAL, {1}, 47},
-			OperationDefinition{OperationType::BIT_SLICE, {50, 6, 1}, 57},
-			OperationDefinition{OperationType::BIT_SLICE, {50, 5, 1}, 56},
-			OperationDefinition{OperationType::BIT_SLICE, {50, 4, 1}, 55},
-			OperationDefinition{OperationType::BIT_SLICE, {50, 3, 1}, 54},
-			OperationDefinition{OperationType::BIT_SLICE, {50, 2, 1}, 53},
-			OperationDefinition{OperationType::BIT_SLICE, {50, 1, 1}, 52},
-			OperationDefinition{OperationType::BIT_SLICE, {50, 0, 1}, 51},
-			OperationDefinition{OperationType::LITERAL, {0}, 48},
-			OperationDefinition{OperationType::AND, {58, 47}, 74},
-			OperationDefinition{OperationType::AND, {57, 47}, 73},
-			OperationDefinition{OperationType::AND, {56, 47}, 72},
-			OperationDefinition{OperationType::AND, {55, 47}, 71},
-			OperationDefinition{OperationType::AND, {54, 47}, 70},
-			OperationDefinition{OperationType::AND, {53, 47}, 69},
-			OperationDefinition{OperationType::AND, {52, 47}, 68},
-			OperationDefinition{OperationType::AND, {51, 47}, 67},
-			OperationDefinition{OperationType::OR, {58, 48}, 66},
-			OperationDefinition{OperationType::OR, {57, 47}, 65},
-			OperationDefinition{OperationType::OR, {56, 48}, 64},
-			OperationDefinition{OperationType::OR, {55, 47}, 63},
-			OperationDefinition{OperationType::OR, {54, 48}, 62},
-			OperationDefinition{OperationType::OR, {53, 47}, 61},
-			OperationDefinition{OperationType::OR, {52, 48}, 60},
-			OperationDefinition{OperationType::OR, {51, 47}, 59},
-			OperationDefinition{OperationType::NOT, {74}, 82},
-			OperationDefinition{OperationType::NOT, {73}, 81},
-			OperationDefinition{OperationType::NOT, {72}, 80},
-			OperationDefinition{OperationType::NOT, {71}, 79},
-			OperationDefinition{OperationType::NOT, {70}, 78},
-			OperationDefinition{OperationType::NOT, {69}, 77},
-			OperationDefinition{OperationType::NOT, {68}, 76},
-			OperationDefinition{OperationType::NOT, {67}, 75},
-			OperationDefinition{OperationType::CONCAT, {66, 65, 64, 63, 62, 61, 60, 59}, 83},
-			OperationDefinition{OperationType::CONCAT, {82, 81, 80, 79, 78, 77, 76, 75}, 84},
-			OperationDefinition{OperationType::RETURN, {83, 84}, 85},
+			OperationDefinition{OperationType::TUPLE_INDEX, {"input", 0U}, 50},
+			OperationDefinition{OperationType::BIT_SLICE, {50U, 7U, 1U}, 58},
+			OperationDefinition{OperationType::LITERAL, {1U}, 47},
+			OperationDefinition{OperationType::BIT_SLICE, {50U, 6U, 1U}, 57},
+			OperationDefinition{OperationType::BIT_SLICE, {50U, 5U, 1U}, 56},
+			OperationDefinition{OperationType::BIT_SLICE, {50U, 4U, 1U}, 55},
+			OperationDefinition{OperationType::BIT_SLICE, {50U, 3U, 1U}, 54},
+			OperationDefinition{OperationType::BIT_SLICE, {50U, 2U, 1U}, 53},
+			OperationDefinition{OperationType::BIT_SLICE, {50U, 1U, 1U}, 52},
+			OperationDefinition{OperationType::BIT_SLICE, {50U, 0U, 1U}, 51},
+			OperationDefinition{OperationType::LITERAL, {0U}, 48},
+			OperationDefinition{OperationType::AND, {58U, 47U}, 74},
+			OperationDefinition{OperationType::AND, {57U, 47U}, 73},
+			OperationDefinition{OperationType::AND, {56U, 47U}, 72},
+			OperationDefinition{OperationType::AND, {55U, 47U}, 71},
+			OperationDefinition{OperationType::AND, {54U, 47U}, 70},
+			OperationDefinition{OperationType::AND, {53U, 47U}, 69},
+			OperationDefinition{OperationType::AND, {52U, 47U}, 68},
+			OperationDefinition{OperationType::AND, {51U, 47U}, 67},
+			OperationDefinition{OperationType::OR, {58U, 48U}, 66},
+			OperationDefinition{OperationType::OR, {57U, 47U}, 65},
+			OperationDefinition{OperationType::OR, {56U, 48U}, 64},
+			OperationDefinition{OperationType::OR, {55U, 47U}, 63},
+			OperationDefinition{OperationType::OR, {54U, 48U}, 62},
+			OperationDefinition{OperationType::OR, {53U, 47U}, 61},
+			OperationDefinition{OperationType::OR, {52U, 48U}, 60},
+			OperationDefinition{OperationType::OR, {51U, 47U}, 59},
+			OperationDefinition{OperationType::NOT, {74U}, 82},
+			OperationDefinition{OperationType::NOT, {73U}, 81},
+			OperationDefinition{OperationType::NOT, {72U}, 80},
+			OperationDefinition{OperationType::NOT, {71U}, 79},
+			OperationDefinition{OperationType::NOT, {70U}, 78},
+			OperationDefinition{OperationType::NOT, {69U}, 77},
+			OperationDefinition{OperationType::NOT, {68U}, 76},
+			OperationDefinition{OperationType::NOT, {67U}, 75},
+			OperationDefinition{OperationType::CONCAT, {66U, 65U, 64U, 63U, 62U, 61U, 60U, 59U}, 83},
+			OperationDefinition{OperationType::CONCAT, {82U, 81U, 80U, 79U, 78U, 77U, 76U, 75U}, 84},
+			OperationDefinition{OperationType::RETURN, {83U, 84U}, 85},
 	};
 
 	const auto stage = transpile_ir_program(
 			definition,
 			ProgramMetadata{
 					{
+						{
+							"input",
 							{
-									{"in", herd::common::DataType::UINT8}
+								{"in", herd::common::DataType::UINT8}
 							}
+						}
 					},
 					{
 							{"out_1", herd::common::DataType::UINT8},
@@ -78,9 +81,9 @@ TEST(XlsccIrTranspiler, transpile_ir_program)
 	EXPECT_EQ(circuit.node_size(), 50);
 	EXPECT_EQ(circuit.edges_size(), 56);
 
-	ASSERT_EQ(stage.input.size(), 1);
-	ASSERT_EQ(stage.input.size(), 1);
-	EXPECT_EQ(stage.input[0], herd::common::DataType::UINT8);
+	ASSERT_EQ(stage.inputs.size(), 1);
+	ASSERT_EQ(stage.inputs[0].size(), 1);
+	EXPECT_EQ(stage.inputs[0][0], herd::common::DataType::UINT8);
 
 	ASSERT_EQ(stage.output.size(), 2);
 	EXPECT_EQ(stage.output[0].name, "out_1");
