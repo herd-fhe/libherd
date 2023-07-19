@@ -21,7 +21,18 @@ namespace herd::translator::xlscc::detail
 	};
 
 	using struct_fields_t = std::vector<StructField>;
-	using input_arguments_t = std::vector<struct_fields_t>;
+
+	struct ArgumentStruct
+	{
+		std::string name;
+		struct_fields_t fields;
+
+		ArgumentStruct(std::string struct_name, struct_fields_t struct_fields)
+		:	name(std::move(struct_name)), fields(std::move(struct_fields))
+		{};
+	};
+
+	using input_arguments_t = std::vector<ArgumentStruct>;
 	using output_argument_t = struct_fields_t;
 
 	struct ProgramMetadata

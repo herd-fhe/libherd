@@ -3,14 +3,16 @@
 
 #include <string_view>
 #include <vector>
+#include <variant>
 
 
 namespace herd::translator::xlscc::detail
 {
 	using type_bits_list_t = std::vector<unsigned int>;
-	using function_header_t = std::pair<type_bits_list_t, type_bits_list_t>;
+	using function_header_t = std::pair<std::vector<type_bits_list_t>, type_bits_list_t>;
 
-	using operation_arguments_t = std::vector<unsigned int>;
+	using operation_argument_t = std::variant<unsigned int, std::string>;
+	using operation_arguments_t = std::vector<operation_argument_t>;
 	using operation_description_t = std::pair<operation_arguments_t, unsigned int>;
 
 	enum class OperationType
@@ -52,6 +54,7 @@ namespace herd::translator::xlscc::detail
 
 	[[nodiscard]] OperationDefinition parse_function_statement(std::string_view source);
 
+	[[nodiscard]] operation_description_t parse_function_tuple_index_arguments(std::string_view source);
 	[[nodiscard]] operation_description_t parse_function_bit_slice_statement_arguments(std::string_view source);
 	[[nodiscard]] operation_description_t parse_function_one_named_argument(std::string_view source);
 	[[nodiscard]] operation_description_t parse_function_variadic_statement_arguments(std::string_view source);

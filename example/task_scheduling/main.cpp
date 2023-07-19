@@ -77,11 +77,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	const std::string mapper_code =
 			"struct in_input\n"
 			"{\n"
-			"    short in;\n"
+			"    unsigned short in;\n"
 			"};\n"
 			"struct out_output\n"
 			"{\n"
-			"    short out;\n"
+			"    unsigned short out;\n"
 			"};\n"
 			"#pragma hls_top\n"
 			"out_output top_add3(in_input input)\n"
@@ -89,16 +89,33 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 			"    return {input.in * 2};\n"
 			"}";
 
+	const std::string reduce_code =
+			"struct agg\n"
+			"{\n"
+			"    unsigned short in;\n"
+			"};\n"
+			"struct in_input\n"
+			"{\n"
+			"    unsigned short out;\n"
+			"};\n"
+			"#pragma hls_top\n"
+			"agg top_add3(agg sum, in_input input)\n"
+			"{\n"
+			"    return {input.out + sum.in};\n"
+			"}";
+
 	herd::utils::TempStorage storage;
 	herd::translator::xlscc::detail::Compiler translator(storage);
 
 	const auto mapper_circuit = translator.translate(mapper_code);
+	const auto reduce_circuit = translator.translate(reduce_code);
 
 	common::ExecutionPlan plan;
 	plan.schema_type = herd::common::SchemaType::BINFHE;
 
 	auto prev = plan.execution_graph.emplace(common::InputStage{data_frame->uuid()});
 	prev = plan.execution_graph.emplace(prev, common::MapperStage{mapper_circuit});
+	prev = plan.execution_graph.emplace(prev, common::ReduceStage{reduce_circuit});
 	plan.execution_graph.emplace(prev, common::OutputStage{"output"});
 
 	{

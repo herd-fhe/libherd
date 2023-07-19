@@ -16,18 +16,30 @@ namespace herd::translator::xlscc::detail
 
 		const auto& main = definition.main_function;
 
-		if(main.header.first.size() != metadata.inputs[0].size() || main.header.second.size() != metadata.output.size())
+		if(main.header.first.size() != metadata.inputs.size() || main.header.second.size() != metadata.output.size())
 		{
 			throw CompilerError("Internal transpiler error. AST mismatch");
 		}
 
 		for(std::size_t i = 0; i < main.header.first.size(); ++i)
 		{
-			if(main.header.first[i] != common::data_type_to_bit_width(metadata.inputs[0][i].data_type))
+			if(main.header.first[i].size() != metadata.inputs[i].fields.size())
 			{
-				throw CompilerError("Internal transpiler error. Structure type mismatch");
+				throw CompilerError("Internal transpiler error. AST mismatch");
 			}
 		}
+
+		for(std::size_t i = 0; i < main.header.first.size(); ++i)
+		{
+			for(std::size_t j = 0; j < main.header.first[i].size(); ++j)
+			{
+				if(main.header.first[i][j] != common::data_type_to_bit_width(metadata.inputs[i].fields[j].data_type))
+				{
+					throw CompilerError("Internal transpiler error. Structure type mismatch");
+				}
+			}
+		}
+
 		for(std::size_t i = 0; i < main.header.second.size(); ++i)
 		{
 			if(main.header.second[i] != common::data_type_to_bit_width(metadata.output[i].data_type))
@@ -36,10 +48,14 @@ namespace herd::translator::xlscc::detail
 			}
 		}
 
-		circuit.input.reserve(metadata.inputs[0].size());
-		for(const auto& input_field: metadata.inputs[0])
+		circuit.inputs.resize(metadata.inputs.size());
+		for(std::size_t index = 0; const auto& input_struct: metadata.inputs)
 		{
-			circuit.input.emplace_back(input_field.data_type);
+			for(const auto& input_field: input_struct.fields)
+			{
+				circuit.inputs[index].emplace_back(input_field.data_type);
+			}
+			++index;
 		}
 
 		circuit.output.reserve(metadata.output.size());
@@ -48,7 +64,7 @@ namespace herd::translator::xlscc::detail
 			circuit.output.emplace_back(output_field.name, output_field.data_type);
 		}
 
-		std::unordered_map<unsigned int, unsigned int> indirect_input_access;
+		std::unordered_map<unsigned int, std::pair<unsigned int, unsigned int>> indirect_input_access;
 		std::unordered_map<unsigned int, std::vector<unsigned int>> indirect_output_access;
 		std::unordered_map<unsigned int, decltype(common::Circuit::circuit_graph)::const_iterator> id_node_map;
 
@@ -64,7 +80,7 @@ namespace herd::translator::xlscc::detail
 				using enum herd::translator::xlscc::detail::OperationType;
 
 				case TUPLE_INDEX:
-					visit_tuple_index(args, output, indirect_input_access);
+					visit_tuple_index(args, output, indirect_input_access, metadata);
 					break;
 				case BIT_SLICE:
 				{
@@ -104,27 +120,49 @@ namespace herd::translator::xlscc::detail
 	}
 
 	void visit_tuple_index(
-			const std::vector<unsigned int>& args, unsigned int output,
-			std::unordered_map<unsigned int, unsigned int>& indirect_input_access
+			const operation_arguments_t& args, unsigned int output,
+			std::unordered_map<unsigned int, std::pair<unsigned int, unsigned int>>& indirect_input_access,
+			const ProgramMetadata& metadata
 	)
 	{
-		indirect_input_access.emplace(output, args[0]);
+		assert(args.size() == 2);
+		assert(std::holds_alternative<std::string>(args[0]));
+		assert(std::holds_alternative<unsigned int>(args[1]));
+
+		const auto& tuple_name = std::get<std::string>(args[0]);
+		std::size_t tuple_name_index = 0;
+		for(const auto& tuple: metadata.inputs)
+		{
+			if(tuple.name == tuple_name)
+			{
+				break;
+			}
+			++tuple_name_index;
+		}
+		assert(tuple_name_index != metadata.inputs.size());
+
+		indirect_input_access.emplace(output, std::make_pair(tuple_name_index, std::get<unsigned int>(args[1])));
 	}
 
 	void visit_bit_slice(
-			const std::vector<unsigned int>& args, unsigned int output,
-			common::DAG<common::node_t>& graph, const std::unordered_map<unsigned int, unsigned int>& indirect_input_access,
+			const operation_arguments_t& args, unsigned int output,
+			common::DAG<common::node_t>& graph, const std::unordered_map<unsigned int, std::pair<unsigned int, unsigned int>>& indirect_input_access,
 			std::unordered_map<unsigned int, decltype(common::Circuit::circuit_graph)::const_iterator>& id_node_map
 	)
 	{
-		assert(args[2] == 1);
-		const auto input_index = indirect_input_access.at(args[0]);
-		const auto iterator = graph.emplace(common::InputNode{input_index, args[1]});
+		assert(args.size() == 3);
+		assert(std::holds_alternative<unsigned int>(args[0]));
+		assert(std::holds_alternative<unsigned int>(args[1]));
+		assert(std::holds_alternative<unsigned int>(args[2]));
+		assert(std::get<unsigned int>(args[2]) == 1);
+
+		const auto [tuple_index, tuple_field_index] = indirect_input_access.at(std::get<unsigned int>(args[0]));
+		const auto iterator = graph.emplace(common::InputNode{tuple_index, tuple_field_index, std::get<unsigned int>(args[1])});
 		id_node_map.try_emplace(output, iterator);
 	}
 
 	void visit_binary(
-			const std::vector<unsigned int>& args, unsigned int output, OperationType type,
+			const operation_arguments_t& args, unsigned int output, OperationType type,
 			common::DAG<common::node_t>& graph, std::unordered_map<unsigned int, decltype(common::Circuit::circuit_graph)::const_iterator>& id_node_map)
 	{
 		const auto graph_operation = type == OperationType::AND
@@ -132,16 +170,17 @@ namespace herd::translator::xlscc::detail
 											 : common::Operation::OR;
 		const auto iterator = graph.emplace(common::OperationNode{graph_operation});
 		id_node_map.try_emplace(output, iterator);
-		for(const auto arg: args)
+		for(const auto& arg: args)
 		{
-			assert(id_node_map.contains(arg));
-			const auto& input = id_node_map[arg];
+			assert(std::holds_alternative<unsigned int>(arg));
+			assert(id_node_map.contains(std::get<unsigned int>(arg)));
+			const auto& input = id_node_map[std::get<unsigned int>(arg)];
 			graph.add_edge(input, iterator);
 		}
 	}
 
 	void visit_unary(
-			const std::vector<unsigned int>& args, unsigned int output, [[maybe_unused]] OperationType type,
+			const operation_arguments_t& args, unsigned int output, [[maybe_unused]] OperationType type,
 			common::DAG<common::node_t>& graph, std::unordered_map<unsigned int, decltype(common::Circuit::circuit_graph)::const_iterator>& id_node_map
 	)
 	{
@@ -149,41 +188,51 @@ namespace herd::translator::xlscc::detail
 		const auto iterator = graph.emplace(common::OperationNode{common::Operation::NOT});
 		id_node_map.try_emplace(output, iterator);
 
-		assert(id_node_map.contains(args[0]));
-		const auto& input = id_node_map[args[0]];
+		assert(args.size() == 1);
+		assert(std::holds_alternative<unsigned int>(args[0]));
+		assert(id_node_map.contains(std::get<unsigned int>(args[0])));
+		const auto& input = id_node_map[std::get<unsigned int>(args[0])];
 		graph.add_edge(input, iterator);
 	}
 
 	void visit_literal(
-			const std::vector<unsigned int>& args, unsigned int output,
+			const operation_arguments_t& args, unsigned int output,
 			common::DAG<common::node_t>& graph, std::unordered_map<unsigned int, decltype(common::Circuit::circuit_graph)::const_iterator>& id_node_map
 	)
 	{
-		assert(args[0] == 0 || args[0] == 1);
-		const bool value = args[0] == 1;
+		assert(args.size() == 1);
+		assert(std::holds_alternative<unsigned int>(args[0]));
+		assert(std::get<unsigned int>(args[0]) == 0 || std::get<unsigned int>(args[0]) == 1);
+		const bool value = std::get<unsigned int>(args[0]) == 1;
 		const auto iterator = graph.emplace(common::ConstantNode{value});
 		id_node_map.try_emplace(output, iterator);
 	}
 
 	void visit_concat(
-			const std::vector<unsigned int>& args, unsigned int output,
+			const operation_arguments_t& args, unsigned int output,
 			std::unordered_map<unsigned int, std::vector<unsigned int>>& indirect_output_access
 	)
 	{
 		assert(!indirect_output_access.contains(output));
-		indirect_output_access[output] = args;
+		indirect_output_access[output] = {};
+		for(const auto& arg: args)
+		{
+			assert(std::holds_alternative<unsigned int>(arg));
+			indirect_output_access[output].emplace_back(std::get<unsigned int>(arg));
+		}
 	}
 
 	void visit_return(
-			const std::vector<unsigned int>& args,
+			const operation_arguments_t& args,
 			common::DAG<common::node_t>& graph, std::unordered_map<unsigned int, decltype(common::Circuit::circuit_graph)::const_iterator>& id_node_map,
 			std::unordered_map<unsigned int, std::vector<unsigned int>>& indirect_output_access
 	)
 	{
-		for(auto tuple_index = static_cast<unsigned int>(args.size()); const auto arg: args)
+		for(auto tuple_index = static_cast<unsigned int>(args.size()); const auto& arg: args)
 		{
-			assert(indirect_output_access.contains(arg));
-			const auto& value_bits = indirect_output_access[arg];
+			assert(std::holds_alternative<unsigned int>(arg));
+			assert(indirect_output_access.contains(std::get<unsigned int>(arg)));
+			const auto& value_bits = indirect_output_access[std::get<unsigned int>(arg)];
 			--tuple_index;
 			for(auto bit_index = static_cast<unsigned int>(value_bits.size()); const auto bit_id: value_bits)
 			{

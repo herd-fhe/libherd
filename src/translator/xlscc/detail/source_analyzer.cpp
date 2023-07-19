@@ -103,7 +103,8 @@ namespace herd::translator::xlscc::detail
 			}
 
 			const auto record_decl = type.getTypePtr()->getAsCXXRecordDecl();
-			metadata.inputs.emplace_back(process_struct_fields(record_decl));
+			const auto argument_name = argument->getNameAsString();
+			metadata.inputs.emplace_back(argument_name, process_struct_fields(record_decl));
 		}
 
 		const auto return_type = main->getReturnType();

@@ -21,7 +21,7 @@ namespace herd::translator::xlscc::detail
 	};
 
 	const std::map<OperationType, std::function<operation_description_t(std::string_view)>> operation_type_arguments_mappers = {
-			{OperationType::TUPLE_INDEX, parse_function_one_named_argument},
+			{OperationType::TUPLE_INDEX, parse_function_tuple_index_arguments},
 			{OperationType::BIT_SLICE, parse_function_bit_slice_statement_arguments},
 			{OperationType::AND, parse_function_variadic_statement_arguments},
 			{OperationType::OR, parse_function_variadic_statement_arguments},
@@ -29,7 +29,6 @@ namespace herd::translator::xlscc::detail
 			{OperationType::LITERAL, parse_function_one_named_argument},
 			{OperationType::CONCAT, parse_function_variadic_statement_arguments},
 			{OperationType::RETURN, parse_function_variadic_statement_arguments}
-
 	};
 
 	ProgramDefinition parse_ir(std::string_view source)
@@ -165,8 +164,9 @@ namespace herd::translator::xlscc::detail
 		bool parsing_completed = false;
 
 		std::string_view::const_iterator signature_begin;
-		std::string_view input_signature;
 		std::string_view output_signature;
+
+		std::vector<type_bits_list_t> inputs;
 
 		for(auto iter = std::cbegin(source); iter != std::cend(source); ++iter)
 		{
@@ -181,14 +181,18 @@ namespace herd::translator::xlscc::detail
 						signature_begin = iter;
 						state = ParserState::ARGUMENTS_END;
 					}
+					else if(*iter == '>')
+					{
+						state = ParserState::RETURN_START;
+					}
 					break;
 				}
 				case ParserState::ARGUMENTS_END:
 				{
 					if(*iter == ')')
 					{
-						input_signature = {signature_begin + 3, iter };
-						state = ParserState::RETURN_START;
+						inputs.emplace_back(parse_type_list({signature_begin + 3, iter }));
+						state = ParserState::ARGUMENTS_START;
 					}
 					break;
 				}
@@ -223,10 +227,9 @@ namespace herd::translator::xlscc::detail
 		}
 
 		assert(parsing_completed);
-		const auto input_bit_sizes = parse_type_list(input_signature);
 		const auto output_bit_sizes = parse_type_list(output_signature);
 
-		return std::make_pair(input_bit_sizes, output_bit_sizes);
+		return std::make_pair(inputs, output_bit_sizes);
 	}
 
 	std::vector<unsigned int> parse_type_list(std::string_view source)
@@ -306,6 +309,22 @@ namespace herd::translator::xlscc::detail
 		definition.output = output_id;
 
 		return definition;
+	}
+
+	operation_description_t parse_function_tuple_index_arguments(std::string_view source)
+	{
+		const auto tuple_name_pos = source.find('(') + 1;
+		const auto tuple_name_end_pos = source.find(',', tuple_name_pos);
+		const auto tuple_name = std::string(std::cbegin(source) + tuple_name_pos, std::cbegin(source) + tuple_name_end_pos);
+
+		const auto tuple_index_pos = source.find('=', tuple_name_end_pos) + 1;
+		const auto tuple_index_end_pos = source.find(',', tuple_index_pos);
+		const auto tuple_index = utils::parse_num<unsigned int>(std::string_view(std::begin(source) + tuple_index_pos, std::begin(source) + tuple_index_end_pos));
+
+		const auto id_pos = source.find('=', tuple_index_end_pos) + 1;
+		const auto id = utils::parse_num<unsigned int>(source.substr(id_pos));
+
+		return {{tuple_name, tuple_index}, id};
 	}
 
 	operation_description_t parse_function_bit_slice_statement_arguments(std::string_view source)
