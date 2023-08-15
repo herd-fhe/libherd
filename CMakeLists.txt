@@ -260,6 +260,7 @@ target_link_libraries(
         herd_common
         herd_dto_mappers
 
+        libclang::libclang
         LLVM-14
         clang-cpp
 )

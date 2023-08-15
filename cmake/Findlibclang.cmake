@@ -14,16 +14,17 @@ find_package_handle_standard_args(
         libclang_INCLUDE_DIR
         libclang_LIBRARY
 )
-
 if(libclang_FOUND)
     set(libclang_INCLUDE_DIRS ${libclang_INCLUDE_DIR})
     set(libclang_LIBRARIES ${libclang_LIBRARY})
+
     if(NOT TARGET libclang::libclang)
         add_library(libclang::libclang UNKNOWN IMPORTED)
         set_target_properties(
                 libclang::libclang
                 PROPERTIES
                 INTERFACE_INCLUDE_DIRECTORIES ${libclang_INCLUDE_DIR}
+                INTERFACE_LINK_DIRECTORIES ${libclang_LIB_DIR}
                 IMPORTED_LOCATION ${libclang_LIBRARY}
         )
     endif()

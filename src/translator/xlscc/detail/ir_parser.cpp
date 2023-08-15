@@ -4,6 +4,7 @@
 #include <locale>
 #include <map>
 #include <functional>
+#include <cstdint>
 
 #include "herd/utils/string_utils.hpp"
 
