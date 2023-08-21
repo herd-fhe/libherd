@@ -34,7 +34,7 @@ namespace herd
 
 		virtual std::vector<std::shared_ptr<storage::DataFrame>> list_data_frames(const common::UUID& session_uuid) = 0;
 
-		virtual executor::JobInfo schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan) = 0;
+		virtual executor::JobInfo schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan, uint32_t concurrency_limit) = 0;
 
 		virtual std::vector<executor::JobState> list_jobs(const common::UUID& session_uuid) = 0;
 		virtual executor::JobInfo describe_job(const common::UUID& session_uuid, const common::UUID& uuid) = 0;

@@ -5,9 +5,9 @@
 
 namespace herd::executor::remote::detail
 {
-	std::shared_ptr<Job> Executor::schedule(const common::ExecutionPlan& plan)
+	std::shared_ptr<Job> Executor::schedule(const common::ExecutionPlan& plan, uint32_t concurrency_limit)
 	{
-		const auto job_info = backend_.schedule_job(session_.uuid(), plan);
+		const auto job_info = backend_.schedule_job(session_.uuid(), plan, concurrency_limit);
 		const auto job = std::make_shared<JobImpl>(job_info.uuid, plan, common::JobStatus::WAITING_FOR_EXECUTION, backend_);
 		jobs_.try_emplace(job_info.uuid, job);
 

@@ -67,9 +67,9 @@ namespace herd
 		return pimpl_->list_data_frames(session_uuid);
 	}
 
-	executor::JobInfo RemoteBackend::schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan)
+	executor::JobInfo RemoteBackend::schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan, uint32_t concurrency_limit)
 	{
-		return pimpl_->schedule_job(session_uuid, plan);
+		return pimpl_->schedule_job(session_uuid, plan, concurrency_limit);
 	}
 
 	std::vector<executor::JobState> RemoteBackend::list_jobs(const common::UUID& session_uuid)

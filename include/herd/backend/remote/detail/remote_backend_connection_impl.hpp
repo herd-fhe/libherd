@@ -53,7 +53,7 @@ namespace herd
 
 		std::vector<std::shared_ptr<storage::DataFrame>> list_data_frames(const common::UUID& session_uuid);
 
-		executor::JobInfo schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan);
+		executor::JobInfo schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan, uint32_t concurrency_limit);
 		std::vector<executor::JobState> list_jobs(const common::UUID& session_uuid);
 		executor::JobInfo describe_job(const common::UUID& session_uuid, const common::UUID& uuid);
 		executor::JobState get_job_state(const common::UUID& session_uuid, const common::UUID& uuid);

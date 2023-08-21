@@ -20,7 +20,7 @@ namespace herd::executor::remote::detail
 	public:
 		Executor(Session& session, RemoteBackend& backend);
 
-		std::shared_ptr<Job> schedule(const common::ExecutionPlan& plan) override;
+		std::shared_ptr<Job> schedule(const common::ExecutionPlan& plan, uint32_t concurrency_limit = 0) override;
 		std::vector<std::shared_ptr<Job>> list_jobs(bool pending_only) override;
 
 		void sync_cache() const;
