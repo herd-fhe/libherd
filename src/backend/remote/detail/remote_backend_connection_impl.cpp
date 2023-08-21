@@ -397,13 +397,14 @@ namespace herd
 		return data_frames;
 	}
 
-	executor::JobInfo RemoteBackend::RemoteBackendConnectionImpl::schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan)
+	executor::JobInfo RemoteBackend::RemoteBackendConnectionImpl::schedule_job(const common::UUID& session_uuid, const common::ExecutionPlan& plan, uint32_t concurrency_limit)
 	{
 		grpc::ClientContext client_context{};
 		setup_authenticated_context(client_context);
 
 		proto::ScheduleJobRequest request;
 		request.set_session_uuid(session_uuid.as_string());
+		request.set_concurrency_limit(concurrency_limit);
 
 		const auto plan_proto = request.mutable_plan();
 		plan_proto->CopyFrom(mapper::to_proto(plan));

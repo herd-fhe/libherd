@@ -13,7 +13,7 @@ namespace herd::executor
 	public:
 		virtual ~IExecutor() = default;
 
-		[[nodiscard]] virtual std::shared_ptr<Job> schedule(const common::ExecutionPlan& plan) = 0;
+		[[nodiscard]] virtual std::shared_ptr<Job> schedule(const common::ExecutionPlan& plan, uint32_t concurrency_limit = 0) = 0;
 		[[nodiscard]] virtual std::vector<std::shared_ptr<Job>> list_jobs(bool pending_only) = 0;
 	};
 }
