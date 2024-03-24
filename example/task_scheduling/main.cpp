@@ -40,7 +40,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	keyset.store_private_key_to_file("./1.key");
 
 	std::stringstream data_frame_csv;
-	for(size_t i = 0; i < 4; ++i)
+	for(size_t i = 0; i < 8; ++i)
 	{
 		data_frame_csv << std::to_string(i)
 					   << "\n";
@@ -49,7 +49,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	herd::storage::ImportOptions options;
 	options.set_columns({common::ColumnMeta{"id", herd::common::DataType::UINT16}});
 	options.set_schema(herd::common::SchemaType::BINFHE);
-	options.set_partitions(2);
+	options.set_partitions(7);
 
 	auto data_frame_future = session->data_storage().import_from_csv(data_frame_csv, options);
 
@@ -115,7 +115,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
 	auto prev = plan.execution_graph.emplace(common::InputStage{data_frame->uuid()});
 	prev = plan.execution_graph.emplace(prev, common::MapperStage{mapper_circuit});
-	prev = plan.execution_graph.emplace(prev, common::ReduceStage{reduce_circuit});
+	prev = plan.execution_graph.emplace(prev, common::ReduceStage{reduce_circuit, herd::common::Policy::PARALLEL_FULL});
 	plan.execution_graph.emplace(prev, common::OutputStage{"output"});
 
 	{
